@@ -1,0 +1,64 @@
+
+<!-- ## Code -->
+<html>
+<head>
+	<title>Language Understanding Experiment</title>
+	<script src="jquery-1.11.2.min.js"></script>
+	<script src="mmturkey-0.6.js"></script>
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- The instructions slide. -->
+<div class="slide" id="instructions">
+	<img src="images/stanford.png" alt="Stanford University">
+		<p id='logo-text'>Stanford Language and Cognition Lab</p>
+	<p class="block-text">In this experiment, you will read some sentences and judge how similar they are to one another. If they have almost the same meaning (even if the words are a little different), you should rate them as "very similar"; but if they have a different meaning, you should rate them as "different."
+	</p>
+	<button type="button" onclick="this.blur(); experiment.next()">Start</button>
+	<p class="block-text" id="legal">Legal information: By answering the
+		following questions, you are participating in a study being performed by
+		cognitive scientists in the Stanford Department of Psychology. If you have
+		questions about this research, please contact Long Ouyang at <a
+		href="mailto://louyang@stanford.edu">louyang@stanford.edu</a> or Noah
+		Goodman, at ngoodman@stanford.edu. You must be  at least 18 years old to
+		participate. Your participation in this research is voluntary. You may
+		decline to answer any or all of the following questions. You may decline
+		further participation, at any time, without adverse consequences. Your
+		anonymity is assured; the researchers who have requested your
+		participation will not receive any personal information about you.</p>
+</div>
+
+<!-- The stage slide. -->
+<div class="slide" id="stage">
+  <p id="sentence1">{{}}</p>
+  <p id="sentence2">{{}}</p>
+  <br>
+  <p> Very dissimilar Very similar
+  <form>
+  <input type="radio" name="judgment" value="1">1
+  <input type="radio" name="judgment" value="2">2
+  <input type="radio" name="judgment" value="3">3
+  <input type="radio" name="judgment" value="4">4
+  <input type="radio" name="judgment" value="5">5
+  <input type="radio" name="judgment" value="6">6
+  <input type="radio" name="judgment" value="7">7
+  </form>
+  </p>
+  <table align="center"><tr><td align="center">
+	<button type="button" id="nextButton" onClick="experiment.next()">Next</button>
+      </td></tr>
+      <tr><td align="center">
+      <div id="testMessage"> </div>
+      </td></tr></table>
+</div>
+
+<!-- The finish slide. -->
+<div class="slide" id="finished">
+	You're finished - thanks for participating! Submitting to Mechanical Turk...
+</div>
+
+<script src="implicatures_e1.js"></script>
+
+</body>
+</html>
