@@ -1,0 +1,63 @@
+<!-- ## Introduction -->
+<!-- This example experiment is a categorization task. On every trial, the subject sees a number and has to press a key depending on whether the number is even or odd. There are two between-subjects independent variables: which keys get pressed (either P for even and Q for odd or vice versa) and the trial order (subjects see one of two fixed orders). There are two dependent variables: accuracy and reaction time. -->
+
+<!-- This example assumes that you already know the basics of HTML, JavaScript (JS), and CSS. If not, [the Codecademy tutorials](http://www.codecademy.com/tracks/javascript) are a useful starting point. -->
+
+<!-- This page contains source code on the right and explanations/commentary on the left. You can jump around the different files by using the "Jump To ..." menu in the upper right corner. You will also want to refer to <a href="../even-odd.html">the actual experiment</a>. -->
+
+<!-- ## Code -->
+<html>
+<head>
+	<title>Even/odd experiment</title>
+	<!-- Include the [jQuery library](http://jquery.com/), which helps you manipulate HTML elements from JS. -->
+	<script src="jquery-1.11.2.min.js"></script>
+	
+	<!-- Include my library, [mmturkey][mmturkey], which manages submitting data to Mechanical Turk. This defines a global object, <code>turk</code>, and attaches five properties to it, <code>hitId</code>, <code>assignmentId</code>, <code>workerId</code>, <code>previewMode</code>, and <code>turkSubmitTo</code>. It also provides a single method, <code>submit(data)</code>, which you use to submit data to Turk. If no submission URL has been provided (because, e.g. you're testing your code outside of the Turk environment), <code>submit</code> displays what would have been submitted (without, obviously, any Turk-specific variables like <code>workerId</code> and <code>assignmentId</code>).  -->
+	<!-- [mmturkey]: http://github.com/longouyang/mmturkey -->
+	<script src="mmturkey-0.6.js"></script>
+	
+	<!-- Include the cascading style sheet (CSS), which lets us separate style from content. This stylesheet is important because it defines the notion of a **slide** and also makes things look nicer, which subjects appreciate. It's worth looking at the [source code](style.html). -->
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- The instructions slide. -->
+<div class="slide" id="instructions">
+	<img src="images/stanford.png" alt="Stanford University">
+		<p id='logo-text'>Stanford Computation and Cognition Lab</p>
+	<p class="block-text">In this experiment, you will see numbers displayed on the screen.
+		<!-- Tell the subject which keys to press. We need to set these values dynamically; I use <code>{{}}</code> to indicate template locations in HTML that will be modified by JavaScript. -->
+		Press <span id="even-key">{{}}</span> if the number is even and
+		<span id="odd-key">{{}}</span> if the number is odd.		
+	</p>
+	<!-- Button to start the experiment. <code>this.blur()</code> removes the focus from the button, if the user pressed the button by using the keyboard, rather than the mouse. -->
+	<button type="button" onclick="this.blur(); experiment.next()">Start</button>
+	<!-- Legal blurb that we're required to show. -->
+	<p class="block-text" id="legal">Legal information: By answering the
+		following questions, you are participating in a study being performed by
+		cognitive scientists in the Stanford Department of Psychology. If you have
+		questions about this research, please contact Long Ouyang at <a
+		href="mailto://louyang@stanford.edu">louyang@stanford.edu</a> or Noah
+		Goodman, at ngoodman@stanford.edu. You must be  at least 18 years old to
+		participate. Your participation in this research is voluntary. You may
+		decline to answer any or all of the following questions. You may decline
+		further participation, at any time, without adverse consequences. Your
+		anonymity is assured; the researchers who have requested your
+		participation will not receive any personal information about you.</p>
+</div>
+<!-- The "stage" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<div class="slide" id="stage">
+	<p id="number">{{}}</p>
+</div>
+<!-- The finish slide. -->
+<div class="slide" id="finished">
+	You're finished - thanks for participating! Submitting to Mechanical Turk...
+</div>
+
+<!-- Include the <a href="experiment.html">JavaScript file for the experiment</a>. As written, that script immediately executes commands, so we include it here at the end of the HTML file to ensure that resources referenced by the script actually exist. For instance, one of the immediately executed commands is <code>showSlide("instructions")</code>. If we loaded experiment.js, say, in the <code>head</code> section, <code>showSlide("instructions")</code> would fail because the <code>instructions</code> slide doesn't exist yet. It is possible to load the script in <code>head</code> but you have to ensure that any immediately executed commands, if they rely on potentially uninitialized HTML elements, are _delayed_ until the page is ready, using either [window.onload][onload] or jQuery's more robust [$(document).ready()][domReady]  -->
+<!-- [onload]: https://developer.mozilla.org/en/DOM/window.onload -->
+<!-- [domReady]: http://api.jquery.com/ready/ -->
+<script src="experiment.js"></script>
+
+</body>
+</html>
