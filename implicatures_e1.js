@@ -44,7 +44,7 @@ var sentences = [["Some of the horses jumped over the fence.",
 		  ["Some of the movies were comedies.",
 		  "Some but not all of the movies were comedies."]];
 
-var myTrialOrder = [0, 1];
+var myTrialOrder = [0, 1, 2, 3];
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -67,9 +67,16 @@ var experiment = {
     // The work horse of the sequence - what to do on every trial.
     next: function() {
 	
-	if (document.getElementById("judgment") != null) {
-	    experiment.data.push(document.getElementById("judgment").value);
-	    $("type='radio'").checked = false;
+	if (document.getElementsByName("judgment") != null) {
+	    experiment.data.push(document.getElementsByName("judgment").value);
+	  //$("[name='judgment']").checked = false;
+	var els = document.getElementsByName("judgment")
+	for (i = 0; i < els.length; i++) {
+    	  if (els[i].type == "radio") {
+            els[i].checked = false;
+    	  }
+	}
+           
 	}
 	
 	// Get the current trial - <code>shift()</code> removes the first element
