@@ -38,6 +38,10 @@ Array.prototype.random = function() {
 var sentences = [["Some of the horses jumped over the fence.",
 		  "All of the horses jumped over the fence."],
 		 ["Some of the movies were comedies.",
+		  "Some but not all of the movies were comedies."],
+		  ["Some of the horses jumped over the fence.",
+		  "All of the horses jumped over the fence."],
+		  ["Some of the movies were comedies.",
 		  "Some but not all of the movies were comedies."]];
 
 var myTrialOrder = [0, 1];
@@ -65,7 +69,7 @@ var experiment = {
 	
 	if (document.getElementById("judgment") != null) {
 	    experiment.data.push(document.getElementById("judgment").value);
-	    $("name*='judgment'").checked = false;
+	    $("type='radio'").checked = false;
 	}
 	
 	// Get the current trial - <code>shift()</code> removes the first element
