@@ -21,7 +21,18 @@ body {
 	padding: 1% 2% 1% 2%;
 }
 
+.center {
+	margin-left: auto;
+  	margin-right: auto;
+	width: 70%;
+	text-align: center;
+}
+
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
+
+input[type="radio"] {
+	margin:15px 15px;
+}
 
 button {
 	background: url(images/button-gradient.png);
@@ -92,3 +103,4 @@ button[disabled] {
   text-align: center;
   width: 100px;
 }
+
