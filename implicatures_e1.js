@@ -38,7 +38,15 @@ function shuffle (a)
 // substitution function
 function doSentSubs (sents, scale, domain, order)
 {
-    sent = sents[scale]["base"];
+    sent = sents["scales"][scale]["base"];
+    Q = sents["scales"][scale]["Q"][order];
+    D = sents["domains"][domain]["D"];
+    S = sents["domains"][domain]["S"];
+    P = sents["domains"][domain]["P"];
+    A = sents["domains"][domain]["A"];
+    V = sents["domains"][domain]["V"];
+
+    sent = sent.replace("Q",Q).replace("D",D).replace("A",A).replace("P",P).replace("S",S).replace("V",V);
     return sent;
 }
 
@@ -47,24 +55,39 @@ var sents = {
     scales: {
 	all_some: {
 	    Q: ["some","some but not all","all"],
-	    base: "Q of the D were P."
+	    base: "Q of the D V P."
 	},
 	always_sometimes: {
 	    Q: ["sometimes","sometimes but not always","always"],
-	    base: "The D were Q P."
+	    base: "the D V Q P."
+	},
+	and_or: {
+	    Q: ["P or A","either P or A","P and A"],
+	    base: "the S V Q."
 	}
     },
 
     domains: {
 	movies: {
 	    D: "movies",
+	    S: "movie",
 	    P: "comedies",
-	    A: "dramas"
+	    A: "dramas",
+	    V: "were"
 	},
 	cookies: {
 	    D: "cookies",
+	    S: "cookie",
 	    P: "chocolate",
-	    A: "oatmeal"
+	    A: "oatmeal",
+	    V: "were",	    
+	},
+	players: {
+	    D: "players",
+	    S: "player",
+	    P: "scored points",
+	    A: "fouled out",
+	    V: "",
 	}
     }
 };
@@ -75,8 +98,12 @@ var contrasts = {
     full: [0, 2]
 };
 
-var contrastOrder = [shuffle([contrasts.lower, contrasts.upper, contrasts.full]),
-		     shuffle([contrasts.lower, contrasts.upper, contrasts.full])];
+var contrastOrder = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
+    shuffle([contrasts.lower, contrasts.upper, contrasts.full]));
+
+for (i = 0; i < contrastOrder.length; i++) {
+    contrastOrder[i] = shuffle(contrastOrder[i]);
+}
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -85,6 +112,7 @@ showSlide("instructions");
 // ############################## The main event ##############################
 
 var experiment = {
+    
     // Parameters for this sequence.
     scales: shuffle(Object.keys(sents.scales)),
     domains: shuffle(Object.keys(sents.domains)),
@@ -115,7 +143,7 @@ var experiment = {
 	
 	// Get the current trial - <code>shift()</code> removes the first element
 	var scale = experiment.scales.shift();
-	var domain = experiment.scales.shift();
+	var domain = experiment.domains.shift();
 	var order = experiment.orders.shift();
 	
 	// If the current trial is undefined, call the end function.
