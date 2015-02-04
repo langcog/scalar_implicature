@@ -24,27 +24,59 @@ Array.prototype.random = function() {
   return this[random(this.length)];
 }
 
-// ############################## Configuration settings ##############################
-// var allKeyBindings = [
-//       {"p": "odd", "q": "even"},
-//       {"p": "even", "q": "odd"} ],
-//     allTrialOrders = [
-//       [1,3,2,5,4,9,8,7,6],
-//       [8,4,3,7,5,6,2,1,9] ],
-//     myKeyBindings = allKeyBindings.random(),
-//     myTrialOrder = allTrialOrders.random(),
-//     pOdd = (myKeyBindings["p"] == "odd");
-    
-var sentences = [["Some of the horses jumped over the fence.",
-		  "All of the horses jumped over the fence."],
-		 ["Some of the movies were comedies.",
-		  "Some but not all of the movies were comedies."],
-		  ["Some of the horses jumped over the fence.",
-		  "All of the horses jumped over the fence."],
-		  ["Some of the movies were comedies.",
-		  "Some but not all of the movies were comedies."]];
+// shuffle function
+function shuffle (a) 
+{ 
+    var o = [];
+    for ( var i=0; i < a.length; i++) { o[i] = a[i]; }
+    for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), 
+	 x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
 
-var myTrialOrder = [0, 1, 2, 3];
+
+// substitution function
+function doSentSubs (sents, scale, domain, order)
+{
+    sent = sents[scale]["base"];
+    return sent;
+}
+
+// ############################## Configuration settings ##############################
+var sents = {
+    scales: {
+	all_some: {
+	    Q: ["some","some but not all","all"],
+	    base: "Q of the D were P."
+	},
+	always_sometimes: {
+	    Q: ["sometimes","sometimes but not always","always"],
+	    base: "The D were Q P."
+	}
+    },
+
+    domains: {
+	movies: {
+	    D: "movies",
+	    P: "comedies",
+	    A: "dramas"
+	},
+	cookies: {
+	    D: "cookies",
+	    P: "chocolate",
+	    A: "oatmeal"
+	}
+    }
+};
+    
+var contrasts = {
+    lower: [0, 1],
+    upper: [1, 2],
+    full: [0, 2]
+};
+
+var contrastOrder = [shuffle([contrasts.lower, contrasts.upper, contrasts.full]),
+		     shuffle([contrasts.lower, contrasts.upper, contrasts.full])];
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -54,7 +86,9 @@ showSlide("instructions");
 
 var experiment = {
     // Parameters for this sequence.
-    trials: myTrialOrder,
+    scales: shuffle(Object.keys(sents.scales)),
+    domains: shuffle(Object.keys(sents.domains)),
+    orders: contrastOrder,
     
     // An array to store the data that we're collecting.
     data: [],
@@ -80,18 +114,24 @@ var experiment = {
 	}
 	
 	// Get the current trial - <code>shift()</code> removes the first element
-	var sents = sentences[experiment.trials.shift()];
+	var scale = experiment.scales.shift();
+	var domain = experiment.scales.shift();
+	var order = experiment.orders.shift();
 	
 	// If the current trial is undefined, call the end function.
-	if (typeof sents == "undefined") {
+	if (typeof scale == "undefined") {
 	    return experiment.end();
 	}
     
 	showSlide("stage");
+
+	// Construct the sentences
+	sent1 = doSentSubs(sents, scale, domain, order[0])
+	sent2 = doSentSubs(sents, scale, domain, order[1])
 	
 	// Display the sentence stimuli
-	$("#sentence1").html(sents[0]);
-	$("#sentence2").html(sents[1]);
+	$("#sentence1").html(sent1);
+	$("#sentence2").html(sent2);
     
 	// Get the current time so we can compute reaction time later.
 	// var startTime = (new Date()).getTime();
