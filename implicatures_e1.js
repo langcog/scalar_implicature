@@ -141,25 +141,40 @@ var experiment = {
 	    turk.submit(experiment.data)
 	}, 1500);
     },
+
+    // LOG RESPONSE
+    log_response: function() {
+	var response_logged = false;
+	
+	var radio = document.getElementsByName("judgment");
+
+	// Loop through radio buttons
+	for (i = 0; i < radio.length; i++) {
+	    if (radio[i].checked) {
+		experiment.data.rating.push(radio[i].value);
+		response_logged = true;		    
+	    }
+	}
+    
+
+	if (response_logged) {
+   	    nextButton.blur();
+
+	    // uncheck radio buttons
+	    for (i = 0; i < radio.length; i++) {radio[i].checked = false}
+
+	    experiment.next();
+		
+	} else {
+	    $("#testMessage").html('<font color="red">' + 
+			       'Please make a response!' + 
+			       '</font>');
+	}
+    },
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
-	/***************Record previous trial here*************/
-	if (document.getElementsByName("judgment") != null) {
-	    //experiment.data.push(document.getElementsByName("judgment").value);
-	    var els = document.getElementsByName("judgment");
-	    //Loop through radio buttons
-	    for (i = 0; i < els.length; i++) {
-		if (els[i].type == "radio") {
-		    //If one is checked, record to data array
-		    if (els[i].checked == true) {
-			experiment.data.rating.push(els[i].value);
-		    }
-		    //Make sure all buttons are unchecked
-		    els[i].checked = false;
-		}
-	    }
-	}
+	$("#testMessage").html(''); 	// clear the test message
 	
 	// Get the current trial - <code>shift()</code> removes the first element
 	var scale = scales.shift();
@@ -171,8 +186,6 @@ var experiment = {
 	    return experiment.end();
 	}
 	
-	/***************Show next trial here*************/
-
 	// Show sentences
 	sent1 = doSentSubs(sents, scale, domain, order[0])
 	sent2 = doSentSubs(sents, scale, domain, order[1])
