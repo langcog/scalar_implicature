@@ -31,27 +31,45 @@
 
 <!-- The stage slide. -->
 <div class="slide" id="stage">
-  <p id="sentence1">{{}}</p>
-  <p id="sentence2">{{}}</p>
-  <br>
-  <p> Very dissimilar Very similar
-  <form class="center">
-  <input type="radio" name="judgment" value="1">1
-  <input type="radio" name="judgment" value="2">2
-  <input type="radio" name="judgment" value="3">3
-  <input type="radio" name="judgment" value="4">4
-  <input type="radio" name="judgment" value="5">5
-  <input type="radio" name="judgment" value="6">6
-  <input type="radio" name="judgment" value="7">7
-  </form>
-  </p>
-  <table align="center"><tr><td align="center">
-	<button type="button" id="nextButton" onClick="experiment.next()">Next</button>
-      </td></tr>
+
+
+<!-- Trying out table below. Maybe color for prompt? -->
+<div align="center">
+<h5> Decide how similar the two sentences are using the scale below  </h5>
+</div>
+<div align="center">
+<p id ="sentence1">{{}}</p> 
+</div>
+<div align="center" > 
+<p id= "sentence2">{{}}</p>
+</div>
+
+<table align = "center"><tr>
+<td align="center">
+	<tr>
+	<td> Very dissimilar</td> 
+	<td><input type="radio" name="judgment" value = "1">1 </td>
+	<td><input type="radio" name="judgment" value = "2">2 </td>
+	<td><input type="radio" name="judgment" value = "3">3 </td>
+	<td><input type="radio" name="judgment" value = "4">4</td>
+	<td><input type="radio" name="judgment" value = "5">5</td>
+	<td><input type="radio" name="judgment" value = "6">6</td>
+	<td><input type="radio" name="judgment" value = "7">7</td>
+	<td>  Very similar </td>
+	</tr>
+</table>
+
+
+  <table align="center"><tr>
+  <td align="center">
+	<button type="button" id="nextButton" onClick="experiment.next()"> next</button>
+         </td> 
       <tr><td align="center">
       <div id="testMessage"> </div>
-      </td></tr></table>
-</div>
+      </td></tr>
+
+ </table>
+ </div>
 
 <!-- The finish slide. -->
 <div class="slide" id="finished">
