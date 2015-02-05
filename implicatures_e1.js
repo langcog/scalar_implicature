@@ -24,17 +24,19 @@ Array.prototype.random = function() {
   return this[random(this.length)];
 }
 
-// shuffle function
-//shuffle ordering of argument array -- are we missing a parenthesis?
+// shuffle function - from stackoverflow?
+// shuffle ordering of argument array -- are we missing a parenthesis?
 function shuffle (a) 
 { 
     var o = [];
-    for (var i=0; i < a.length; i++) { o[i] = a[i]; }
-    //for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), 
-	// x = o[--i], o[i] = o[j], o[j] = x);
-	for (var j, x, i = o.length;
-		i;
-		j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
+    
+    for (var i=0; i < a.length; i++) {
+	o[i] = a[i];
+    }
+    
+    for (var j, x, i = o.length;
+	 i;
+	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
     return o;
 }
 
@@ -52,18 +54,7 @@ function doSentSubs (sents, scale, domain, order)
 
     sent = sent.replace("Q",Q).replace("D",D).replace("A",A).replace("P",P).replace("S",S).replace("V",V);
 
-    //Return data to be populated in data object
-    return {
-    	sentence: sent,
-    	Q: Q,
-    	D: D,
-    	A: A,
-    	P: P,
-    	S: S,
-    	V: V
-    }
-
-    //return sent;
+    return sent;
 }
 
 // ############################## Configuration settings ##############################
@@ -114,111 +105,90 @@ var contrasts = {
     full: [0, 2]
 };
 
-var contrastOrder = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
+// make the trial order
+var orders = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
     shuffle([contrasts.lower, contrasts.upper, contrasts.full]));
 
-for (i = 0; i < contrastOrder.length; i++) {
-    contrastOrder[i] = shuffle(contrastOrder[i]);
+for (i = 0; i < orders.length; i++) {
+    orders[i] = shuffle(orders[i]);
 }
+
+
+// Parameters for this participant
+var scales = shuffle(Object.keys(sents.scales));
+var domains = shuffle(Object.keys(sents.domains));
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
-
 // ############################## The main event ##############################
-
 var experiment = {
     
-    // Parameters for this sequence.
-    scales: shuffle(Object.keys(sents.scales)),
-    domains: shuffle(Object.keys(sents.domains)),
-    orders: contrastOrder,
+    // The object to be submitted.
+    data: {
+	order: [],
+	scale: [],
+	domain: [],
+	sent1: [],
+	sent2: [],
+	rating: [],
+    },
     
-    trial_record: {},
-    // An array to store the data (trial_objects)
-    data: [],
-    
+    // end the experiment
     end: function() {
 	showSlide("finished");
-	setTimeout(function() { turk.submit(experiment) }, 1500);
+	setTimeout(function() {
+	    turk.submit(experiment.data)
+	}, 1500);
     },
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
-	    /***************Record previous trial here*************/
-		if (document.getElementsByName("judgment") != null) {
-		    //experiment.data.push(document.getElementsByName("judgment").value);
-			var els = document.getElementsByName("judgment");
-			//Loop through radio buttons
-			for (i = 0; i < els.length; i++) {
-				if (els[i].type == "radio") {
-					//If one is checked, record to data array
-			    	if (els[i].checked == true) {
-			      		experiment.trial_record.rating = els[i].value;
-			      		experiment.data.push(trial_record);
-			    	}
-			    	//Make sure all buttons are unchecked
-		            els[i].checked = false;
-		    	}
-			}
+	/***************Record previous trial here*************/
+	if (document.getElementsByName("judgment") != null) {
+	    //experiment.data.push(document.getElementsByName("judgment").value);
+	    var els = document.getElementsByName("judgment");
+	    //Loop through radio buttons
+	    for (i = 0; i < els.length; i++) {
+		if (els[i].type == "radio") {
+		    //If one is checked, record to data array
+		    if (els[i].checked == true) {
+			experiment.data.rating.push(els[i].value);
+		    }
+		    //Make sure all buttons are unchecked
+		    els[i].checked = false;
 		}
-		
-		// Get the current trial - <code>shift()</code> removes the first element
-		var scale = experiment.scales.shift();
-		var domain = experiment.domains.shift();
-		var order = experiment.orders.shift();
-		
-		// If the current trial is undefined, call the end function.
-		if (typeof scale == "undefined") {
-		    return experiment.end();
-		}
-	    
-	    /***************Show next trial here*************/
-		showSlide("stage");
+	    }
+	}
+	
+	// Get the current trial - <code>shift()</code> removes the first element
+	var scale = scales.shift();
+	var domain = domains.shift();
+	var order = orders.shift();
+	
+	// If the current trial is undefined, call the end function.
+	if (typeof scale == "undefined") {
+	    return experiment.end();
+	}
+	
+	/***************Show next trial here*************/
 
-		/***EARLIER ITERATION OF DATA OBJECT
-		 Data object storing current scale, domain, order and response entered
-	    trial_object = {
-	    	sent1: {
-	    		sentence: experiment.sent1,
-	    		scale: experiment.scales
-	    		domain: experiment.domains
-	    	},
-	    	sent2: {
-	    		sentence: experiment.sent2,
-	    		scale: experiment.scales
-	    		domain: experiment.domains
-	    	},
-	    	order: just explicitly code instead of comparing sentences
-	    	subject_response: response value populated in for-loop
-	    };
-	    ******/
-	    //trial_record = {};
-	    /*****Ben suggested code*******/
-	    trial_object1 = doSentSubs(sents, scale, domain, order[0]);
-		trial_object2 = doSentSubs(sents, scale, domain, order[1]);
-		trial_record = {
-			object1: experiment.trial_object1,
-			object2: experiment.trial_object2,
-			order: experiment.order
-		};
-		console.log(trial_record)
-		/*****Ben suggested code*******/
-		console.log(trial_object1)
-		console.log(trial_object2)
+	// Show sentences
+	sent1 = doSentSubs(sents, scale, domain, order[0])
+	sent2 = doSentSubs(sents, scale, domain, order[1])
+	
+	// Display the sentence stimuli
+	$("#sentence1").html(sent1);
+	$("#sentence2").html(sent2);
 
-		sent1 = trial_object1.sentence;
-		sent2 = trial_object2.sentence;
+	// push all relevant variables into data object
+	experiment.data.order.push(order);
+	experiment.data.scale.push(scale);
+	experiment.data.domain.push(domain);
+	experiment.data.sent1.push(sent1);
+	experiment.data.sent2.push(sent2);
 
-		
-		/*** Construct the sentences MF code
-		sent1 = doSentSubs(sents, scale, domain, order[0])
-		sent2 = doSentSubs(sents, scale, domain, order[1])
-		***/
-
-		// Display the sentence stimuli
-		$("#sentence1").html(sent1);
-		$("#sentence2").html(sent2);
+	showSlide("stage");
     }
 }
 
