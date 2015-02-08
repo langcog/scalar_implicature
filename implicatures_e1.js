@@ -115,6 +115,14 @@ var sents = {
 		    P2: "buttons",
 		    V1: "had",
 		    V2: "had"
+		},
+		students: {
+		    SP: "students",
+		    SS: "student",
+		    P1: "tired",
+		    P2: "hungry",
+		    V1: "were",
+		    V2: "was"
 		}
     }
 };  
@@ -199,7 +207,7 @@ var experiment = {
 		
 		// Get the current trial - <code>shift()</code> removes the first element
 		//Randomly select from our scales array and stop exp after we've exhausted all the domains
-		var scale = scales[random(0, n_scales)];
+		var scale = scales[random(0, (n_scales-1))];
 		console.log("scale", scale);
 		var domain = domains.shift();
 		var order = orders.shift();
