@@ -107,10 +107,10 @@ var sents = {
 		players: {
 		    SP: "players",
 		    SS: "player",
-		    P1: "scored points",
-		    P2: "fouled out",
-		    V1: "",
-		    V2: ""
+		    P1: "skillful",
+		    P2: "hardworking",
+		    V1: "were",
+		    V2: "was"
 		},
 		weather: {
 		    SP: "weekends",
@@ -156,7 +156,7 @@ for (i = 0; i < orders.length; i++) {
 // Parameters for this participant
 var scales = shuffle(Object.keys(sents.scales));
 var domains = shuffle(Object.keys(sents.domains));
-var n_scales = scales.length;
+var n_scales = scales.length; //Used with random() call populating var scales in experiment
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
