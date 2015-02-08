@@ -72,6 +72,18 @@ var sents = {
 		and_or: {
 		    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
 		    base: "The SS V2 Q."
+		},
+		two_three: {
+		    Q: ["Two","Two but not three","Three"],
+		    base: "Q of the SP V1 P1."
+		},
+		good_excellent: {
+		    Q: ["good","good but not excellent","excellent"],
+		    base: "He thought the SS V2 Q."
+		},
+		like_love: {
+		    Q: ["liked","liked but didn't love","loved"],
+		    base: "She Q the SS."
 		}
     },
 
@@ -111,10 +123,10 @@ var sents = {
 		clothes: {
 		    SP: "shirts",
 		    SS: "shirt",
-		    P1: "collars",
-		    P2: "buttons",
-		    V1: "had",
-		    V2: "had"
+		    P1: "striped",
+		    P2: "soft",
+		    V1: "were",
+		    V2: "was"
 		},
 		students: {
 		    SP: "students",
