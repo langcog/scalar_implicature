@@ -72,7 +72,7 @@ var sents = {
 		and_or: {
 		    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
 		    base: "The SS V2 Q."
-		},
+		}
     },
 
     domains: {
@@ -107,6 +107,14 @@ var sents = {
 		    P2: "windy",
 		    V1: "were",
 		    V2: "was"
+		},
+		clothes: {
+		    SP: "shirts",
+		    SS: "shirt",
+		    P1: "collars",
+		    P2: "buttons",
+		    V1: "had",
+		    V2: "had"
 		}
     }
 };  
@@ -127,10 +135,8 @@ for (i = 0; i < orders.length; i++) {
 
 // Parameters for this participant
 var scales = shuffle(Object.keys(sents.scales));
-console.log("scales", scales)
 var domains = shuffle(Object.keys(sents.domains));
-var n_items = domains.length;
-console.log("DOMAINS len", n_items)
+var n_scales = scales.length;
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -193,12 +199,13 @@ var experiment = {
 		
 		// Get the current trial - <code>shift()</code> removes the first element
 		//Randomly select from our scales array and stop exp after we've exhausted all the domains
-		var scale = scales[(random() * n_items) + 1];
+		var scale = scales[random(0, n_scales)];
+		console.log("scale", scale);
 		var domain = domains.shift();
 		var order = orders.shift();
 		
 		//If the current trial is undefined, call the end function.
-		if (typeof scale == "undefined") {
+		if (typeof domain == "undefined") {
 		    return experiment.end();
 		}
 		
