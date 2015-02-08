@@ -46,13 +46,14 @@ function doSentSubs (sents, scale, domain, order)
 {
     sent = sents["scales"][scale]["base"];
     Q = sents["scales"][scale]["Q"][order];
-    D = sents["domains"][domain]["D"];
-    S = sents["domains"][domain]["S"];
-    P = sents["domains"][domain]["P"];
-    A = sents["domains"][domain]["A"];
-    V = sents["domains"][domain]["V"];
+    SP = sents["domains"][domain]["SP"]; //Plural
+    SS = sents["domains"][domain]["SS"]; //Singular
+    P1 = sents["domains"][domain]["P1"]; //Predicate 1
+    P2 = sents["domains"][domain]["P2"]; //Predicate 2
+    V1 = sents["domains"][domain]["V1"]; //Past
+    V2 = sents["domains"][domain]["V2"]; //Present
 
-    sent = sent.replace("Q",Q).replace("D",D).replace("A",A).replace("P",P).replace("S",S).replace("V",V);
+    sent = sent.replace("Q",Q).replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
 
     return sent;
 }
@@ -61,44 +62,55 @@ function doSentSubs (sents, scale, domain, order)
 var sents = {
     scales: {
 		all_some: {
-		    Q: ["some","some but not all","all"],
-		    base: "Q of the D V P."
+		    Q: ["Some","Some but not all","All"],
+		    base: "Q of the SP V1 P1."
 		},
 		always_sometimes: {
 		    Q: ["sometimes","sometimes but not always","always"],
-		    base: "the D V Q P."
+		    base: "The SP V1 Q P1."
 		},
 		and_or: {
-		    Q: ["P or A","either P or A","P and A"],
-		    base: "the S V Q."
-		}
+		    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
+		    base: "The SS V2 Q."
+		},
     },
 
     domains: {
 		movies: {
-		    D: "movies",
-		    S: "movie",
-		    P: "comedies",
-		    A: "dramas",
-		    V: "were"
+		    SP: "movies",
+		    SS: "movie",
+		    P1: "comedies",
+		    P2: "dramas",
+		    V1: "were",
+		    V2: "was"
 		},
 		cookies: {
-		    D: "cookies",
-		    S: "cookie",
-		    P: "chocolate",
-		    A: "oatmeal",
-		    V: "were",	    
+		    SP: "cookies",
+		    SS: "cookie",
+		    P1: "chocolate",
+		    P2: "oatmeal",
+		    V1: "were",	    
+		    V2: "was"
 		},
 		players: {
-		    D: "players",
-		    S: "player",
-		    P: "scored points",
-		    A: "fouled out",
-		    V: "",
+		    SP: "players",
+		    SS: "player",
+		    P1: "scored points",
+		    P2: "fouled out",
+		    V1: "",
+		    V2: ""
+		},
+		weather: {
+		    SP: "weekends",
+		    SS: "weekend",
+		    P1: "sunny",
+		    P2: "windy",
+		    V1: "were",
+		    V2: "was"
 		}
     }
-};
-    
+};  
+
 var contrasts = {
     lower: [0, 1],
     upper: [1, 2],
@@ -113,10 +125,12 @@ for (i = 0; i < orders.length; i++) {
     orders[i] = shuffle(orders[i]);
 }
 
-
 // Parameters for this participant
 var scales = shuffle(Object.keys(sents.scales));
+console.log("scales", scales)
 var domains = shuffle(Object.keys(sents.domains));
+var n_items = domains.length;
+console.log("DOMAINS len", n_items)
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -126,82 +140,84 @@ var experiment = {
     
     // The object to be submitted.
     data: {
-	order: [],
-	scale: [],
-	domain: [],
-	sent1: [],
-	sent2: [],
-	rating: [],
+		order: [],
+		scale: [],
+		domain: [],
+		sent1: [],
+		sent2: [],
+		rating: [],
     },
     
     // end the experiment
     end: function() {
-	showSlide("finished");
-	setTimeout(function() {
-	    turk.submit(experiment.data)
-	}, 1500);
+		showSlide("finished");
+		setTimeout(function() {
+		    turk.submit(experiment.data)
+		}, 1500);
     },
 
     // LOG RESPONSE
     log_response: function() {
-	var response_logged = false;
-	
-	var radio = document.getElementsByName("judgment");
-
-	// Loop through radio buttons
-	for (i = 0; i < radio.length; i++) {
-	    if (radio[i].checked) {
-		experiment.data.rating.push(radio[i].value);
-		response_logged = true;		    
-	    }
-	}
-    
-
-	if (response_logged) {
-   	    nextButton.blur();
-
-	    // uncheck radio buttons
-	    for (i = 0; i < radio.length; i++) {radio[i].checked = false}
-
-	    experiment.next();
+		var response_logged = false;
 		
-	} else {
-	    $("#testMessage").html('<font color="red">' + 
-			       'Please make a response!' + 
-			       '</font>');
-	}
+		//Array of radio buttons
+		var radio = document.getElementsByName("judgment");
+
+		// Loop through radio buttons
+		for (i = 0; i < radio.length; i++) {
+		    if (radio[i].checked) {
+			experiment.data.rating.push(radio[i].value);
+			response_logged = true;		    
+		    }
+		}
+	    
+
+		if (response_logged) {
+	   	    nextButton.blur();
+
+		    // uncheck radio buttons
+		    for (i = 0; i < radio.length; i++) {
+		    		radio[i].checked = false
+		    }
+		    experiment.next();
+		} else {
+		    $("#testMessage").html('<font color="red">' + 
+				       'Please make a response!' + 
+				       '</font>');
+		}
     },
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
-	$("#testMessage").html(''); 	// clear the test message
-	
-	// Get the current trial - <code>shift()</code> removes the first element
-	var scale = scales.shift();
-	var domain = domains.shift();
-	var order = orders.shift();
-	
-	// If the current trial is undefined, call the end function.
-	if (typeof scale == "undefined") {
-	    return experiment.end();
-	}
-	
-	// Show sentences
-	sent1 = doSentSubs(sents, scale, domain, order[0])
-	sent2 = doSentSubs(sents, scale, domain, order[1])
-	
-	// Display the sentence stimuli
-	$("#sentence1").html(sent1);
-	$("#sentence2").html(sent2);
+		$("#testMessage").html(''); 	// clear the test message
+		
+		// Get the current trial - <code>shift()</code> removes the first element
+		//Randomly select from our scales array and stop exp after we've exhausted all the domains
+		var scale = scales[(random() * n_items) + 1];
+		var domain = domains.shift();
+		var order = orders.shift();
+		
+		//If the current trial is undefined, call the end function.
+		if (typeof scale == "undefined") {
+		    return experiment.end();
+		}
+		
+		// Show sentences
+		sent1 = doSentSubs(sents, scale, domain, order[0])
+		sent2 = doSentSubs(sents, scale, domain, order[1])
+		
+		// Display the sentence stimuli
+		$("#sentence1").html(sent1);
+		$("#sentence2").html(sent2);
 
-	// push all relevant variables into data object
-	experiment.data.order.push(order);
-	experiment.data.scale.push(scale);
-	experiment.data.domain.push(domain);
-	experiment.data.sent1.push(sent1);
-	experiment.data.sent2.push(sent2);
+		// push all relevant variables into data object
+		experiment.data.order.push(order);
+		experiment.data.scale.push(scale);
+		experiment.data.domain.push(domain);
+		experiment.data.sent1.push(sent1);
+		experiment.data.sent2.push(sent2);
 
-	showSlide("stage");
+		showSlide("stage");
     }
 }
 
