@@ -98,14 +98,18 @@
  <!-- The debriefing slide. -->
  <div class="slide" id="debriefing">
 	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
-	<form onsubmit="experiment.submitcomments()">
-	<textarea type="text"  id="homelang" name="lg" value="value"></textarea>
-		
-	<p> What do you think this experiment was about? </p>
-	<textarea type="text" id="expthoughts" name="expaim"></textarea>
-	
-	<p> Any general comments about the experiment? </p>
-	<textarea type="textarea" id="expcomments" name="expgen"></textarea>
+   <form onsubmit="experiment.submitcomments()">
+   <p>
+	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
+   </p>
+   <p> What do you think this experiment was about? </p>
+   <p>
+	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+   </p>
+   <p> Any general comments about the experiment? </p>
+   <p>
+   <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+   </p>
 	</form>
 	
 	<div align="center">
