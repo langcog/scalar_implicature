@@ -24,17 +24,19 @@ Array.prototype.random = function() {
   return this[random(this.length)];
 }
 
-// shuffle function
-//shuffle ordering of argument array -- are we missing a parenthesis?
+// shuffle function - from stackoverflow?
+// shuffle ordering of argument array -- are we missing a parenthesis?
 function shuffle (a) 
 { 
     var o = [];
-    for (var i=0; i < a.length; i++) { o[i] = a[i]; }
-    //for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), 
-	// x = o[--i], o[i] = o[j], o[j] = x);
-	for (var j, x, i = o.length;
-		i;
-		j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
+    
+    for (var i=0; i < a.length; i++) {
+	o[i] = a[i];
+    }
+    
+    for (var j, x, i = o.length;
+	 i;
+	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
     return o;
 }
 
@@ -44,181 +46,227 @@ function doSentSubs (sents, scale, domain, order)
 {
     sent = sents["scales"][scale]["base"];
     Q = sents["scales"][scale]["Q"][order];
-    D = sents["domains"][domain]["D"];
-    S = sents["domains"][domain]["S"];
-    P = sents["domains"][domain]["P"];
-    A = sents["domains"][domain]["A"];
-    V = sents["domains"][domain]["V"];
+    SP = sents["domains"][domain]["SP"]; //Plural
+    SS = sents["domains"][domain]["SS"]; //Singular
+    P1 = sents["domains"][domain]["P1"]; //Predicate 1
+    P2 = sents["domains"][domain]["P2"]; //Predicate 2
+    V1 = sents["domains"][domain]["V1"]; //Past
+    V2 = sents["domains"][domain]["V2"]; //Present
 
-    sent = sent.replace("Q",Q).replace("D",D).replace("A",A).replace("P",P).replace("S",S).replace("V",V);
+    sent = sent.replace("Q",Q).replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
 
-    //Return data to be populated in data object
-    return {
-    	sentence: sent,
-    	Q: Q,
-    	D: D,
-    	A: A,
-    	P: P,
-    	S: S,
-    	V: V
-    }
-
-    //return sent;
+    return sent;
 }
 
 // ############################## Configuration settings ##############################
 var sents = {
     scales: {
 		all_some: {
-		    Q: ["some","some but not all","all"],
-		    base: "Q of the D V P."
+		    Q: ["Some","Some but not all","All"],
+		    base: "Q of the SP V1 P1."
 		},
 		always_sometimes: {
 		    Q: ["sometimes","sometimes but not always","always"],
-		    base: "the D V Q P."
+		    base: "The SP V1 Q P1."
 		},
 		and_or: {
-		    Q: ["P or A","either P or A","P and A"],
-		    base: "the S V Q."
+		    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
+		    base: "The SS V2 Q."
+		},
+		two_three: {
+		    Q: ["Two","Two but not three","Three"],
+		    base: "Q of the SP V1 P1."
+		},
+		good_excellent: {
+		    Q: ["good","good but not excellent","excellent"],
+		    base: "He thought the SS V2 Q."
+		},
+		like_love: {
+		    Q: ["liked","liked but didn't love","loved"],
+		    base: "She Q the SS."
 		}
     },
 
     domains: {
 		movies: {
-		    D: "movies",
-		    S: "movie",
-		    P: "comedies",
-		    A: "dramas",
-		    V: "were"
+		    SP: "movies",
+		    SS: "movie",
+		    P1: "comedies",
+		    P2: "dramas",
+		    V1: "were",
+		    V2: "was"
 		},
 		cookies: {
-		    D: "cookies",
-		    S: "cookie",
-		    P: "chocolate",
-		    A: "oatmeal",
-		    V: "were",	    
+		    SP: "cookies",
+		    SS: "cookie",
+		    P1: "chocolate",
+		    P2: "oatmeal",
+		    V1: "were",	    
+		    V2: "was"
 		},
 		players: {
-		    D: "players",
-		    S: "player",
-		    P: "scored points",
-		    A: "fouled out",
-		    V: "",
+		    SP: "players",
+		    SS: "player",
+		    P1: "skillful",
+		    P2: "hardworking",
+		    V1: "were",
+		    V2: "was"
+		},
+		weather: {
+		    SP: "weekends",
+		    SS: "weekend",
+		    P1: "sunny",
+		    P2: "windy",
+		    V1: "were",
+		    V2: "was"
+		},
+		clothes: {
+		    SP: "shirts",
+		    SS: "shirt",
+		    P1: "striped",
+		    P2: "soft",
+		    V1: "were",
+		    V2: "was"
+		},
+		students: {
+		    SP: "students",
+		    SS: "student",
+		    P1: "tired",
+		    P2: "hungry",
+		    V1: "were",
+		    V2: "was"
 		}
     }
-};
-    
+};  
+
 var contrasts = {
     lower: [0, 1],
     upper: [1, 2],
     full: [0, 2]
 };
 
-var contrastOrder = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
+// make the trial order
+var orders = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
     shuffle([contrasts.lower, contrasts.upper, contrasts.full]));
 
-for (i = 0; i < contrastOrder.length; i++) {
-    contrastOrder[i] = shuffle(contrastOrder[i]);
+for (i = 0; i < orders.length; i++) {
+    orders[i] = shuffle(orders[i]);
 }
+
+var totalTrials = orders.length;
+
+// Parameters for this participant
+var scales = shuffle(Object.keys(sents.scales));
+var domains = shuffle(Object.keys(sents.domains));
+var n_scales = scales.length; //Used with random() call populating var scales in experiment
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
-
 // ############################## The main event ##############################
-
 var experiment = {
     
-    // Parameters for this sequence.
-    scales: shuffle(Object.keys(sents.scales)),
-    domains: shuffle(Object.keys(sents.domains)),
-    orders: contrastOrder,
+    // The object to be submitted.
+    data: {
+	order: [],
+	comparison: [],
+	scale: [],
+	domain: [],
+	sent1: [],
+	sent2: [],
+	rating: [],
+    },
     
-    trial_record: {},
-    // An array to store the data (trial_objects)
-    data: [],
-    
+    // end the experiment
     end: function() {
 	showSlide("finished");
-	setTimeout(function() { turk.submit(experiment) }, 1500);
+	setTimeout(function() {
+	    turk.submit(experiment.data)
+	}, 1500);
+    },
+
+    // LOG RESPONSE
+    log_response: function() {
+	var response_logged = false;
+	
+	//Array of radio buttons
+	var radio = document.getElementsByName("judgment");
+	
+	// Loop through radio buttons
+	for (i = 0; i < radio.length; i++) {
+	    if (radio[i].checked) {
+		experiment.data.rating.push(radio[i].value);
+		response_logged = true;		    
+	    }
+	}
+	
+	
+	if (response_logged) {
+	    nextButton.blur();
+	    
+	    // uncheck radio buttons
+	    for (i = 0; i < radio.length; i++) {
+		radio[i].checked = false
+	    }
+	    experiment.next();
+	} else {
+	    $("#testMessage").html('<font color="red">' + 
+				   'Please make a response!' + 
+				   '</font>');
+	}
     },
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
-	    /***************Record previous trial here*************/
-		if (document.getElementsByName("judgment") != null) {
-		    //experiment.data.push(document.getElementsByName("judgment").value);
-			var els = document.getElementsByName("judgment");
-			//Loop through radio buttons
-			for (i = 0; i < els.length; i++) {
-				if (els[i].type == "radio") {
-					//If one is checked, record to data array
-			    	if (els[i].checked == true) {
-			      		experiment.trial_record.rating = els[i].value;
-			      		experiment.data.push(trial_record);
-			    	}
-			    	//Make sure all buttons are unchecked
-		            els[i].checked = false;
-		    	}
-			}
-		}
-		
-		// Get the current trial - <code>shift()</code> removes the first element
-		var scale = experiment.scales.shift();
-		var domain = experiment.domains.shift();
-		var order = experiment.orders.shift();
-		
-		// If the current trial is undefined, call the end function.
-		if (typeof scale == "undefined") {
-		    return experiment.end();
-		}
+	// Allow experiment to start if it's a turk worker OR if it's a test run
+	if (window.self == window.top | turk.workerId.length > 0) {
 	    
-	    /***************Show next trial here*************/
-		showSlide("stage");
-
-		/***EARLIER ITERATION OF DATA OBJECT
-		 Data object storing current scale, domain, order and response entered
-	    trial_object = {
-	    	sent1: {
-	    		sentence: experiment.sent1,
-	    		scale: experiment.scales
-	    		domain: experiment.domains
-	    	},
-	    	sent2: {
-	    		sentence: experiment.sent2,
-	    		scale: experiment.scales
-	    		domain: experiment.domains
-	    	},
-	    	order: just explicitly code instead of comparing sentences
-	    	subject_response: response value populated in for-loop
-	    };
-	    ******/
-	    //trial_record = {};
-	    /*****Ben suggested code*******/
-	    trial_object1 = doSentSubs(sents, scale, domain, order[0]);
-		trial_object2 = doSentSubs(sents, scale, domain, order[1]);
-		trial_record = {
-			object1: experiment.trial_object1,
-			object2: experiment.trial_object2,
-			order: experiment.order
-		};
-		console.log(trial_record)
-		/*****Ben suggested code*******/
-		console.log(trial_object1)
-		console.log(trial_object2)
-
-		sent1 = trial_object1.sentence;
-		sent2 = trial_object2.sentence;
-
-		
-		/*** Construct the sentences MF code
-		sent1 = doSentSubs(sents, scale, domain, order[0])
-		sent2 = doSentSubs(sents, scale, domain, order[1])
-		***/
-
-		// Display the sentence stimuli
-		$("#sentence1").html(sent1);
-		$("#sentence2").html(sent2);
+	    $("#testMessage").html(''); 	// clear the test message
+	    $("#prog").attr("style","width:" +
+			    String(100 * (1 - orders.length/totalTrials)) + "%")
+// style="width:progressTotal%"
+	    
+	    // Get the current trial - <code>shift()</code> removes the first element
+	    //Randomly select from our scales array and stop exp after we've exhausted all the domains
+	    var scale = scales[random(0, (n_scales-1))];
+	    console.log("scale", scale);
+	    var domain = domains.shift();
+	    var order = orders.shift();
+	    
+	    //If the current trial is undefined, call the end function.
+	    if (typeof domain == "undefined") {
+		return experiment.end();
+	    }
+	    
+	    // Show sentences
+	    sent1 = doSentSubs(sents, scale, domain, order[0])
+	    sent2 = doSentSubs(sents, scale, domain, order[1])
+	    
+	    // Display the sentence stimuli
+	    $("#sentence1").html(sent1);
+	    $("#sentence2").html(sent2);
+	    
+	    // create comparison
+	    var comparison = "";
+	    
+	    if ((order[0]==0 & order[1] == 1) | (order[0]==1 & order[1]==0)) {
+		comparison = "lower";
+	    } else if ((order[0]==1 & order[1] == 2) | (order[0]==2 & order[1]==1)) {
+		comparison = "upper";
+	    } else {
+		comparison = "full";
+	    }
+	    
+	    // push all relevant variables into data object	    
+	    experiment.data.order.push(order);
+	    experiment.data.comparison.push(comparison);
+	    experiment.data.scale.push(scale);
+	    experiment.data.domain.push(domain);
+	    experiment.data.sent1.push(sent1);
+	    experiment.data.sent2.push(sent2);
+	    
+	    showSlide("stage");
+	}
     }
 }
 
