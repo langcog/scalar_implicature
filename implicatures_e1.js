@@ -61,38 +61,44 @@ function doSentSubs (sents, scale, domain, order)
 // ############################## Configuration settings ##############################
 var sents = {
     scales: {
-		all_some: {
-		    Q: ["Some","Some but not all","All"],
-		    base: "Q of the SP V1 P1."
-		},
-		always_sometimes: {
-		    Q: ["sometimes","sometimes but not always","always"],
-		    base: "The SP V1 Q P1."
-		},
-		and_or: {
-		    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
-		    base: "The SS V2 Q."
-		},
-		two_three: {
-		    Q: ["Two","Two but not three","Three"],
-		    base: "Q of the SP V1 P1."
-		},
-		good_excellent: {
-		    Q: ["good","good but not excellent","excellent"],
-		    base: "He thought the SS V2 Q."
-		},
-		like_love: {
-		    Q: ["liked","liked but didn't love","loved"],
-		    base: "She Q the SS."
-		}
+	training: {
+	    Q: ["enjoy going sailing with my father","enjoy walking in the woods alone"],
+	    base: "I really Q."
+	},	
+	all_some: {
+	    Q: ["Some","Some but not all","All"],
+	    base: "Q of the SP V1 P1."
+	},
+	always_sometimes: {
+	    Q: ["sometimes","sometimes but not always","always"],
+	    base: "The SP V1 Q P1."
+	},
+	and_or: {
+	    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
+	    base: "The SS V2 Q."
+	},
+	two_three: {
+	    Q: ["Two","Two but not three","Three"],
+	    base: "Q of the SP V1 P1."
+	},
+	good_excellent: {
+	    Q: ["good","good but not excellent","excellent"],
+	    base: "He thought the SS V2 Q."
+	},
+	like_love: {
+	    Q: ["liked","liked but didn't love","loved"],
+	    base: "She Q the SS."
+	}
     },
-
+    
     domains: {
+	training: {	    
+	},
 		movies: {
 		    SP: "movies",
 		    SS: "movie",
-		    P1: "comedies",
-		    P2: "dramas",
+		    P1: "funny",
+		    P2: "sad",
 		    V1: "were",
 		    V2: "was"
 		},
@@ -146,8 +152,9 @@ var contrasts = {
 };
 
 // make the trial order
-var orders = shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
-    shuffle([contrasts.lower, contrasts.upper, contrasts.full]));
+var orders = [[0, 1]].concat(
+    shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
+	shuffle([contrasts.lower, contrasts.upper, contrasts.full])));
 
 for (i = 0; i < orders.length; i++) {
     orders[i] = shuffle(orders[i]);
@@ -156,9 +163,11 @@ for (i = 0; i < orders.length; i++) {
 var totalTrials = orders.length;
 
 // Parameters for this participant
-var scales = shuffle(Object.keys(sents.scales));
-var domains = shuffle(Object.keys(sents.domains));
-var n_scales = scales.length; //Used with random() call populating var scales in experiment
+var scales = Object.keys(sents.scales);
+var domains = Object.keys(sents.domains);
+scales.shift(); domains.shift();
+scales = ["training"].concat(shuffle(scales));
+domains = ["training"].concat(shuffle(domains));
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -231,12 +240,12 @@ var experiment = {
 	    
 	    // Get the current trial - <code>shift()</code> removes the first element
 	    //Randomly select from our scales array and stop exp after we've exhausted all the domains
-	    var scale = scales[random(0, (n_scales-1))];
+	    var scale = scales.shift();
 	    var domain = domains.shift();
 	    var order = orders.shift();
 	    
 	    //If the current trial is undefined, call the end function.
-	    if (typeof domain == "undefined") {
+	    if (typeof scale == "undefined") {
 		return experiment.debriefing();
 	    }
 	    
