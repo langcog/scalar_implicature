@@ -61,8 +61,12 @@ function doSentSubs (sents, scale, domain, order)
 // ############################## Configuration settings ##############################
 var sents = {
     scales: {
-	training: {
+	training1: {
 	    Q: ["enjoy going sailing with my father","enjoy walking in the woods alone"],
+	    base: "I really Q."
+	},	
+	training2: {
+	    Q: ["despise fancy restaurants.","don't like eating out at upscale places."],
 	    base: "I really Q."
 	},	
 	all_some: {
@@ -92,7 +96,9 @@ var sents = {
     },
     
     domains: {
-	training: {	    
+	training1: {	    
+	},
+	training2: {	    
 	},
 		movies: {
 		    SP: "movies",
@@ -152,7 +158,7 @@ var contrasts = {
 };
 
 // make the trial order
-var orders = [[0, 1]].concat(
+var orders = [[0, 1],[0, 1]].concat(
     shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
 	shuffle([contrasts.lower, contrasts.upper, contrasts.full])));
 
@@ -165,9 +171,16 @@ var totalTrials = orders.length;
 // Parameters for this participant
 var scales = Object.keys(sents.scales);
 var domains = Object.keys(sents.domains);
-scales.shift(); domains.shift();
-scales = ["training"].concat(shuffle(scales));
-domains = ["training"].concat(shuffle(domains));
+
+// remove the first two elements - the training trials
+scales.shift();
+scales.shift();
+domains.shift();
+domains.shift();
+
+// now put the training trials up front and shuffle the rest of the trials.
+scales = ["training1","training2"].concat(shuffle(scales));
+domains = ["training1","training2"].concat(shuffle(domains));
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -261,7 +274,11 @@ var experiment = {
 	    var comparison = "";
 	    
 	    if ((order[0]==0 & order[1] == 1) | (order[0]==1 & order[1]==0)) {
-		comparison = "lower";
+		if (scale.match("training")) {
+		    comparison = "training";
+		} else {	
+		    comparison = "lower";
+		}
 	    } else if ((order[0]==1 & order[1] == 2) | (order[0]==2 & order[1]==1)) {
 		comparison = "upper";
 	    } else {
