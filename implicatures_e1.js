@@ -153,6 +153,8 @@ for (i = 0; i < orders.length; i++) {
     orders[i] = shuffle(orders[i]);
 }
 
+var totalTrials = orders.length;
+
 // Parameters for this participant
 var scales = shuffle(Object.keys(sents.scales));
 var domains = shuffle(Object.keys(sents.domains));
@@ -220,6 +222,9 @@ var experiment = {
 	if (window.self == window.top | turk.workerId.length > 0) {
 	    
 	    $("#testMessage").html(''); 	// clear the test message
+	    $("#prog").attr("style","width:" +
+			    String(100 * (1 - orders.length/totalTrials)) + "%")
+// style="width:progressTotal%"
 	    
 	    // Get the current trial - <code>shift()</code> removes the first element
 	    //Randomly select from our scales array and stop exp after we've exhausted all the domains

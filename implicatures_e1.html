@@ -2,23 +2,28 @@
 <!-- ## Code -->
 <html>
 <head>
-	<title>Language Understanding Experiment</title>
-	<script src="jquery-1.11.2.min.js"></script>
-	<script src="mmturkey-0.6.js"></script>
-	<link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Language Understanding Experiment</title>
+<script src="jquery-1.11.2.min.js"></script>
+<script src="mmturkey-0.6.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css" />
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
 <!-- The instructions slide. -->
 <div class="slide" id="instructions">
-	<img src="images/stanford.png" alt="Stanford University">
-		<p id='logo-text'>Stanford Language and Cognition Lab</p>
-	<p class="block-text">In this experiment, you will read some sentences and judge how similar they are to one another. If they have a similar meaning (even if the words are a little different), you should rate them as <i>similar</i>; but if they have a different meaning, you should rate them as <i>different</i>.
-	</p>
+  <br>
+  <img src="images/stanford.png" alt="Stanford University">
+  <p id='logo-text'>Stanford Language and Cognition Lab</p>
+  <p class="block-text">In this experiment, you will read some sentences and judge how similar they are to one another. If they have a similar meaning (even if the words are a little different), you should rate them as <i>similar</i>; but if they have a different meaning, you should rate them as <i>different</i>.
+  </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
-
+  
   <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
-
+  
   <p class="block-text" id="legal">By answering the
   following questions, you are participating in a study being performed by
   cognitive scientists in the Stanford Department of Psychology. If you have
@@ -37,14 +42,26 @@
 
 <!-- The stage slide. -->
 <div class="slide" id="stage">
+  
+<div class="progress">
+  
+<!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
 
+    <div id="prog" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
 
-<!-- Trying out table below. Maybe color for prompt? -->
+      <span class="sr-only">70% Complete</span>
+
+    </div>
+
+  </div>
+  <br>
+  
+  <!-- Trying out table below. Maybe color for prompt? -->
 <div align="center">
-<h4>Decide how similar the two sentences are using the scale below.</h4>
+  <h4>Decide how similar the two sentences are using the scale below.</h4>
 </div>
 <div align="center">
-<p id ="sentence1">{{}}</p> 
+  <p id ="sentence1">{{}}</p> 
 </div>
 <div align="center" > 
 <p id= "sentence2">{{}}</p>
@@ -53,15 +70,17 @@
 <table align = "center"><tr>
 <td align="center">
 	<tr>
-	<td> Very dissimilar</td> 
-	<td><input type="radio" name="judgment" value = "1">1 </td>
-	<td><input type="radio" name="judgment" value = "2">2 </td>
-	<td><input type="radio" name="judgment" value = "3">3 </td>
-	<td><input type="radio" name="judgment" value = "4">4</td>
-	<td><input type="radio" name="judgment" value = "5">5</td>
-	<td><input type="radio" name="judgment" value = "6">6</td>
-	<td><input type="radio" name="judgment" value = "7">7</td>
-	<td>  Very similar </td>
+	  <td>Very dissimilar</td>
+	  <td> </td>
+	  <td><input type="radio" name="judgment" value = "1">1</td>
+	  <td><input type="radio" name="judgment" value = "2">2</td>
+	  <td><input type="radio" name="judgment" value = "3">3</td>
+	  <td><input type="radio" name="judgment" value = "4">4</td>
+	  <td><input type="radio" name="judgment" value = "5">5</td>
+	  <td><input type="radio" name="judgment" value = "6">6</td>
+	  <td><input type="radio" name="judgment" value = "7">7</td>
+	  <td>&nbsp;&nbsp;&nbsp;</td>
+	  <td>Very similar</td>
 	</tr>
 </table>
 
