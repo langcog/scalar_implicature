@@ -166,85 +166,102 @@ var experiment = {
     
     // The object to be submitted.
     data: {
-		order: [],
-		scale: [],
-		domain: [],
-		sent1: [],
-		sent2: [],
-		rating: [],
+	order: [],
+	comparison: [],
+	scale: [],
+	domain: [],
+	sent1: [],
+	sent2: [],
+	rating: [],
     },
     
     // end the experiment
     end: function() {
-		showSlide("finished");
-		setTimeout(function() {
-		    turk.submit(experiment.data)
-		}, 1500);
+	showSlide("finished");
+	setTimeout(function() {
+	    turk.submit(experiment.data)
+	}, 1500);
     },
 
     // LOG RESPONSE
     log_response: function() {
-		var response_logged = false;
-		
-		//Array of radio buttons
-		var radio = document.getElementsByName("judgment");
-
-		// Loop through radio buttons
-		for (i = 0; i < radio.length; i++) {
-		    if (radio[i].checked) {
-			experiment.data.rating.push(radio[i].value);
-			response_logged = true;		    
-		    }
-		}
+	var response_logged = false;
+	
+	//Array of radio buttons
+	var radio = document.getElementsByName("judgment");
+	
+	// Loop through radio buttons
+	for (i = 0; i < radio.length; i++) {
+	    if (radio[i].checked) {
+		experiment.data.rating.push(radio[i].value);
+		response_logged = true;		    
+	    }
+	}
+	
+	
+	if (response_logged) {
+	    nextButton.blur();
 	    
-
-		if (response_logged) {
-	   	    nextButton.blur();
-
-		    // uncheck radio buttons
-		    for (i = 0; i < radio.length; i++) {
-		    		radio[i].checked = false
-		    }
-		    experiment.next();
-		} else {
-		    $("#testMessage").html('<font color="red">' + 
-				       'Please make a response!' + 
-				       '</font>');
-		}
+	    // uncheck radio buttons
+	    for (i = 0; i < radio.length; i++) {
+		radio[i].checked = false
+	    }
+	    experiment.next();
+	} else {
+	    $("#testMessage").html('<font color="red">' + 
+				   'Please make a response!' + 
+				   '</font>');
+	}
     },
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
-		$("#testMessage").html(''); 	// clear the test message
-		
-		// Get the current trial - <code>shift()</code> removes the first element
-		//Randomly select from our scales array and stop exp after we've exhausted all the domains
-		var scale = scales[random(0, (n_scales-1))];
-		console.log("scale", scale);
-		var domain = domains.shift();
-		var order = orders.shift();
-		
-		//If the current trial is undefined, call the end function.
-		if (typeof domain == "undefined") {
-		    return experiment.end();
-		}
-		
-		// Show sentences
-		sent1 = doSentSubs(sents, scale, domain, order[0])
-		sent2 = doSentSubs(sents, scale, domain, order[1])
-		
-		// Display the sentence stimuli
-		$("#sentence1").html(sent1);
-		$("#sentence2").html(sent2);
-
-		// push all relevant variables into data object
-		experiment.data.order.push(order);
-		experiment.data.scale.push(scale);
-		experiment.data.domain.push(domain);
-		experiment.data.sent1.push(sent1);
-		experiment.data.sent2.push(sent2);
-
-		showSlide("stage");
+	// Allow experiment to start if it's a turk worker OR if it's a test run
+	if (window.self == window.top | turk.workerId.length > 0) {
+	    
+	    $("#testMessage").html(''); 	// clear the test message
+	    
+	    // Get the current trial - <code>shift()</code> removes the first element
+	    //Randomly select from our scales array and stop exp after we've exhausted all the domains
+	    var scale = scales[random(0, (n_scales-1))];
+	    console.log("scale", scale);
+	    var domain = domains.shift();
+	    var order = orders.shift();
+	    
+	    //If the current trial is undefined, call the end function.
+	    if (typeof domain == "undefined") {
+		return experiment.end();
+	    }
+	    
+	    // Show sentences
+	    sent1 = doSentSubs(sents, scale, domain, order[0])
+	    sent2 = doSentSubs(sents, scale, domain, order[1])
+	    
+	    // Display the sentence stimuli
+	    $("#sentence1").html(sent1);
+	    $("#sentence2").html(sent2);
+	    
+	    // create comparison
+	    var comparison = "";
+	    
+	    if ((order[0]==0 & order[1] == 1) | (order[0]==1 & order[1]==0)) {
+		comparison = "lower";
+	    } else if ((order[0]==1 & order[1] == 2) | (order[0]==2 & order[1]==1)) {
+		comparison = "upper";
+	    } else {
+		comparison = "full";
+	    }
+	    
+	    // push all relevant variables into data object	    
+	    experiment.data.order.push(order);
+	    experiment.data.comparison.push(comparison);
+	    experiment.data.scale.push(scale);
+	    experiment.data.domain.push(domain);
+	    experiment.data.sent1.push(sent1);
+	    experiment.data.sent2.push(sent2);
+	    
+	    showSlide("stage");
+	}
     }
 }
 
