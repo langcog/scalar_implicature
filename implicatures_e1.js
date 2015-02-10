@@ -175,6 +175,9 @@ var experiment = {
 	sent1: [],
 	sent2: [],
 	rating: [],
+	language: [],
+	expt_aim: [],
+	expt_gen: [],
     },
     
     // end the experiment
@@ -229,13 +232,12 @@ var experiment = {
 	    // Get the current trial - <code>shift()</code> removes the first element
 	    //Randomly select from our scales array and stop exp after we've exhausted all the domains
 	    var scale = scales[random(0, (n_scales-1))];
-	    console.log("scale", scale);
 	    var domain = domains.shift();
 	    var order = orders.shift();
 	    
 	    //If the current trial is undefined, call the end function.
 	    if (typeof domain == "undefined") {
-		return experiment.end();
+		return experiment.debriefing();
 	    }
 	    
 	    // Show sentences
@@ -267,6 +269,19 @@ var experiment = {
 	    
 	    showSlide("stage");
 	}
+    },
+
+    //	go to debriefing slide
+    debriefing: function() {
+	showSlide("debriefing");
+    },
+
+    // submitcomments function
+    submit_comments: function() {
+	experiment.data.language.push(document.getElementById("homelang").value);
+	experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
+	experiment.data.expt_gen.push(document.getElementById("expcomments").value);
+	experiment.end();
     }
 }
 
