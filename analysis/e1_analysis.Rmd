@@ -1,0 +1,114 @@
+PSYCH 130 - EXPERIMENT 1 ANALYSIS
+=================================
+
+Preliminaries.
+
+```{r}
+rm(list=ls())
+source("analysis/useful_dplyr.R")
+library("rjson")
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("production-results/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("production-results/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   comparison = jd$answer$comparison,
+                   scale = jd$answer$scale,
+                   domain = jd$answer$domain,
+                   rating = as.numeric(jd$answer$rating),
+                   language = jd$answer$language)
+  d.raw <- bind_rows(d, id)
+}
+```
+
+Exclude non-compliant participants and non-English speakers. 
+
+```{r}
+d <- d.raw %>% 
+  filter(grepl(pattern = "english", language, ignore.case = TRUE), 
+         comparison != "training")
+```
+
+Note: we discovered that "upper" was miscoded in the experiment as "full" (they are flipped). Let's unflip them. 
+
+```{r}
+d$comparison <- factor(d$comparison, 
+                       levels = c("upper", "lower", "full"), 
+                       labels = c("full", "lower", "upper"))
+```
+
+
+Main Analysis
+-------------
+
+First look at means across scales. 
+
+```{r}
+ms <- d %>%
+  group_by(scale, comparison) %>%
+  summarise(cil = ci.low(rating), 
+            cih = ci.high(rating), 
+            rating = mean(rating))
+
+qplot(x = scale, y = rating, 
+      fill = comparison,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = rating - cil, 
+                     ymax = rating + cih),
+                 position = position_dodge(width=.9))
+```
+
+Now break down by plurality. This isn't super interpretable. 
+
+```{r}
+msp <- d %>%
+  mutate(plural = scale == "always_sometimes" |
+           scale == "all_some" |
+           scale == "three_two") %>%
+  group_by(plural, comparison) %>%
+  summarise(cil = ci.low(rating), 
+            cih = ci.high(rating), 
+            rating = mean(rating))
+
+qplot(x = plural, y = rating, 
+      fill = comparison,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = msp) + 
+  geom_linerange(aes(ymin = rating - cil, 
+                     ymax = rating + cih),
+                 position = position_dodge(width=.9))
+```
+
+Let's look at domains. 
+
+```{r}
+msd <- d %>%
+  group_by(scale, domain, comparison) %>%
+  summarise(n = n(), 
+            cil = ci.low(rating), 
+            cih = ci.high(rating), 
+            rating = mean(rating))
+
+qplot(x = scale, y = rating, 
+      fill = comparison,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = msd) + 
+  facet_wrap( ~ domain) + 
+  geom_linerange(aes(ymin = rating - cil, 
+                     ymax = rating + cih),
+                 position = position_dodge(width=.9))
+```
+
+
+

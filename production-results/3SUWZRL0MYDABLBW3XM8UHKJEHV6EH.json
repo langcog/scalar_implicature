@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T08:01:46Z",
+    "AutoApprovalTime": "2015-02-12T08:00:55Z",
+    "AssignmentId": "3SUWZRL0MYDABLBW3XM8UHKJEHV6EH",
+    "WorkerId": "A1TIR25FCHEDXI",
+    "AcceptTime": "2015-02-12T07:53:11Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "upper",
+            "full",
+            "lower",
+            "upper",
+            "full",
+            "lower"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "students",
+            "cookies",
+            "clothes",
+            "movies",
+            "weather",
+            "players"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "like_love",
+            "good_excellent",
+            "all_some",
+            "two_three",
+            "always_sometimes",
+            "and_or"
+        ],
+        "language": [
+            "Spanish"
+        ],
+        "rating": [
+            "1",
+            "7",
+            "4",
+            "4",
+            "7",
+            "4",
+            "1",
+            "7"
+        ],
+        "expt_aim": [
+            "No idea"
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "sent2": [
+            "I really enjoy going sailing with my father.",
+            "I really don't like eating out at upscale places..",
+            "She loved the student.",
+            "He thought the cookie was good.",
+            "Some of the shirts were striped.",
+            "Two but not three of the movies were funny.",
+            "The weekends were always sunny.",
+            "The player was skillful or hardworking."
+        ],
+        "sent1": [
+            "I really enjoy walking in the woods alone.",
+            "I really despise fancy restaurants..",
+            "She liked but didn't love the student.",
+            "He thought the cookie was excellent.",
+            "Some but not all of the shirts were striped.",
+            "Three of the movies were funny.",
+            "The weekends were sometimes sunny.",
+            "The player was either skillful or hardworking."
+        ],
+        "order": [
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                2
+            ],
+            [
+                2,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T07:55:55Z"
+}

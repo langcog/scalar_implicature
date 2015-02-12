@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T07:36:45Z",
+    "AutoApprovalTime": "2015-02-12T07:32:33Z",
+    "AssignmentId": "3AMYWKA6YBMWNCOLXBP4ZTEXIJZ6OJ",
+    "WorkerId": "AKADLTX0G8CZG",
+    "AcceptTime": "2015-02-12T07:22:49Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "upper",
+            "full",
+            "lower",
+            "upper",
+            "full",
+            "lower"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "weather",
+            "movies",
+            "players",
+            "students",
+            "cookies",
+            "clothes"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "good_excellent",
+            "like_love",
+            "two_three",
+            "all_some",
+            "and_or",
+            "always_sometimes"
+        ],
+        "language": [
+            "english"
+        ],
+        "rating": [
+            "3",
+            "5",
+            "4",
+            "5",
+            "5",
+            "5",
+            "4",
+            "6"
+        ],
+        "expt_aim": [
+            "no clue"
+        ],
+        "expt_gen": [
+            "short!"
+        ],
+        "sent2": [
+            "I really enjoy going sailing with my father.",
+            "I really despise fancy restaurants..",
+            "He thought the weekend was good but not excellent.",
+            "She liked the movie.",
+            "Two but not three of the players were skillful.",
+            "Some but not all of the students were tired.",
+            "The cookie was chocolate or oatmeal.",
+            "The shirts were sometimes but not always striped."
+        ],
+        "sent1": [
+            "I really enjoy walking in the woods alone.",
+            "I really don't like eating out at upscale places..",
+            "He thought the weekend was excellent.",
+            "She loved the movie.",
+            "Two of the players were skillful.",
+            "All of the students were tired.",
+            "The cookie was chocolate and oatmeal.",
+            "The shirts were sometimes striped."
+        ],
+        "order": [
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                2,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                2,
+                0
+            ],
+            [
+                0,
+                1
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T07:27:33Z"
+}

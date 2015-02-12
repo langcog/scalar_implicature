@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T07:51:45Z",
+    "AutoApprovalTime": "2015-02-12T07:51:04Z",
+    "AssignmentId": "3URFVVM165ITORSTV2YOVXZH59LZUH",
+    "WorkerId": "AL09YPXVJOEVT",
+    "AcceptTime": "2015-02-12T07:44:37Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "full",
+            "upper",
+            "lower",
+            "full",
+            "lower",
+            "upper"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "weather",
+            "cookies",
+            "clothes",
+            "students",
+            "players",
+            "movies"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "like_love",
+            "two_three",
+            "good_excellent",
+            "and_or",
+            "always_sometimes",
+            "all_some"
+        ],
+        "language": [
+            "English"
+        ],
+        "rating": [
+            "1",
+            "6",
+            "5",
+            "4",
+            "7",
+            "6",
+            "7",
+            "1"
+        ],
+        "expt_aim": [
+            "Don't know"
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "sent2": [
+            "I really enjoy going sailing with my father.",
+            "I really despise fancy restaurants..",
+            "She liked the weekend.",
+            "Two but not three of the cookies were chocolate.",
+            "He thought the shirt was good but not excellent.",
+            "The student was tired and hungry.",
+            "The players were sometimes skillful.",
+            "All of the movies were funny."
+        ],
+        "sent1": [
+            "I really enjoy walking in the woods alone.",
+            "I really don't like eating out at upscale places..",
+            "She loved the weekend.",
+            "Three of the cookies were chocolate.",
+            "He thought the shirt was good.",
+            "The student was tired or hungry.",
+            "The players were sometimes but not always skillful.",
+            "Some but not all of the movies were funny."
+        ],
+        "order": [
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                2,
+                0
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                2
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T07:46:04Z"
+}

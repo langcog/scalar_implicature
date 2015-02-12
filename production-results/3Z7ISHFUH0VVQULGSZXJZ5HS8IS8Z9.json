@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T07:26:45Z",
+    "AutoApprovalTime": "2015-02-12T07:26:35Z",
+    "AssignmentId": "3Z7ISHFUH0VVQULGSZXJZ5HS8IS8Z9",
+    "WorkerId": "A2LN9OJWWQOV7T",
+    "AcceptTime": "2015-02-12T07:20:14Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "upper",
+            "lower",
+            "full",
+            "lower",
+            "full",
+            "upper"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "clothes",
+            "cookies",
+            "movies",
+            "weather",
+            "players",
+            "students"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "two_three",
+            "all_some",
+            "and_or",
+            "good_excellent",
+            "always_sometimes",
+            "like_love"
+        ],
+        "language": [
+            "english"
+        ],
+        "rating": [
+            "2",
+            "6",
+            "3",
+            "5",
+            "7",
+            "5",
+            "3",
+            "3"
+        ],
+        "expt_aim": [
+            "not sure"
+        ],
+        "expt_gen": [
+            "no"
+        ],
+        "sent2": [
+            "I really enjoy walking in the woods alone.",
+            "I really don't like eating out at upscale places..",
+            "Two but not three of the shirts were striped.",
+            "Some of the cookies were chocolate.",
+            "The movie was funny and sad.",
+            "He thought the weekend was good.",
+            "The players were always skillful.",
+            "She loved the student."
+        ],
+        "sent1": [
+            "I really enjoy going sailing with my father.",
+            "I really despise fancy restaurants..",
+            "Three of the shirts were striped.",
+            "Some but not all of the cookies were chocolate.",
+            "The movie was funny or sad.",
+            "He thought the weekend was good but not excellent.",
+            "The players were sometimes skillful.",
+            "She liked but didn't love the student."
+        ],
+        "order": [
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                1,
+                2
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T07:21:35Z"
+}

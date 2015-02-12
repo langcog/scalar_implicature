@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T08:11:47Z",
+    "AutoApprovalTime": "2015-02-12T08:11:17Z",
+    "AssignmentId": "30X31N5D63QC86SHU5NPZ3QKBRVASD",
+    "WorkerId": "A21522AEF5MUDX",
+    "AcceptTime": "2015-02-12T08:04:37Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "full",
+            "lower",
+            "upper",
+            "full",
+            "upper",
+            "lower"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "players",
+            "movies",
+            "weather",
+            "cookies",
+            "clothes",
+            "students"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "two_three",
+            "like_love",
+            "all_some",
+            "always_sometimes",
+            "good_excellent",
+            "and_or"
+        ],
+        "language": [
+            "Spanish"
+        ],
+        "rating": [
+            "5",
+            "7",
+            "3",
+            "7",
+            "3",
+            "1",
+            "1",
+            "7"
+        ],
+        "expt_aim": [
+            "Similarity in wording and sentences."
+        ],
+        "expt_gen": [
+            "Interesting"
+        ],
+        "sent2": [
+            "I really enjoy going sailing with my father.",
+            "I really despise fancy restaurants..",
+            "Three of the players were skillful.",
+            "She liked but didn't love the movie.",
+            "All of the weekends were sunny.",
+            "The cookies were always chocolate.",
+            "He thought the shirt was good but not excellent.",
+            "The student was tired or hungry."
+        ],
+        "sent1": [
+            "I really enjoy walking in the woods alone.",
+            "I really don't like eating out at upscale places..",
+            "Two of the players were skillful.",
+            "She liked the movie.",
+            "Some but not all of the weekends were sunny.",
+            "The cookies were sometimes chocolate.",
+            "He thought the shirt was excellent.",
+            "The student was either tired or hungry."
+        ],
+        "order": [
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                2
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T08:06:17Z"
+}

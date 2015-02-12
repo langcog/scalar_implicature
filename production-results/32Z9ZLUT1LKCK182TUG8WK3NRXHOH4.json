@@ -1,0 +1,116 @@
+{
+    "ApprovalTime": "2015-02-12T08:06:44Z",
+    "AutoApprovalTime": "2015-02-12T08:05:24Z",
+    "AssignmentId": "32Z9ZLUT1LKCK182TUG8WK3NRXHOH4",
+    "WorkerId": "A23437BMZ5T1FH",
+    "AcceptTime": "2015-02-12T07:57:26Z",
+    "HITId": "3VQTAXTYN3LUJ9RJZMDJKVXSMP0BUK",
+    "Assignment": "",
+    "answer": {
+        "comparison": [
+            "training",
+            "training",
+            "upper",
+            "lower",
+            "full",
+            "upper",
+            "full",
+            "lower"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "clothes",
+            "players",
+            "weather",
+            "movies",
+            "cookies",
+            "students"
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "like_love",
+            "and_or",
+            "two_three",
+            "all_some",
+            "always_sometimes",
+            "good_excellent"
+        ],
+        "language": [
+            "Romanian"
+        ],
+        "rating": [
+            "1",
+            "7",
+            "2",
+            "7",
+            "5",
+            "6",
+            "4",
+            "6"
+        ],
+        "expt_aim": [
+            "How similar a sentence sounds to another sentence."
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "sent2": [
+            "I really enjoy going sailing with my father.",
+            "I really despise fancy restaurants..",
+            "She liked but didn't love the shirt.",
+            "The player was skillful or hardworking.",
+            "Three of the weekends were sunny.",
+            "Some but not all of the movies were funny.",
+            "The cookies were sometimes chocolate.",
+            "He thought the student was good but not excellent."
+        ],
+        "sent1": [
+            "I really enjoy walking in the woods alone.",
+            "I really don't like eating out at upscale places..",
+            "She loved the shirt.",
+            "The player was either skillful or hardworking.",
+            "Two of the weekends were sunny.",
+            "All of the movies were funny.",
+            "The cookies were always chocolate.",
+            "He thought the student was good."
+        ],
+        "order": [
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                2
+            ],
+            [
+                2,
+                1
+            ],
+            [
+                2,
+                0
+            ],
+            [
+                0,
+                1
+            ]
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-12T08:00:24Z"
+}
