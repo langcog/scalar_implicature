@@ -110,14 +110,14 @@ var sents = {
 		    sent_manipulation: NULL,
 		    sent_inference: "A said, 'The SS V2 good'",
 		    sent_question:  "Would you conclude from this that, according to
-		    A, the SS V2 not excellent",
+		    A, the SS V2 not excellent?",
 		},
 		like_love: {
 		    sent_context: "A and B were talking about a SS, yesterday",
 		    sent_manipulation: NULL,
 		    sent_inference: "A said, 'I liked the SS'",
 		    sent_question:  "Would you conclude from this that, according to
-		    A, he did not love the SS",
+		    A, he did not love the SS?",
 		}
     },
     domains: {
