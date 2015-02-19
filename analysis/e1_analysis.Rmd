@@ -24,7 +24,7 @@ for (f in files) {
                    domain = jd$answer$domain,
                    rating = as.numeric(jd$answer$rating),
                    language = jd$answer$language)
-  d.raw <- bind_rows(d, id)
+  d.raw <- bind_rows(d.raw, id)
 }
 ```
 
