@@ -58,48 +58,71 @@ function doSentSubs (sents, scale, domain, order)
     return sent;
 }
 
-// ############################## Configuration settings ##############################
+// ############################## BP Changes Configuration settings ##############################
 var sents = {
     scales: {
-	training1: {
-	    Q: ["enjoy going sailing with my father","enjoy walking in the woods alone"],
-	    base: "I really Q."
-	},	
-	training2: {
-	    Q: ["despise fancy restaurants.","don't like eating out at upscale places."],
-	    base: "I really Q."
-	},	
-	all_some: {
-	    Q: ["Some","Some but not all","All"],
-	    base: "Q of the SP V1 P1."
-	},
-	always_sometimes: {
-	    Q: ["sometimes","sometimes but not always","always"],
-	    base: "The SP V1 Q P1."
-	},
-	and_or: {
-	    Q: ["P1 or P2","either P1 or P2","P1 and P2"],
-	    base: "The SS V2 Q."
-	},
-	two_three: {
-	    Q: ["Two","Two but not three","Three"],
-	    base: "Q of the SP V1 P1."
-	},
-	good_excellent: {
-	    Q: ["good","good but not excellent","excellent"],
-	    base: "He thought the SS V2 Q."
-	},
-	like_love: {
-	    Q: ["liked","liked but didn't love","loved"],
-	    base: "She Q the SS."
-	}
+		training1: {
+		    sent_context: "A and B were talking about sailing, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, 'I enjoy going sailing with my father'",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, he enjoys waling in the woords alone?"
+		},	
+		training2: {
+			sent_context: "A and B were talking about restaurants, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, 'I don't like eating out at upscale places.'",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, he despises fancy restaurants?"
+		},	
+		all_some: {
+		    sent_context: "A and B were talking about SP, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, some of the SP V1 P1",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, not all of the SP V1 P1?"
+		},
+		always_sometimes: {
+			sent_context: "A and B were talking about SP, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, sometimes the SP V1 P1",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, the SP V1 not alwyas P1?"
+		},
+		and_or: {
+			sent_context: "A and B were talking about SP, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, the SS V2 P1 or P2",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, the SS V2 not both P1 and p2?"
+		},
+		two_three: {
+			sent_context: "A and B were talking about SP, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, two of the SS V1 P1",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, two but not three of the SP V1 P1?",
+		},
+		good_excellent: {
+		    sent_context: "A and B were talking about SS, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, 'The SS V2 good",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, the SS V2 not excellent",
+		},
+		like_love: {
+		    sent_context: "A and B were talking about a SS, yesterday"
+		    sent_manipulation: NULL,
+		    sent_inference: "A said, 'I liked the SS",
+		    sent_question:  "Would you conclude from this that, according to
+		    A, he did not love the SS",
+		}
     },
-    
     domains: {
-	training1: {	    
-	},
-	training2: {	    
-	},
+		training1: {	    
+		},
+		training2: {	    
+		},
 		movies: {
 		    SP: "movies",
 		    SS: "movie",
