@@ -42,10 +42,11 @@ function shuffle (a)
 
 // substitution function - do we want to save all these factors to a data object?
 //Pass a trial object in to be populated?
-function doSentSubs (sents, scale, domain, order)
+function doSentSubs (sents, scale, domain)
 {
-    sent = sents["scales"][scale]["base"];
-    Q = sents["scales"][scale]["Q"][order];
+    inference = sents["scales"][scale]["sent_inference"];
+    context = sents["scales"][scale]["sent_question"];
+    //Q = sents["scales"][scale]["Q"][order];
     SP = sents["domains"][domain]["SP"]; //Plural
     SS = sents["domains"][domain]["SS"]; //Singular
     P1 = sents["domains"][domain]["P1"]; //Predicate 1
@@ -53,67 +54,68 @@ function doSentSubs (sents, scale, domain, order)
     V1 = sents["domains"][domain]["V1"]; //Past
     V2 = sents["domains"][domain]["V2"]; //Present
 
-    sent = sent.replace("Q",Q).replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
+    inference = sent.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
+    context = sent.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
 
-    return sent;
+    return [inference, context];
 }
 
 // ############################## BP Changes Configuration settings ##############################
 var sents = {
     scales: {
 		training1: {
-		    sent_context: "A and B were talking about sailing, yesterday"
+		    sent_context: "A and B were talking about sailing, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'I enjoy going sailing with my father'",
+		    sent_inference: "A said, 'I enjoy going sailing with my father.'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, he enjoys waling in the woords alone?"
 		},	
 		training2: {
-			sent_context: "A and B were talking about restaurants, yesterday"
+			sent_context: "A and B were talking about restaurants, yesterday",
 		    sent_manipulation: NULL,
 		    sent_inference: "A said, 'I don't like eating out at upscale places.'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, he despises fancy restaurants?"
 		},	
 		all_some: {
-		    sent_context: "A and B were talking about SP, yesterday"
+		    sent_context: "A and B were talking about SP, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, some of the SP V1 P1",
+		    sent_inference: "A said, 'some of the SP V1 P1'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, not all of the SP V1 P1?"
 		},
 		always_sometimes: {
-			sent_context: "A and B were talking about SP, yesterday"
+			sent_context: "A and B were talking about SP, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, sometimes the SP V1 P1",
+		    sent_inference: "A said, 'sometimes the SP V1 P1'",
 		    sent_question:  "Would you conclude from this that, according to
-		    A, the SP V1 not alwyas P1?"
+		    A, the SP V1 not always P1?"
 		},
 		and_or: {
-			sent_context: "A and B were talking about SP, yesterday"
+			sent_context: "A and B were talking about SP, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, the SS V2 P1 or P2",
+		    sent_inference: "A said, 'the SS V2 P1 or P2'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, the SS V2 not both P1 and p2?"
 		},
 		two_three: {
-			sent_context: "A and B were talking about SP, yesterday"
+			sent_context: "A and B were talking about SP, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, two of the SS V1 P1",
+		    sent_inference: "A said, 'two of the SS V1 P1'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, two but not three of the SP V1 P1?",
 		},
 		good_excellent: {
-		    sent_context: "A and B were talking about SS, yesterday"
+		    sent_context: "A and B were talking about SS, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'The SS V2 good",
+		    sent_inference: "A said, 'The SS V2 good'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, the SS V2 not excellent",
 		},
 		like_love: {
-		    sent_context: "A and B were talking about a SS, yesterday"
+		    sent_context: "A and B were talking about a SS, yesterday",
 		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'I liked the SS",
+		    sent_inference: "A said, 'I liked the SS'",
 		    sent_question:  "Would you conclude from this that, according to
 		    A, he did not love the SS",
 		}
@@ -173,8 +175,6 @@ var sents = {
 		}
     }
 };  
-
-
 
 
 // Parameters for this participant
