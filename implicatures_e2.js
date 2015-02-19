@@ -151,24 +151,11 @@ var sents = {
     }
 };  
 
-var contrasts = {
-    lower: [0, 1],
-    upper: [1, 2],
-    full: [0, 2]
-};
 
-// make the trial order
-var orders = [[0, 1],[0, 1]].concat(
-    shuffle([contrasts.lower, contrasts.upper, contrasts.full]).concat(
-	shuffle([contrasts.lower, contrasts.upper, contrasts.full])));
 
-for (i = 0; i < orders.length; i++) {
-    orders[i] = shuffle(orders[i]);
-}
-
-var totalTrials = orders.length;
 
 // Parameters for this participant
+var speakers = ["John","Mary"];
 var scales = Object.keys(sents.scales);
 var domains = Object.keys(sents.domains);
 
@@ -182,6 +169,8 @@ domains.shift();
 scales = ["training1","training2"].concat(shuffle(scales));
 domains = ["training1","training2"].concat(shuffle(domains));
 
+var totalTrials = scales.length;
+
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
@@ -190,13 +179,13 @@ var experiment = {
     
     // The object to be submitted.
     data: {
-	order: [],
-	comparison: [],
 	scale: [],
 	domain: [],
-	sent1: [],
-	sent2: [],
-	rating: [],
+	sent_context: [],
+	sent_inference: [],
+	sent_question: [],
+	speaker: [],
+	judgment: [],
 	language: [],
 	expt_aim: [],
 	expt_gen: [],
@@ -245,53 +234,40 @@ var experiment = {
     next: function() {
 	// Allow experiment to start if it's a turk worker OR if it's a test run
 	if (window.self == window.top | turk.workerId.length > 0) {
-	    
-	    $("#testMessage").html(''); 	// clear the test message
+
+	    // clear the test message and adjust progress bar
+	    $("#testMessage").html('');  
 	    $("#prog").attr("style","width:" +
 			    String(100 * (1 - orders.length/totalTrials)) + "%")
-// style="width:progressTotal%"
 	    
 	    // Get the current trial - <code>shift()</code> removes the first element
-	    //Randomly select from our scales array and stop exp after we've exhausted all the domains
+	    // randomly select from our scales array,
+	    // stop exp after we've exhausted all the domains
 	    var scale = scales.shift();
 	    var domain = domains.shift();
-	    var order = orders.shift();
 	    
-	    //If the current trial is undefined, call the end function.
-	    if (typeof scale == "undefined") {
-		return experiment.debriefing();
-	    }
+	    // if the current trial is undefined, call the end function.
+	    typeof scale == "undefined" ? experiment.debriefing() : true
 	    
-	    // Show sentences
-	    sent1 = doSentSubs(sents, scale, domain, order[0])
-	    sent2 = doSentSubs(sents, scale, domain, order[1])
+	    // Generate the sentence stimuli
+	    speaker = shuffle(speakers)[0]
+	    sent_context = sents["scales"][scale]["context"];
+	    sent_inference = doSentSubs(sents, scale, domain);
+	    sent_question = doSentSubs(sents, scale, domain);
 	    
 	    // Display the sentence stimuli
-	    $("#sentence1").html(sent1);
-	    $("#sentence2").html(sent2);
-	    
-	    // create comparison
-	    var comparison = "";
-	    
-	    if ((order[0]==0 & order[1] == 1) | (order[0]==1 & order[1]==0)) {
-		if (scale.match("training")) {
-		    comparison = "training";
-		} else {	
-		    comparison = "lower";
-		}
-	    } else if ((order[0]==1 & order[1] == 2) | (order[0]==2 & order[1]==1)) {
-		comparison = "upper";
-	    } else {
-		comparison = "full";
-	    }
+	    $("#sent_context").html(sent_context);
+	    $("#sent_inference").html(sent_inference);
+	    $("#sent_question").html(sent_question);
+	    $("#speaker").html(speaker)
 	    
 	    // push all relevant variables into data object	    
-	    experiment.data.order.push(order);
-	    experiment.data.comparison.push(comparison);
 	    experiment.data.scale.push(scale);
 	    experiment.data.domain.push(domain);
-	    experiment.data.sent1.push(sent1);
-	    experiment.data.sent2.push(sent2);
+	    experiment.data.sent_context.push(sent_context);
+	    experiment.data.sent_inference.push(sent_inference);
+	    experiment.data.sent_question.push(sent_question);
+	    experiment.data.speaker.push(speaker); 
 	    
 	    showSlide("stage");
 	}
