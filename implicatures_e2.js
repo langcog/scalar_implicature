@@ -77,17 +77,17 @@ var sents = {
 		},	
 		all_some: {		   
 		    sent_manipulation: null,
-		    sent_inference: "Some of the SP V1 P1.",
+		    sent_inference: "some of the SP V1 P1.",
 		    sent_question:  "not all of the SP V1 P1?"
 		},
 		always_sometimes: {
 		    sent_manipulation: null,
-		    sent_inference: "Sometimes the SP V1 P1.",
+		    sent_inference: "sometimes the SP V1 P1.",
 		    sent_question:  "the SP V1 not always P1?"
 		},
 		and_or: {
 		    sent_manipulation: null,
-		    sent_inference: "The SS V2 P1 or P2.",
+		    sent_inference: "the SS V2 P1 or P2.",
 		    sent_question:  "the SS V2 not both P1 and P2?"
 		},
 		two_three: {
@@ -97,7 +97,7 @@ var sents = {
 		},
 		good_excellent: {
 		    sent_manipulation: null,
-		    sent_inference: "The SS V2 good.",
+		    sent_inference: "the SS V2 good.",
 		    sent_question:  "the SS V2 not excellent?",
 		},
 		like_love: {
@@ -108,13 +108,14 @@ var sents = {
     },
     domains: {
 	training1: {
-	    sent_context: "John and Bob were talking about sailing yesterday.",
+	    sent_context_plural: "John and Bob were talking about sailing yesterday.",
 	},
 	training2: {
-	    sent_context: "John and Bob were talking about restaurants yesterday.",    
+	    sent_context_plural: "John and Bob were talking about restaurants yesterday.",
 	},
 	movies: {
-	    sent_context: "Yesterday, John and Bob were talking about the movies at the local theater.",
+	    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
+	    sent_context_singular: "Yesterday, John and Bob were talking about a movie at the local theater.",
 	    SP: "movies",
 	    SS: "movie",
 	    P1: "funny",
@@ -123,7 +124,8 @@ var sents = {
 	    V2: "was"
 	},
 	cookies: {
-	    sent_context: "A few days ago, John and Bob were talking about cookies at a local bakery.",
+	    sent_context_plural: "A few days ago, John and Bob were talking about cookies at a local bakery.",
+	    sent_context_singular: "A few days ago, John and Bob were talking about a particular cookie at a local bakery.",
 	    SP: "cookies",
 	    SS: "cookie",
 	    P1: "chocolate",
@@ -132,7 +134,8 @@ var sents = {
 	    V2: "was"
 	},
 	players: {
-	    sent_context: "Last week, John and Bob were talking about the players on their basketball team.",
+	    sent_context_plural: "Last week, John and Bob were talking about the players on their basketball team.",
+	    sent_context_singular: "Last week, John and Bob were talking about a player on their basketball team.",
 	    SP: "players",
 	    SS: "player",
 	    P1: "skillful",
@@ -141,7 +144,8 @@ var sents = {
 	    V2: "was"
 	},
 	weather: {
-	    sent_context: "Bob and John were talking about the weather.",
+	    sent_context_plural: "Bob and John were talking about the weather during a recent trip.",
+	    sent_context_singular: "Bob and John were talking about the previous weekend.",
 	    SP: "weekends",
 	    SS: "weekend",
 	    P1: "sunny",
@@ -150,7 +154,8 @@ var sents = {
 	    V2: "was"
 	},
 	clothes: {
-	    sent_context: "Last month, Bob and John were talking about the selection of shirts at a local store.",
+	    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
+	    sent_context_singular: "Last month, Bob and John were talking about a shirt their friend wore to a party.",
 	    SP: "shirts",
 	    SS: "shirt",
 	    P1: "striped",
@@ -159,7 +164,8 @@ var sents = {
 	    V2: "was"
 	},
 	students: {
-	    sent_context: "A year ago, Bob and John were talking about the students in their class.",
+	    sent_context_plural: "A year ago, Bob and John were talking about the students in their class.",
+	    sent_context_singular: "A year ago, Bob and John were talking about a particular student they used to teach.",
 	    SP: "students",
 	    SS: "student",
 	    P1: "tired",
@@ -261,6 +267,7 @@ var experiment = {
 	    // randomly select from our scales array,
 	    // stop exp after we've exhausted all the domains
 	    var scale = scales.shift();
+	    console.log("scale: ", scale);
 	    var domain = domains.shift();
 	    
 	    // if the current trial is undefined, call the end function.
@@ -270,7 +277,13 @@ var experiment = {
 	    
 	    // Generate the sentence stimuli
 	    speaker = shuffle(speakers)[0]
-	    sent_context = sents["domains"][domain]["sent_context"];
+
+	    //If we have a singular scale adjust domains
+	    if (scale == "and_or" || scale == "good_excellent" || scale == "like_love") {
+	    	sent_context = sents["domains"][domain]["sent_context_singular"];
+	    } else {
+	    	sent_context = sents["domains"][domain]["sent_context_plural"];
+	    }
 
 	    sent_materials = doSentSubs(sents, scale, domain);	
 	    
