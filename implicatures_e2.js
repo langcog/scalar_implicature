@@ -134,8 +134,8 @@ var sents = {
 	    V2: "was"
 	},
 	players: {
-	    sent_context_plural: "Last week, John and Bob were talking about the players on their basketball team.",
-	    sent_context_singular: "Last week, John and Bob were talking about a player on their basketball team.",
+	    sent_context_plural: "Last week, John and Bob were talking about the football game.",
+	    sent_context_singular: "Last week, John and Bob were talking about a player in a recent football game.",
 	    SP: "players",
 	    SS: "player",
 	    P1: "skillful",
@@ -164,7 +164,7 @@ var sents = {
 	    V2: "was"
 	},
 	students: {
-	    sent_context_plural: "A year ago, Bob and John were talking about the students in their class.",
+	    sent_context_plural: "A year ago, Bob and John were talking about the students in a class they taught.",
 	    sent_context_singular: "A year ago, Bob and John were talking about a particular student they used to teach.",
 	    SP: "students",
 	    SS: "student",
@@ -269,7 +269,7 @@ var experiment = {
 	    var scale = scales.shift();
 	    console.log("scale: ", scale);
 	    var domain = domains.shift();
-	    
+	    console.log("domain: ", domain);
 	    // if the current trial is undefined, call the end function.
 	    if (typeof scale == "undefined") {
 		return experiment.debriefing();
