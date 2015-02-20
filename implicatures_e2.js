@@ -211,6 +211,7 @@ var experiment = {
 	judgment: [],
 	language: [],
 	expt_aim: [],
+	character_thoughts: [],
 	expt_gen: [],
     },
     
@@ -268,7 +269,7 @@ var experiment = {
 	    // stop exp after we've exhausted all the domains
 	    var scale = scales.shift();
 	    var domain = domains.shift();
-	    
+
 	    // if the current trial is undefined, call the end function.
 	    if (typeof scale == "undefined") {
 		return experiment.debriefing();
@@ -316,6 +317,7 @@ var experiment = {
     submit_comments: function() {
 	experiment.data.language.push(document.getElementById("homelang").value);
 	experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
+	experiment.data.character_thoughts.push(document.getElementById("character_thoughts").value);
 	experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 	experiment.end();
     }
