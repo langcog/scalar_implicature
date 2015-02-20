@@ -77,17 +77,17 @@ var sents = {
 		},	
 		all_some: {		   
 		    sent_manipulation: null,
-		    sent_inference: "some of the SP V1 P1.",
+		    sent_inference: "Some of the SP V1 P1.",
 		    sent_question:  "not all of the SP V1 P1?"
 		},
 		always_sometimes: {
 		    sent_manipulation: null,
-		    sent_inference: "sometimes the SP V1 P1.",
+		    sent_inference: "Sometimes the SP V1 P1.",
 		    sent_question:  "the SP V1 not always P1?"
 		},
 		and_or: {
 		    sent_manipulation: null,
-		    sent_inference: "the SS V2 P1 or P2.",
+		    sent_inference: "The SS V2 P1 or P2.",
 		    sent_question:  "the SS V2 not both P1 and P2?"
 		},
 		two_three: {
@@ -97,7 +97,7 @@ var sents = {
 		},
 		good_excellent: {
 		    sent_manipulation: null,
-		    sent_inference: "the SS V2 good.",
+		    sent_inference: "The SS V2 good.",
 		    sent_question:  "the SS V2 not excellent?",
 		},
 		like_love: {
