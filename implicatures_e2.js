@@ -44,9 +44,10 @@ function shuffle (a)
 //Pass a trial object in to be populated?
 function doSentSubs (sents, scale, domain)
 {
+
     inference = sents["scales"][scale]["sent_inference"];
-    context = sents["scales"][scale]["sent_question"];
-    //Q = sents["scales"][scale]["Q"][order];
+    question = sents["scales"][scale]["sent_question"];
+
     SP = sents["domains"][domain]["SP"]; //Plural
     SS = sents["domains"][domain]["SS"]; //Singular
     P1 = sents["domains"][domain]["P1"]; //Predicate 1
@@ -54,131 +55,124 @@ function doSentSubs (sents, scale, domain)
     V1 = sents["domains"][domain]["V1"]; //Past
     V2 = sents["domains"][domain]["V2"]; //Present
 
-    inference = sent.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-    context = sent.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
+    inference = inference.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
 
-    return [inference, context];
+    question = question.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
+
+    return [inference, question];
 }
 
 // ############################## BP Changes Configuration settings ##############################
 var sents = {
     scales: {
 		training1: {
-		    sent_context: "A and B were talking about sailing, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'I enjoy going sailing with my father.'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, he enjoys waling in the woords alone?"
+		    sent_manipulation: null,
+		    sent_inference: "I enjoy going sailing with my father.",
+		    sent_question:  "he enjoys walking in the woods alone?"
 		},	
-		training2: {
-			sent_context: "A and B were talking about restaurants, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'I don't like eating out at upscale places.'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, he despises fancy restaurants?"
+	training2: {
+		    sent_manipulation: null,
+		    sent_inference: "I don't like eating out at upscale places.",
+		    sent_question:  "he despises fancy restaurants?"
 		},	
-		all_some: {
-		    sent_context: "A and B were talking about SP, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'some of the SP V1 P1'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, not all of the SP V1 P1?"
+		all_some: {		   
+		    sent_manipulation: null,
+		    sent_inference: "Some of the SP V1 P1.",
+		    sent_question:  "not all of the SP V1 P1?"
 		},
 		always_sometimes: {
-			sent_context: "A and B were talking about SP, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'sometimes the SP V1 P1'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, the SP V1 not always P1?"
+		    sent_manipulation: null,
+		    sent_inference: "Sometimes the SP V1 P1.",
+		    sent_question:  "the SP V1 not always P1?"
 		},
 		and_or: {
-			sent_context: "A and B were talking about SP, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'the SS V2 P1 or P2'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, the SS V2 not both P1 and p2?"
+		    sent_manipulation: null,
+		    sent_inference: "The SS V2 P1 or P2.",
+		    sent_question:  "the SS V2 not both P1 and P2?"
 		},
 		two_three: {
-			sent_context: "A and B were talking about SP, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'two of the SS V1 P1'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, two but not three of the SP V1 P1?",
+		    sent_manipulation: null,
+		    sent_inference: "Two of the SP V1 P1.",
+		    sent_question:  "two but not three of the SP V1 P1?",
 		},
 		good_excellent: {
-		    sent_context: "A and B were talking about SS, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'The SS V2 good'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, the SS V2 not excellent?",
+		    sent_manipulation: null,
+		    sent_inference: "The SS V2 good.",
+		    sent_question:  "the SS V2 not excellent?",
 		},
 		like_love: {
-		    sent_context: "A and B were talking about a SS, yesterday",
-		    sent_manipulation: NULL,
-		    sent_inference: "A said, 'I liked the SS'",
-		    sent_question:  "Would you conclude from this that, according to
-		    A, he did not love the SS?",
+		    sent_manipulation: null,
+		    sent_inference: "I liked the SS.",
+		    sent_question:  "he did not love the SS?",
 		}
     },
     domains: {
-		training1: {	    
-		},
-		training2: {	    
-		},
-		movies: {
-		    SP: "movies",
-		    SS: "movie",
-		    P1: "funny",
-		    P2: "sad",
-		    V1: "were",
-		    V2: "was"
-		},
-		cookies: {
-		    SP: "cookies",
-		    SS: "cookie",
-		    P1: "chocolate",
-		    P2: "oatmeal",
-		    V1: "were",	    
-		    V2: "was"
-		},
-		players: {
-		    SP: "players",
-		    SS: "player",
-		    P1: "skillful",
-		    P2: "hardworking",
-		    V1: "were",
-		    V2: "was"
-		},
-		weather: {
-		    SP: "weekends",
-		    SS: "weekend",
-		    P1: "sunny",
-		    P2: "windy",
-		    V1: "were",
-		    V2: "was"
-		},
-		clothes: {
-		    SP: "shirts",
-		    SS: "shirt",
-		    P1: "striped",
-		    P2: "soft",
-		    V1: "were",
-		    V2: "was"
-		},
-		students: {
-		    SP: "students",
-		    SS: "student",
-		    P1: "tired",
-		    P2: "hungry",
-		    V1: "were",
-		    V2: "was"
-		}
+	training1: {
+	    sent_context: "John and Bob were talking about sailing yesterday.",
+	},
+	training2: {
+	    sent_context: "John and Bob were talking about restaurants yesterday.",    
+	},
+	movies: {
+	    sent_context: "Yesterday, John and Bob were talking about the movies at the local theater.",
+	    SP: "movies",
+	    SS: "movie",
+	    P1: "funny",
+	    P2: "sad",
+	    V1: "were",
+	    V2: "was"
+	},
+	cookies: {
+	    sent_context: "A few days ago, John and Bob were talking about cookies at a local bakery.",
+	    SP: "cookies",
+	    SS: "cookie",
+	    P1: "chocolate",
+	    P2: "oatmeal",
+	    V1: "were",	    
+	    V2: "was"
+	},
+	players: {
+	    sent_context: "Last week, John and Bob were talking about the players on their basketball team.",
+	    SP: "players",
+	    SS: "player",
+	    P1: "skillful",
+	    P2: "hardworking",
+	    V1: "were",
+	    V2: "was"
+	},
+	weather: {
+	    sent_context: "Bob and John were talking about the weather.",
+	    SP: "weekends",
+	    SS: "weekend",
+	    P1: "sunny",
+	    P2: "windy",
+	    V1: "were",
+	    V2: "was"
+	},
+	clothes: {
+	    sent_context: "Last month, Bob and John were talking about the selection of shirts at a local store.",
+	    SP: "shirts",
+	    SS: "shirt",
+	    P1: "striped",
+	    P2: "soft",
+	    V1: "were",
+	    V2: "was"
+	},
+	students: {
+	    sent_context: "A year ago, Bob and John were talking about the students in their class.",
+	    SP: "students",
+	    SS: "student",
+	    P1: "tired",
+	    P2: "hungry",
+	    V1: "were",
+	    V2: "was"
+	}
     }
 };  
 
 
 // Parameters for this participant
-var speakers = ["John","Mary"];
+var speakers = ["John","Bob"];
 var scales = Object.keys(sents.scales);
 var domains = Object.keys(sents.domains);
 
@@ -232,7 +226,7 @@ var experiment = {
 	// Loop through radio buttons
 	for (i = 0; i < radio.length; i++) {
 	    if (radio[i].checked) {
-		experiment.data.rating.push(radio[i].value);
+		experiment.data.judgment.push(radio[i].value);
 		response_logged = true;		    
 	    }
 	}
@@ -261,7 +255,7 @@ var experiment = {
 	    // clear the test message and adjust progress bar
 	    $("#testMessage").html('');  
 	    $("#prog").attr("style","width:" +
-			    String(100 * (1 - orders.length/totalTrials)) + "%")
+			    String(100 * (1 - scales.length/totalTrials)) + "%")
 	    
 	    // Get the current trial - <code>shift()</code> removes the first element
 	    // randomly select from our scales array,
@@ -270,26 +264,31 @@ var experiment = {
 	    var domain = domains.shift();
 	    
 	    // if the current trial is undefined, call the end function.
-	    typeof scale == "undefined" ? experiment.debriefing() : true
+	    if (typeof scale == "undefined") {
+		return experiment.debriefing();
+	    }
 	    
 	    // Generate the sentence stimuli
 	    speaker = shuffle(speakers)[0]
-	    sent_context = sents["scales"][scale]["context"];
-	    sent_inference = doSentSubs(sents, scale, domain);
-	    sent_question = doSentSubs(sents, scale, domain);
+	    sent_context = sents["domains"][domain]["sent_context"];
+
+	    sent_materials = doSentSubs(sents, scale, domain);	
 	    
 	    // Display the sentence stimuli
 	    $("#sent_context").html(sent_context);
-	    $("#sent_inference").html(sent_inference);
-	    $("#sent_question").html(sent_question);
-	    $("#speaker").html(speaker)
+	    $("#speaker").html("<i>" + speaker + " said:</i>")
+	    $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
+				      sent_materials[0] + "\"");
+	    $("#sent_question").html("Would you conclude from this sentence that, according to " +
+				     speaker + ", " +
+				     sent_materials[1]);
 	    
 	    // push all relevant variables into data object	    
 	    experiment.data.scale.push(scale);
 	    experiment.data.domain.push(domain);
 	    experiment.data.sent_context.push(sent_context);
-	    experiment.data.sent_inference.push(sent_inference);
-	    experiment.data.sent_question.push(sent_question);
+	    experiment.data.sent_inference.push(sent_materials[0]);
+	    experiment.data.sent_question.push(sent_materials[1]);
 	    experiment.data.speaker.push(speaker); 
 	    
 	    showSlide("stage");
