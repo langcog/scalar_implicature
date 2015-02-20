@@ -267,9 +267,8 @@ var experiment = {
 	    // randomly select from our scales array,
 	    // stop exp after we've exhausted all the domains
 	    var scale = scales.shift();
-	    console.log("scale: ", scale);
 	    var domain = domains.shift();
-	    console.log("domain: ", domain);
+	    
 	    // if the current trial is undefined, call the end function.
 	    if (typeof scale == "undefined") {
 		return experiment.debriefing();
