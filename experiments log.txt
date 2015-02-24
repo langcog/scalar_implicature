@@ -3,11 +3,19 @@
 - six scales
 - six domains
 - three comparison conditions - upper/lower/full 
-- 100 participants
+- 100 participants on 2/10
 - note that we flipped one of the order labels such that upper and lower are reversed
+- results support differentiation across scales
 
 * Experiment 2
 - identical to experiment 1 except we adopt the DV from van Tiel 2015
   - inference 2AFC
   - context sentence, inference sentence, question
 - hypothesis is that we should replicate E1 and van Tiel's implicature patterns
+- ran 100 participants on 2/24
+
+* Experiment 3 
+- began development 2/24
+- goal is to create an epistemic manipulation, following bergen & grodner (2012)
+  - manipulate how much Bob/John know about the particular situation they are in.
+- target is 200 participants
