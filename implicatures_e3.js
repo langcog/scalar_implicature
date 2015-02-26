@@ -1,5 +1,4 @@
-// ############################## Helper functions ##############################
-
+//############################## Helper functions ##############################
 // Shows slides. We're using jQuery here - the **$** is the jQuery selector function, which takes as input either a DOM element or a CSS selector string.
 function showSlide(id) {
 	// Hide all slides
@@ -69,57 +68,48 @@ function doSpeakerSub(speaker, manip) {
 	manip = manip.replace("SPEAKER", speaker);
 	return manip;
 }
+//############################## Helper functions ##############################
 
-// ############################## BP Changes Configuration settings ##############################
+
 var sents = {
-	//todo: make it so that manipulation comes from a manipulation choice from the function call
     scales: {
 		training1: {
-		    //sent_manipulation: null,
 		    sent_inference: "I enjoy going sailing with my father.",
 		    sent_question:  "he enjoys walking in the woods alone?"
 		},	
 		training2: {
-		    //sent_manipulation: null,
 		    sent_inference: "I don't like eating out at upscale places.",
 		    sent_question:  "he despises fancy restaurants?"
 		},	
 		all_some: {		   
-		    //sent_manipulation: null,
 		    sent_inference: "Some of the SP V1 P1.",
 		    sent_question:  "not all of the SP V1 P1?"
 		},
 		always_sometimes: {
-		    //sent_manipulation: null,
 		    sent_inference: "Sometimes the SP V1 P1.",
 		    sent_question:  "the SP V1 not always P1?"
 		},
 		and_or: {
-		    //sent_manipulation: null,
 		    sent_inference: "The SS V2 P1 or P2.",
 		    sent_question:  "the SS V2 not both P1 and P2?"
 		},
 		two_three: {
-		    //sent_manipulation: null,
 		    sent_inference: "Two of the SP V1 P1.",
 		    sent_question:  "two but not three of the SP V1 P1?",
 		},
 		good_excellent: {
-		    //sent_manipulation: null,
 		    sent_inference: "The SS V2 good.",
 		    sent_question:  "the SS V2 not excellent?"
 		},
 		like_love: {
-		    //sent_manipulation: null,
 		    sent_inference: "I liked the SS.",
 		    sent_question:  "he did not love the SS?"
 		}
     },
     domains: {
-    	//if it says "speaker" then it is a sentence Charlie wrote as a filler that may or may not be good
 		training1: {
 		    sent_context_plural: "John and Bob were talking about sailing yesterday.",
-		    sent_manipulation_high: "SPEAKER is professional sailor and teaches on the side.",
+		    sent_manipulation_high: "SPEAKER is professional sailor and works at the local yacht club.",
 		    sent_manipulation_low: "SPEAKER has an intense fear of deep water, it has something\
 		    to do with his childhood and having watched Pirates of the Caribbean too many times.",
 		},
@@ -205,9 +195,7 @@ var sents = {
     }
 }
 
-
-// Parameters for this participant
-// console.log("sent_main" )
+//###:-----------------CONDITION PARAMETERS-------------------:###
 var speakers = ["John","Bob"];
 //manipulations is new
 var manipulation_choices = ["high", "low"];
@@ -223,16 +211,17 @@ domains.shift();
 // now put the training trials up front and shuffle the rest of the trials.
 scales = ["training1","training2"].concat(shuffle(scales));
 domains = ["training1","training2"].concat(shuffle(domains));
+//###:-----------------CONDITION PARAMETERS-------------------:###
 
-var totalTrials = scales.length;
+var totalTrials = scales.length; //One trial for each scale
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
-// ############################## The main event ##############################
+//###:-----------------MAIN EVENT-------------------:###
 var experiment = {
-    
-    // The object to be submitted.
+
+    //Data object for logging responses, etc
     data: {
 		scale: [],
 		domain: [],
@@ -249,7 +238,7 @@ var experiment = {
 		expt_gen: [],
     },
     
-    // end the experiment
+    //End the experiment
     end: function() {
 		showSlide("finished");
 		setTimeout(function() {
@@ -257,7 +246,7 @@ var experiment = {
 		}, 1500);
     },
 
-    // LOG RESPONSE
+    //Log response
     log_response: function() {
 		var response_logged = false;
 		//Array of radio buttons
@@ -274,40 +263,38 @@ var experiment = {
 		if (response_logged) {
 		    nextButton.blur();
 		    
-		    // uncheck radio buttons
+		    //Uncheck radio buttons
 		    for (i = 0; i < radio.length; i++) {
 				radio[i].checked = false
 		    }
-		    experiment.next();
+		    experiment.next(); //Move to next condition
 		} else {
+			//Else respondent didn't make a response
 		    $("#testMessage").html('<font color="red">' + 
 					   'Please make a response!' + 
 					   '</font>');
 		}
 	},
     
-    // The work horse of the sequence - what to do on every trial.
+    //Run every trial
     next: function() {
-		// Allow experiment to start if it's a turk worker OR if it's a test run
+		//Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top | turk.workerId.length > 0) {
 
-		    // clear the test message and adjust progress bar
+		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - scales.length/totalTrials)) + "%");
 		    
-		    // Get the current trial - <code>shift()</code> removes the first element
-		    // randomly select from our scales array,
-		    // stop exp after we've exhausted all the domains
-		    var scale = scales.shift();
+		    //Get the current trial parameters - scale, domain, speaker
+		    var scale = scales.shift(); //<code>shift()</code> removes the first element of an array
 		    var domain = domains.shift();
+		    speaker = shuffle(speakers)[0]; //Randomize speaker
 
-		    // if the current trial is undefined, call the end function.
+		    // If the current trial is undefined, move to debrief
 		    if (typeof scale == "undefined") {
 				return experiment.debriefing();
 		    }
-		    
-		    speaker = shuffle(speakers)[0]; //Randomize speaker
 
 		    //###:---------Manipulation code----------:###
 		    manipulation_level = shuffle(manipulation_choices)[0]; //Randomize manipulation
@@ -331,7 +318,7 @@ var experiment = {
 		    //Main substitition function (everything but manipulation)
 		    sent_materials = doSentSubs(sents, scale, domain);	
 		    
-		    // Display the sentence stimuli
+		    //###:-----------------Display trial-----------------:###
 		    $("#sent_context").html(sent_context);
 		    //adding in manipulation
 		    $("#speaker").html(speaker);
@@ -342,8 +329,9 @@ var experiment = {
 		    $("#sent_question").html("Would you conclude from this sentence that, according to " +
 					     speaker + ", " +
 					     sent_materials[1]);
+		    //###:-----------------Display trial-----------------:###
 		    
-		    // push all relevant variables into data object	    
+		    //###:-------------Log trial data (push to data object)-------------:###
 		    experiment.data.scale.push(scale);
 		    experiment.data.domain.push(domain);
 		    experiment.data.sent_context.push(sent_context);
@@ -352,15 +340,18 @@ var experiment = {
 		    experiment.data.manipulation_level.push(manipulation_level);
 		    experiment.data.sent_manipulation.push(sent_manipulation);
 		    experiment.data.speaker.push(speaker); 
+		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
 		}
     },
-    //	go to debriefing slide
+
+    //Show debrief
     debriefing: function() {
 		showSlide("debriefing");
     },
-    // submitcomments function
+
+    //###:-------------Log debrief data-------------:###
     submit_comments: function() {
 		experiment.data.language.push(document.getElementById("homelang").value);
 		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
@@ -368,5 +359,5 @@ var experiment = {
 		experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 		experiment.end();
     }
+    //###:-------------Log debrief data-------------:###
 };
-
