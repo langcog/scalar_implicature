@@ -12,11 +12,11 @@ library("rjson")
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("production-results/")
+files <- dir("production-results/e1/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("production-results/",f,sep="")
+  jf <- paste("production-results/e1/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    comparison = jd$answer$comparison,
@@ -31,9 +31,16 @@ for (f in files) {
 Exclude non-compliant participants and non-English speakers. 
 
 ```{r}
+compliant <- d.raw %>% 
+  filter(grepl("training", comparison)) %>%
+  group_by(workerid) %>%
+  summarise(compliant = rating[domain == "training2"] > 5)
+
 d <- d.raw %>% 
+  left_join(compliant) %>%
   filter(grepl(pattern = "english", language, ignore.case = TRUE), 
-         comparison != "training")
+         comparison != "training", 
+         compliant == TRUE)
 ```
 
 Note: we discovered that "upper" was miscoded in the experiment as "full" (they are flipped). Let's unflip them. 
@@ -53,10 +60,12 @@ First look at means across scales.
 ```{r}
 ms <- d %>%
   group_by(scale, comparison) %>%
-  summarise(cil = ci.low(rating), 
+  summarise(n = n(),
+            cil = ci.low(rating), 
             cih = ci.high(rating), 
             rating = mean(rating))
 
+pdf("plots/e1.pdf")
 qplot(x = scale, y = rating, 
       fill = comparison,
       geom = "bar", stat = "identity", 
@@ -65,7 +74,45 @@ qplot(x = scale, y = rating,
   geom_linerange(aes(ymin = rating - cil, 
                      ymax = rating + cih),
                  position = position_dodge(width=.9))
+dev.off()
 ```
+
+Flip to make distance scores.
+
+```{r}
+dms <- d %>%
+  group_by(scale, comparison) %>%
+  mutate(dist = (6 - (rating - 1))/6) %>%
+  summarise(n = n(),
+            cil = ci.low(dist), 
+            cih = ci.high(dist), 
+            rating = mean(dist))
+
+pdf("plots/e1_distance.pdf")
+qplot(x = scale, y = rating, 
+      fill = comparison,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = rating - cil, 
+                     ymax = rating + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Distance (1 - similarity)")
+dev.off()
+
+pdf("plots/e1_upperonly.pdf")
+qplot(x = scale, y = rating, 
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = filter(ms, comparison=="upper")) + 
+  geom_linerange(aes(ymin = rating - cil, 
+                     ymax = rating + cih),
+                 position = position_dodge(width=.9)) + 
+  ylim(c(0,1)) + 
+  ylab("Distance (1 - similarity)")
+dev.off()
+```
+
 
 Now break down by plurality. This isn't super interpretable. 
 
