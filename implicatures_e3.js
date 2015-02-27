@@ -109,22 +109,19 @@ var sents = {
     domains: {
 		training1: {
 		    sent_context_plural: "John and Bob were talking about sailing yesterday.",
-		    sent_manipulation_high: "SPEAKER is professional sailor and works at the local yacht club.",
-		    sent_manipulation_low: "SPEAKER has an intense fear of deep water, it has something\
-		    to do with his childhood and having watched Pirates of the Caribbean too many times.",
+		    sent_manipulation_high: "SPEAKER spends a lot of time with his family.",
+		    sent_manipulation_low: "SPEAKER spends a lot of time with his family.",
 		},
 		training2: {
 		    sent_context_plural: "John and Bob were talking about restaurants yesterday.",
-		    sent_manipulation_high: "SPEAKER is a well-known food critic and writes a column on food, laughter and life\
-		    for the New Yorker magazine.",
-		    sent_manipulation_low: "SPEAKER believes in using the cardboard boxes from his frozen\
-		    pizza dinners as plates to expedite clean-up time.",
+		    sent_manipulation_high: "SPEAKER enjoys reading restaurant reviews.",
+		    sent_manipulation_low: "SPEAKER enjoys reading restaurant reviews.",
 		},
 		movies: {
 		    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
 		    sent_context_singular: "Yesterday, John and Bob were talking about a movie at the local theater.",
 		    sent_manipulation_high: "SPEAKER has always loved movies.",
-		    sent_manipulation_low: "SPEAKER has never been very interested in movies.",
+		    sent_manipulation_low: "SPEAKER typically goes to sleep in movies.",
 		    SP: "movies",
 		    SS: "movie",
 		    P1: "funny",
@@ -134,9 +131,9 @@ var sents = {
 		},
 		cookies: {
 		    sent_context_plural: "A few days ago, John and Bob were talking about cookies at a local bakery.",
-		    sent_context_singular: "A few days ago, John and Bob were talking about a particular cookie at a local bakery.",
-		   	sent_manipulation_high: "SPEAKER goes to the bakery every day.",
-		    sent_manipulation_low:  "SPEAKER had never been to a bakery before.",
+		    sent_context_singular: "A few days ago, John and Bob were talking about a particular kind of cookie at a local bakery.",
+		    sent_manipulation_high: "SPEAKER goes to the bakery every day.",
+		    sent_manipulation_low:  "SPEAKER has never been to the bakery before.",
 		    SP: "cookies",
 		    SS: "cookie",
 		    P1: "chocolate",
@@ -148,7 +145,7 @@ var sents = {
 		    sent_context_plural: "Last week, John and Bob were talking about the football game.",
 		    sent_context_singular: "Last week, John and Bob were talking about a player in a recent football game.",
 		    sent_manipulation_high: "SPEAKER is a huge football fan.",
-		    sent_manipulation_low: "SPEAKER has never watched football before.",
+		    sent_manipulation_low: "SPEAKER has only seen one or two football games.",
 		    SP: "players",
 		    SS: "player",
 		    P1: "skillful",
@@ -157,9 +154,9 @@ var sents = {
 		    V2: "was"
 		},
 		weather: {
-		    sent_context_plural: "Bob and John were talking about the weather during a recent trip.",
-		    sent_context_singular: "Bob and John were talking about the previous weekend.",
-		    sent_manipulation_high: "SPEAKER is a climatologist.",
+		    sent_context_plural: "Bob and John were talking about the weather during the previous month.",
+		    sent_context_singular: "Bob and John were talking about the weather during the previous weekend.",
+		    sent_manipulation_high: "SPEAKER watches the weather channel every day.",
 		    sent_manipulation_low: "SPEAKER doesn't usually pay attention to the weather.",
 		    SP: "weekends",
 		    SS: "weekend",
@@ -170,8 +167,8 @@ var sents = {
 		},
 		clothes: {
 		    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
-		    sent_context_singular: "Last month, Bob and John were talking about a shirt their friend wore to a party.",
-		   	sent_manipulation_high: "SPEAKER is an avid shirt collector.",
+		    sent_context_singular: "Last month, Bob and John were talking about a shirt at a local store.",
+		    sent_manipulation_high: "SPEAKER is an avid shopper and likes dressing up.",
 		    sent_manipulation_low: "SPEAKER has no interest in fashion or clothes.",
 		    SP: "shirts",
 		    SS: "shirt",
@@ -182,9 +179,9 @@ var sents = {
 		},
 		students: {
 		    sent_context_plural: "A year ago, Bob and John were talking about the students in a class they taught.",
-		    sent_context_singular: "A year ago, Bob and John were talking about a particular student they used to teach.",
-		    sent_manipulation_high: "SPEAKER keeps in touch with all his previous students and knows them well.",
-		    sent_manipulation_low: "SPEAKER does not care that much about his students",
+		    sent_context_singular: "A year ago, Bob and John were talking about a  student in a class they taught.",
+		    sent_manipulation_high: "SPEAKER cares about his students and keeps in touch with them.",
+		    sent_manipulation_low: "SPEAKER does not care that much about his students and doesn't get to know them.",
 		    SP: "students",
 		    SS: "student",
 		    P1: "tired",
