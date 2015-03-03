@@ -18,4 +18,5 @@
 - began development 2/24
 - goal is to create an epistemic manipulation, following bergen & grodner (2012)
   - manipulate how much Bob/John know about the particular situation they are in.
-- target is 200 participants
+- collected  100 participants 2/26 
+- data collection overnight, not sure how much that matters. 

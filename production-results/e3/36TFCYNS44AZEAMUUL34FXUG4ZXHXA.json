@@ -1,0 +1,115 @@
+{
+    "ApprovalTime": "2015-02-27T07:21:45Z",
+    "AutoApprovalTime": "2015-02-27T07:21:09Z",
+    "AssignmentId": "36TFCYNS44AZEAMUUL34FXUG4ZXHXA",
+    "WorkerId": "A1O3ABR69LGPIE",
+    "AcceptTime": "2015-02-27T07:13:27Z",
+    "HITId": "388FBO7JZRTD1R0LCDFHEB3ZZH8NYW",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "he despises fancy restaurants?",
+            "the shirt was not excellent?",
+            "two but not three of the weekends were sunny?",
+            "he did not love the movie?",
+            "the student was not both tired and hungry?",
+            "the cookies were not always chocolate?",
+            "not all of the players were skillful?"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "clothes",
+            "weather",
+            "movies",
+            "students",
+            "cookies",
+            "players"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "John enjoys reading restaurant reviews.",
+            "John is an avid shopper and likes dressing up.",
+            "John doesn't usually pay attention to the weather.",
+            "John typically goes to sleep in movies.",
+            "Bob does not care that much about his students and doesn't get to know them.",
+            "John goes to the bakery every day.",
+            "John is a huge football fan."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "high",
+            "high",
+            "high",
+            "low",
+            "low",
+            "low",
+            "high",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Last month, Bob and John were talking about a shirt at a local store.",
+            "Bob and John were talking about the weather during the previous month.",
+            "Yesterday, John and Bob were talking about a movie at the local theater.",
+            "A year ago, Bob and John were talking about a  student in a class they taught.",
+            "A few days ago, John and Bob were talking about cookies at a local bakery.",
+            "Last week, John and Bob were talking about the football game."
+        ],
+        "expt_aim": [
+            "How trustworthy a person's opinion on something is based upon their interest or knowledge in the subject. For example, Bob may say something about an object/activity, but if he is not interested in or hates that object/acitivity, I may not trust his opinion on it."
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "I don't like eating out at upscale places.",
+            "The shirt was good.",
+            "Two of the weekends were sunny.",
+            "I liked the movie.",
+            "The student was tired or hungry.",
+            "Sometimes the cookies were chocolate.",
+            "Some of the players were skillful."
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "good_excellent",
+            "two_three",
+            "like_love",
+            "and_or",
+            "always_sometimes",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "John",
+            "John",
+            "John",
+            "John",
+            "Bob",
+            "John",
+            "John"
+        ],
+        "expt_gen": [
+            "No comment"
+        ],
+        "character_thoughts": [
+            "They are average guys."
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "2",
+            "2",
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-27T07:16:09Z"
+}

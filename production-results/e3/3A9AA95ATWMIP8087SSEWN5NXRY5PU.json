@@ -1,0 +1,115 @@
+{
+    "ApprovalTime": "2015-02-27T07:31:46Z",
+    "AutoApprovalTime": "2015-02-27T07:27:51Z",
+    "AssignmentId": "3A9AA95ATWMIP8087SSEWN5NXRY5PU",
+    "WorkerId": "AS4WHZ0EVURW",
+    "AcceptTime": "2015-02-27T07:20:04Z",
+    "HITId": "388FBO7JZRTD1R0LCDFHEB3ZZH8NYW",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "he despises fancy restaurants?",
+            "the shirts were not always striped?",
+            "the cookie was not excellent?",
+            "he did not love the weekend?",
+            "the student was not both tired and hungry?",
+            "two but not three of the players were skillful?",
+            "not all of the movies were funny?"
+        ],
+        "domain": [
+            "training1",
+            "training2",
+            "clothes",
+            "cookies",
+            "weather",
+            "students",
+            "players",
+            "movies"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "John enjoys reading restaurant reviews.",
+            "John is an avid shopper and likes dressing up.",
+            "John goes to the bakery every day.",
+            "Bob doesn't usually pay attention to the weather.",
+            "Bob does not care that much about his students and doesn't get to know them.",
+            "John is a huge football fan.",
+            "Bob has always loved movies."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "high",
+            "high",
+            "high",
+            "high",
+            "low",
+            "low",
+            "high",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Last month, Bob and John were talking about the selection of shirts at a local store.",
+            "A few days ago, John and Bob were talking about a particular kind of cookie at a local bakery.",
+            "Bob and John were talking about the weather during the previous weekend.",
+            "A year ago, Bob and John were talking about a  student in a class they taught.",
+            "Last week, John and Bob were talking about the football game.",
+            "Yesterday, John and Bob were talking about the movies at a local theater."
+        ],
+        "expt_aim": [
+            "Reading comprehension?"
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "I don't like eating out at upscale places.",
+            "Sometimes the shirts were striped.",
+            "The cookie was good.",
+            "I liked the weekend.",
+            "The student was tired or hungry.",
+            "Two of the players were skillful.",
+            "Some of the movies were funny."
+        ],
+        "scale": [
+            "training1",
+            "training2",
+            "always_sometimes",
+            "good_excellent",
+            "like_love",
+            "and_or",
+            "two_three",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "John",
+            "John",
+            "John",
+            "Bob",
+            "Bob",
+            "John",
+            "Bob"
+        ],
+        "expt_gen": [
+            "No"
+        ],
+        "character_thoughts": [
+            "No specific thoughts..."
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "2",
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-02-27T07:22:51Z"
+}
