@@ -20,3 +20,14 @@
   - manipulate how much Bob/John know about the particular situation they are in.
 - collected  100 participants 2/26 
 - data collection overnight, not sure how much that matters. 
+- nothing much happened with epistemic manipulation - in hindsight, probably because the knowledge wasn't targeted enough at the particular scalar claim made by the speaker.
+
+* Experiment 4
+- began development 3/3
+- epistemic manipulation mark 2
+- remove all scalars except "some"
+
+* Experiment 5
+- began development 3/3
+- base rate manipulation
+- remove all scalars except "some"

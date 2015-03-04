@@ -1,0 +1,140 @@
+PSYCH 130 - EXPERIMENT 3 ANALYSIS
+=================================
+
+Preliminaries.
+
+```{r}
+rm(list=ls())
+source("analysis/useful_dplyr.R")
+library("rjson")
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("production-results/e3/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("production-results/e3/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answer$scale,
+                   domain = jd$answer$domain,
+                   knowledge = jd$answer$manipulation_level,
+                   judgment = as.numeric(jd$answer$judgment)==1,
+                   language = jd$answer$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Exclude non-compliant participants and non-English speakers. 
+
+```{r}
+compliant <- d.raw %>% 
+  filter(grepl("training", domain)) %>%
+  group_by(workerid) %>%
+  summarise(compliant = judgment[domain == "training1"] == FALSE)
+  
+d <- d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         domain != "training1", 
+         domain != "training2", 
+         compliant == TRUE)
+```
+
+Main Analysis
+-------------
+
+First look at means across scales with no breakdown by epistemic condition. 
+
+```{r}
+ms <- d %>%
+  group_by(scale) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment))
+
+pdf("plots/e3.pdf")
+qplot(x = scale, y = judgment, 
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = judgment - cil, 
+                     ymax = judgment + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Does the inference follow? 1=yes, 0=no")
+dev.off()
+```
+
+Next break down by epistemic condition. 
+
+```{r}
+ms <- d %>%
+  group_by(scale, knowledge) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment))
+
+# pdf("plots/e3_level.pdf")
+qplot(x = scale, y = judgment, 
+      fill = knowledge,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = judgment - cil, 
+                     ymax = judgment + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Does the inference follow? 1=yes, 0=no")
+# dev.off()
+```
+
+Mean across scales
+
+```{r}
+ms <- d %>%
+  group_by(knowledge) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment))
+
+qplot(x = knowledge, y = judgment, 
+      fill = knowledge,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = judgment - cil, 
+                     ymax = judgment + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Does the inference follow? 1=yes, 0=no")
+```
+
+Add domains:
+
+```{r}
+ms <- d %>%
+  group_by(scale, domain, knowledge) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment))
+
+qplot(x = scale, y = judgment, 
+      fill = knowledge,
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  facet_wrap(~domain) + 
+  geom_linerange(aes(ymin = judgment - cil, 
+                     ymax = judgment + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Does the inference follow? 1=yes, 0=no")
+```
+
+Statistical model:
+
+```{r}
+summary(glmer(judgment ~ scale + knowledge + (1 | workerid), 
+              family = "binomial", data=d))
+```
