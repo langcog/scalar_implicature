@@ -70,7 +70,6 @@ function doSpeakerSub(speaker, manip) {
 }
 //############################## Helper functions ##############################
 
-
 var sents = {
     scales: {
 		training1: {
@@ -84,26 +83,6 @@ var sents = {
 		all_some: {		   
 		    sent_inference: "Some of the SP V1 P1.",
 		    sent_question:  "not all of the SP V1 P1?"
-		},
-		always_sometimes: {
-		    sent_inference: "Sometimes the SP V1 P1.",
-		    sent_question:  "the SP V1 not always P1?"
-		},
-		and_or: {
-		    sent_inference: "The SS V2 P1 or P2.",
-		    sent_question:  "the SS V2 not both P1 and P2?"
-		},
-		two_three: {
-		    sent_inference: "Two of the SP V1 P1.",
-		    sent_question:  "two but not three of the SP V1 P1?",
-		},
-		good_excellent: {
-		    sent_inference: "The SS V2 good.",
-		    sent_question:  "the SS V2 not excellent?"
-		},
-		like_love: {
-		    sent_inference: "I liked the SS.",
-		    sent_question:  "he did not love the SS?"
 		}
     },
     domains: {
@@ -206,11 +185,15 @@ domains.shift();
 domains.shift();
 
 // now put the training trials up front and shuffle the rest of the trials.
-scales = ["training1","training2"].concat(shuffle(scales));
+scales = ["training1","training2"].concat(scales);
+
+//Debug
+console.log("scales line 210: ", scales);
+//Debug
 domains = ["training1","training2"].concat(shuffle(domains));
 //###:-----------------CONDITION PARAMETERS-------------------:###
 
-var totalTrials = scales.length; //One trial for each scale
+var totalTrials = domains.length; //One trial for each domain
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -281,15 +264,20 @@ var experiment = {
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
-				    String(100 * (1 - scales.length/totalTrials)) + "%");
+				    String(100 * (1 - domains.length/totalTrials)) + "%");
 		    
-		    //Get the current trial parameters - scale, domain, speaker
-		    var scale = scales.shift(); //<code>shift()</code> removes the first element of an array
+		    //#####:---Get the current trial parameters - scale, domain, speaker---:#####
+		    //Setting scale var:
+		    //First two conditions are training, the remainder are <all,some>
+		    numTrials = experiment.data.scale.length; //Tracks trial number
+		    if (numTrials < 2) { scale = scales[numTrials]; } //Training
+		    else { scale = scales[2]; } //<all,some>
+
 		    var domain = domains.shift();
 		    speaker = shuffle(speakers)[0]; //Randomize speaker
 
-		    // If the current trial is undefined, move to debrief
-		    if (typeof scale == "undefined") {
+		    // If the current trial domain is undefined, move to debrief
+		    if (typeof domain == "undefined") {
 				return experiment.debriefing();
 		    }
 
@@ -306,6 +294,7 @@ var experiment = {
 		    //###:---------Manipulation code----------:###
 
 		    //Adjust scales based on number (sing vs plural)
+		    //Keeping this for now in case we do something with number
 		    if (scale == "and_or" || scale == "good_excellent" || scale == "like_love") {
 		    	sent_context = sents["domains"][domain]["sent_context_singular"];
 		    } else {
@@ -326,6 +315,7 @@ var experiment = {
 		    $("#sent_question").html("Would you conclude from this sentence that, according to " +
 					     speaker + ", " +
 					     sent_materials[1]);
+		    console.log(sent_materials);
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
