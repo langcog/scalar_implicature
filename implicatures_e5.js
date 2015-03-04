@@ -282,8 +282,7 @@ var experiment = {
 		    }
 
 		    //###:---------Manipulation code----------:###
-		    //Manipulation hard-coded at level "LOW" for e4
-		    manipulation_level = manipulation_choices[1];
+		    manipulation_level = shuffle(manipulation_choices)[0]; //Randomize manipulation
 		    //Set manipulation sentence
 		    if (manipulation_level == "high") {
 		    	sent_manipulation = sents["domains"][domain]["sent_manipulation_high"];
