@@ -1,0 +1,3 @@
+Time,Action,Data
+2015/02/10 09:47:39,Create,"{u'description': u'Judge the similarity between pairs of sentences, simple and fun.', u'title': u'Sentence comparison study', u'url': u'https://langcog.stanford.edu/expts/scalar_implicature/implicatures_e1.html', u'assignment_duration': u'1 hour', u'qualifications': {u'location': u'US', u'approval_percentage': 85}, u'frame_height': 450, u'keywords': u'Language, experiment, short', u'auto_approval_delay': u'5 minutes', u'reward': 0.5}"
+2015/02/10 15:05:05,Add,10 assignments
