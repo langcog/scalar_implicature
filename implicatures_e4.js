@@ -99,8 +99,8 @@ var sents = {
 		movies: {
 		    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
 		    sent_context_singular: "Yesterday, John and Bob were talking about a movie at the local theater.",
-		    sent_manipulation_high: "SPEAKER has always loved movies.",
-		    sent_manipulation_low: "SPEAKER typically goes to sleep in movies.",
+		    sent_manipulation_high: "SPEAKER has seen every movie at the theater",
+		    sent_manipulation_low: "SPEAKER has not had a chance to see the movies at the theater.",
 		    SP: "movies",
 		    SS: "movie",
 		    P1: "funny",
@@ -111,8 +111,8 @@ var sents = {
 		cookies: {
 		    sent_context_plural: "A few days ago, John and Bob were talking about cookies at a local bakery.",
 		    sent_context_singular: "A few days ago, John and Bob were talking about a particular kind of cookie at a local bakery.",
-		    sent_manipulation_high: "SPEAKER goes to the bakery every day.",
-		    sent_manipulation_low:  "SPEAKER has never been to the bakery before.",
+		    sent_manipulation_high: "SPEAKER is the baker and knows which cookies were baked.",
+		    sent_manipulation_low:  "SPEAKER has never paid attention to the desserts at the bakery.",
 		    SP: "cookies",
 		    SS: "cookie",
 		    P1: "chocolate",
@@ -123,8 +123,9 @@ var sents = {
 		players: {
 		    sent_context_plural: "Last week, John and Bob were talking about the football game.",
 		    sent_context_singular: "Last week, John and Bob were talking about a player in a recent football game.",
-		    sent_manipulation_high: "SPEAKER is a huge football fan.",
-		    sent_manipulation_low: "SPEAKER has only seen one or two football games.",
+		     //this one was tricky I was trying to convey that the speaker knows about the set of players and the significance of skillful/hardworking
+		    sent_manipulation_high: "SPEAKER is a coach who is attending the game to scout all of the players.",
+		    sent_manipulation_low: "SPEAKER does not know how football is played.",
 		    SP: "players",
 		    SS: "player",
 		    P1: "skillful",
@@ -136,7 +137,7 @@ var sents = {
 		    sent_context_plural: "Bob and John were talking about the weather during the previous month.",
 		    sent_context_singular: "Bob and John were talking about the weather during the previous weekend.",
 		    sent_manipulation_high: "SPEAKER watches the weather channel every day.",
-		    sent_manipulation_low: "SPEAKER doesn't usually pay attention to the weather.",
+		    sent_manipulation_low: "SPEAKER has not been paying attention to the weather recently.",
 		    SP: "weekends",
 		    SS: "weekend",
 		    P1: "sunny",
@@ -147,8 +148,8 @@ var sents = {
 		clothes: {
 		    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
 		    sent_context_singular: "Last month, Bob and John were talking about a shirt at a local store.",
-		    sent_manipulation_high: "SPEAKER is an avid shopper and likes dressing up.",
-		    sent_manipulation_low: "SPEAKER has no interest in fashion or clothes.",
+		    sent_manipulation_high: "SPEAKER is an avid shopper who knows the full selection of shirts at the store.",
+		    sent_manipulation_low: "SPEAKER has not had a chance to look at the shirt selection.",
 		    SP: "shirts",
 		    SS: "shirt",
 		    P1: "striped",
