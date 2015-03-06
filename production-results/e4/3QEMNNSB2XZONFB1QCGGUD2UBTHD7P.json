@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T00:57:07Z",
+    "AutoApprovalTime": "2015-03-06T00:55:12Z",
+    "AssignmentId": "3QEMNNSB2XZONFB1QCGGUD2UBTHD7P",
+    "WorkerId": "A1M0QYZBOX2FSF",
+    "AcceptTime": "2015-03-06T00:47:33Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the cookies at the bakery are chocolate?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the movies at the theater are comedies?"
+        ],
+        "domain": [
+            "training1",
+            "cookies",
+            "training2",
+            "movies"
+        ],
+        "sent_manipulation": [
+            "Bob spends a lot of time with his family.",
+            "John ate one of the cookies but hasn't been to the bakery himself.",
+            "John enjoys reading restaurant reviews.",
+            "Bob has seen every movie at the theater."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "low",
+            "training",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Yesterday, John and Bob were talking about the movies at a local theater."
+        ],
+        "expt_aim": [
+            "Assumptions about the exclusiveness of the words \"some\" and \"all\""
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the cookies at the bakery are chocolate.",
+            "I don't like eating out at upscale places.",
+            "Some of the movies at the theater are comedies."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "Bob",
+            "John",
+            "John",
+            "Bob"
+        ],
+        "expt_gen": [
+            "Nope"
+        ],
+        "character_thoughts": [
+            "John makes looser assumptions than Bob"
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-06T00:50:12Z"
+}

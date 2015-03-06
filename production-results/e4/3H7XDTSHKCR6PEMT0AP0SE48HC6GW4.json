@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T00:57:07Z",
+    "AutoApprovalTime": "2015-03-06T00:55:36Z",
+    "AssignmentId": "3H7XDTSHKCR6PEMT0AP0SE48HC6GW4",
+    "WorkerId": "A1PGBO99HRG4O6",
+    "AcceptTime": "2015-03-06T00:48:54Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the students from the class have been successful?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the movies at the theater are comedies?"
+        ],
+        "domain": [
+            "training1",
+            "students",
+            "training2",
+            "movies"
+        ],
+        "sent_manipulation": [
+            "Bob spends a lot of time with his family.",
+            "Bob has kept in touch with all of the students.",
+            "Bob enjoys reading restaurant reviews.",
+            "Bob has only had the chance to see one of the movies showing at the theater."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "high",
+            "training",
+            "low"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "A year ago, Bob and John were talking about the students in a class they taught.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Yesterday, John and Bob were talking about the movies at a local theater."
+        ],
+        "expt_aim": [
+            "If the person taking the experiment can understand context and make conclusions from the sentence. "
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the students from the class have been successful.",
+            "I don't like eating out at upscale places.",
+            "Some of the movies at the theater are comedies."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "Bob",
+            "Bob",
+            "Bob",
+            "Bob"
+        ],
+        "expt_gen": [
+            "None."
+        ],
+        "character_thoughts": [
+            "They are friends who generally like to talk about things. "
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-06T00:50:36Z"
+}

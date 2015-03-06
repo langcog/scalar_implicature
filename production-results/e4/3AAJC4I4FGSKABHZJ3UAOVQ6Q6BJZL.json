@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-05T23:56:44Z",
+    "AutoApprovalTime": "2015-03-05T23:55:38Z",
+    "AssignmentId": "3AAJC4I4FGSKABHZJ3UAOVQ6Q6BJZL",
+    "WorkerId": "AEHXJIW38LJS4",
+    "AcceptTime": "2015-03-05T23:49:06Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the weekends in the month were sunny?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the students from the class have been successful?"
+        ],
+        "domain": [
+            "training1",
+            "weather",
+            "training2",
+            "students"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "John was around for the entire month.",
+            "Bob enjoys reading restaurant reviews.",
+            "John has only kept up with one of the students."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "high",
+            "training",
+            "low"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "Bob and John were talking about the weather during the previous month.",
+            "John and Bob were talking about restaurants yesterday.",
+            "A year ago, Bob and John were talking about the students in a class they taught."
+        ],
+        "expt_aim": [
+            "How we interpret sentences"
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the weekends in the month were sunny.",
+            "I don't like eating out at upscale places.",
+            "Some of the students from the class have been successful."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "John",
+            "Bob",
+            "John"
+        ],
+        "expt_gen": [
+            "I hope your research goes well"
+        ],
+        "character_thoughts": [
+            "They seem like normal dudes"
+        ],
+        "judgment": [
+            "1",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-05T23:50:38Z"
+}

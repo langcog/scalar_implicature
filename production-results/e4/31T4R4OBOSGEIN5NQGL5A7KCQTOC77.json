@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-05T23:56:43Z",
+    "AutoApprovalTime": "2015-03-05T23:52:50Z",
+    "AssignmentId": "31T4R4OBOSGEIN5NQGL5A7KCQTOC77",
+    "WorkerId": "A3LD1G3R5NOVYH",
+    "AcceptTime": "2015-03-05T23:46:16Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the shirts at the store are expensive?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the movies at the theater are comedies?"
+        ],
+        "domain": [
+            "training1",
+            "clothes",
+            "training2",
+            "movies"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "Bob has shopped at the store and looked at the shirt display.",
+            "John enjoys reading restaurant reviews.",
+            "John has only had the chance to see one of the movies showing at the theater."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "high",
+            "training",
+            "low"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "Last month, Bob and John were talking about the selection of shirts at a local store.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Yesterday, John and Bob were talking about the movies at a local theater."
+        ],
+        "expt_aim": [
+            "To see which direction people take ambivilent statements"
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the shirts at the store are expensive.",
+            "I don't like eating out at upscale places.",
+            "Some of the movies at the theater are comedies."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "Bob",
+            "John",
+            "John"
+        ],
+        "expt_gen": [
+            "nope"
+        ],
+        "character_thoughts": [
+            "I have no thoughts about John and Bob"
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-05T23:47:50Z"
+}

@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T00:57:07Z",
+    "AutoApprovalTime": "2015-03-06T00:53:47Z",
+    "AssignmentId": "3OLQQLKKNSPMZGQ3NGGX3LPO20HEJP",
+    "WorkerId": "A2GPLEO45M3HK0",
+    "AcceptTime": "2015-03-06T00:46:49Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the movies at the theater are comedies?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the weekends in the month were sunny?"
+        ],
+        "domain": [
+            "training1",
+            "movies",
+            "training2",
+            "weather"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "Bob has only had the chance to see one of the movies showing at the theater.",
+            "Bob enjoys reading restaurant reviews.",
+            "John was around for the entire month."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "low",
+            "training",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "Yesterday, John and Bob were talking about the movies at a local theater.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Bob and John were talking about the weather during the previous month."
+        ],
+        "expt_aim": [
+            "Whether things are logically true versus how we perceive them."
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the movies at the theater are comedies.",
+            "I don't like eating out at upscale places.",
+            "Some of the weekends in the month were sunny."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "Bob",
+            "Bob",
+            "John"
+        ],
+        "expt_gen": [
+            "Interesting."
+        ],
+        "character_thoughts": [
+            "I don't know enough to really say.  Just two guys, I guess."
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-06T00:48:47Z"
+}

@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T02:11:44Z",
+    "AutoApprovalTime": "2015-03-06T02:07:12Z",
+    "AssignmentId": "3VD82FOHKQOL3TXM7227LT67GJRCOS",
+    "WorkerId": "A2A8GX1LGLXFT5",
+    "AcceptTime": "2015-03-06T01:56:58Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the cookies at the bakery are chocolate?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the players on the team were skillful?"
+        ],
+        "domain": [
+            "training1",
+            "cookies",
+            "training2",
+            "players"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "John has been to the bakery and looked at the new cookies.",
+            "John enjoys reading restaurant reviews.",
+            "Bob saw only a single play."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "high",
+            "training",
+            "low"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
+            "John and Bob were talking about restaurants yesterday.",
+            "Last week, John and Bob were talking about the high school football game."
+        ],
+        "expt_aim": [
+            "To see people interpret sentences. "
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the cookies at the bakery are chocolate.",
+            "I don't like eating out at upscale places.",
+            "Some of the players on the team were skillful."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "John",
+            "John",
+            "Bob"
+        ],
+        "expt_gen": [
+            "No."
+        ],
+        "character_thoughts": [
+            "They like to make statements."
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-06T02:02:12Z"
+}

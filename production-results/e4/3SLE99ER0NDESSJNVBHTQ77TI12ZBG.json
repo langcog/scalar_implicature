@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T00:07:04Z",
+    "AutoApprovalTime": "2015-03-06T00:02:30Z",
+    "AssignmentId": "3SLE99ER0NDESSJNVBHTQ77TI12ZBG",
+    "WorkerId": "A9GNNAGBWOFAM",
+    "AcceptTime": "2015-03-05T23:49:50Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the cookies at the bakery are chocolate?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the students from the class have been successful?"
+        ],
+        "domain": [
+            "training1",
+            "cookies",
+            "training2",
+            "students"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "John ate one of the cookies but hasn't been to the bakery himself.",
+            "John enjoys reading restaurant reviews.",
+            "John has kept in touch with all of the students."
+        ],
+        "language": [
+            "Vietnamese"
+        ],
+        "manipulation_level": [
+            "training",
+            "low",
+            "training",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
+            "John and Bob were talking about restaurants yesterday.",
+            "A year ago, Bob and John were talking about the students in a class they taught."
+        ],
+        "expt_aim": [
+            "Dont take someone word without a grain of salt. Sentence structure relative cognitive thinking."
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the cookies at the bakery are chocolate.",
+            "I don't like eating out at upscale places.",
+            "Some of the students from the class have been successful."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "John",
+            "John",
+            "John"
+        ],
+        "expt_gen": [
+            "Conclusion : Therefore they have no other friends"
+        ],
+        "character_thoughts": [
+            "John and Bob seem to talk a lot with each other"
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "2"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-05T23:57:30Z"
+}

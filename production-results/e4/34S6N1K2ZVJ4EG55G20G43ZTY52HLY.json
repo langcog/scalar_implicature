@@ -1,0 +1,79 @@
+{
+    "ApprovalTime": "2015-03-06T00:12:14Z",
+    "AutoApprovalTime": "2015-03-06T00:09:10Z",
+    "AssignmentId": "34S6N1K2ZVJ4EG55G20G43ZTY52HLY",
+    "WorkerId": "A76V94E1EJMEZ",
+    "AcceptTime": "2015-03-06T00:03:06Z",
+    "HITId": "3I6NF2WGIGW9PB9FE7XPDUW933SG5H",
+    "Assignment": "",
+    "answer": {
+        "sent_question": [
+            "he enjoys walking in the woods alone?",
+            "not all of the players on the team were skillful?",
+            "he doesn't like eating at fancy restaurants?",
+            "not all of the students from the class have been successful?"
+        ],
+        "domain": [
+            "training1",
+            "players",
+            "training2",
+            "students"
+        ],
+        "sent_manipulation": [
+            "John spends a lot of time with his family.",
+            "Bob saw only a single play.",
+            "John enjoys reading restaurant reviews.",
+            "John has kept in touch with all of the students."
+        ],
+        "language": [
+            "English"
+        ],
+        "manipulation_level": [
+            "training",
+            "low",
+            "training",
+            "high"
+        ],
+        "sent_context": [
+            "John and Bob were talking about sailing yesterday.",
+            "Last week, John and Bob were talking about the high school football game.",
+            "John and Bob were talking about restaurants yesterday.",
+            "A year ago, Bob and John were talking about the students in a class they taught."
+        ],
+        "expt_aim": [
+            "Sentence structure"
+        ],
+        "sent_inference": [
+            "I enjoy going sailing with my father.",
+            "Some of the players on the team were skillful.",
+            "I don't like eating out at upscale places.",
+            "Some of the students from the class have been successful."
+        ],
+        "scale": [
+            "training1",
+            "all_some",
+            "training2",
+            "all_some"
+        ],
+        "speaker": [
+            "John",
+            "Bob",
+            "John",
+            "John"
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "character_thoughts": [
+            "They seem like judgmental people who do not enjoy new experiences"
+        ],
+        "judgment": [
+            "2",
+            "1",
+            "1",
+            "1"
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-03-06T00:04:10Z"
+}
