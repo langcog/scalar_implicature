@@ -36,7 +36,9 @@ Experiment 4
 
 * began development 3/3
 * epistemic manipulation mark 2
+  * try to be as direct as possible about perceptual access to a particular set
 * remove all scalars except "some"
+* run on 3/5
 
 Experiment 5
 ------------
