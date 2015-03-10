@@ -39,10 +39,3 @@ Experiment 4
   * try to be as direct as possible about perceptual access to a particular set
 * remove all scalars except "some"
 * run on 3/5
-
-Experiment 5
-------------
-
-* began development 3/3
-* base rate manipulation
-* remove all scalars except "some"

@@ -1,4 +1,4 @@
-PSYCH 130 - EXPERIMENT 2 ANALYSIS
+PSYCH 130 - EXPERIMENT 4 ANALYSIS
 =================================
 
 Preliminaries.
@@ -12,15 +12,16 @@ library("rjson")
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("production-results/e2/")
+files <- dir("production-results/e4/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("production-results/e2/",f,sep="")
+  jf <- paste("production-results/e4/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    scale = jd$answer$scale,
                    domain = jd$answer$domain,
+                   knowledge = jd$answer$manipulation_level,
                    judgment = as.numeric(jd$answer$judgment)==1,
                    language = jd$answer$language)
   d.raw <- bind_rows(d.raw, id)
@@ -33,7 +34,7 @@ Exclude non-compliant participants and non-English speakers.
 compliant <- d.raw %>% 
   filter(grepl("training", domain)) %>%
   group_by(workerid) %>%
-  summarise(compliant = judgment[domain == "training1"] == FALSE &
+  summarise(compliant = judgment[domain == "training1"] == FALSE & 
               judgment[domain == "training2"] == TRUE)
   
 d <- d.raw %>% 
@@ -48,17 +49,40 @@ d <- d.raw %>%
 Main Analysis
 -------------
 
-First look at means across scales. 
+First look at means broken down by epistemic condition.
 
 ```{r}
 ms <- d %>%
-  group_by(scale) %>%
+  group_by(knowledge) %>%
   summarise(cil = ci.low(judgment), 
             cih = ci.high(judgment), 
             judgment = mean(judgment))
 
-# pdf("plots/e2.pdf")
-qplot(x = scale, y = judgment, 
+pdf("plots/e4.pdf",width=4)
+qplot(x = knowledge, y = judgment, fill=knowledge, 
+      geom = "bar", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = judgment - cil, 
+                     ymax = judgment + cih),
+                 position = position_dodge(width=.9)) + 
+  ylab("Does the inference follow? 1=yes, 0=no")
+dev.off()
+```
+
+Next break down by domain condition. 
+
+```{r}
+ms <- d %>%
+  group_by(domain, knowledge) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment), 
+            n = n())
+
+# pdf("plots/e3_level.pdf")
+qplot(x = domain, y = judgment, 
+      fill = knowledge,
       geom = "bar", stat = "identity", 
       position = "dodge", 
       data = ms) + 
@@ -69,23 +93,18 @@ qplot(x = scale, y = judgment,
 # dev.off()
 ```
 
-Now by domain as well. 
+Statistics 
 
 ```{r}
-ms <- d %>%
-  group_by(scale, domain) %>%
-  summarise(cil = ci.low(judgment), 
-            cih = ci.high(judgment), 
-            judgment = mean(judgment))
 
-# pdf("plots/e2.pdf")
-qplot(x = scale, y = judgment, fill = domain, 
-      geom = "bar", stat = "identity", 
-      position = "dodge", 
-      data = ms) + 
-  geom_linerange(aes(ymin = judgment - cil, 
-                     ymax = judgment + cih),
-                 position = position_dodge(width=.9)) + 
-  ylab("Does the inference follow? 1=yes, 0=no")
-# dev.off()
+summary(glmer(judgment ~ knowledge + (1 | workerid) + 
+                (knowledge | domain), 
+              data = d,
+              family = "binomial"))
+
+summary(glmer(judgment ~ knowledge + (1 | workerid) + 
+                (1 | domain), 
+              data = d,
+              family = "binomial"))
+
 ```

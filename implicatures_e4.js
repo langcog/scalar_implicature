@@ -72,78 +72,78 @@ function doSpeakerSub(speaker, manip) {
 
 var sents = {
     scales: {
-		training1: {
-		    sent_inference: "I enjoy going sailing with my father.",
-		    sent_question:  "he enjoys walking in the woods alone?"
-		},	
-		training2: {
-		    sent_inference: "I don't like eating out at upscale places.",
-		    sent_question:  "he doesn't like eating at fancy restaurants?"
-		},	
-		all_some: {		   
-		    sent_inference: "Some of the SP V1 P1.",
-		    sent_question:  "not all of the SP V1 P1?"
-		}
+	training1: {
+	    sent_inference: "I enjoy going sailing with my father.",
+	    sent_question:  "he enjoys walking in the woods alone?"
+	},	
+	training2: {
+	    sent_inference: "I don't like eating out at upscale places.",
+	    sent_question:  "he doesn't like eating at fancy restaurants?"
+	},	
+	all_some: {		   
+	    sent_inference: "Some of the SP V1 P1.",
+	    sent_question:  "not all of the SP V1 P1?"
+	}
     },
     domains: {
-		training1: {
-		    sent_context_plural: "John and Bob were talking about sailing yesterday.",
-		    sent_manipulation_high: "SPEAKER spends a lot of time with his family.",
-		    sent_manipulation_low: "SPEAKER spends a lot of time with his family.",
-		},
-		training2: {
-		    sent_context_plural: "John and Bob were talking about restaurants yesterday.",
-		    sent_manipulation_high: "SPEAKER enjoys reading restaurant reviews.",
-		    sent_manipulation_low: "SPEAKER enjoys reading restaurant reviews.",
-		},
-		movies: {
-		    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
-		    sent_manipulation_high: "SPEAKER has seen every movie at the theater.",
-		    sent_manipulation_low: "SPEAKER has only had the chance to see one of the movies showing at the theater.",
-		    SP: "movies at the theater",
-		    P1: "comedies",
-		    V1: "are"
-		},
-		cookies: {
-		    sent_context_plural: "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
-		    sent_manipulation_high: "SPEAKER has been to the bakery and looked at the new cookies.",
-		    sent_manipulation_low:  "SPEAKER ate one of the cookies but hasn't been to the bakery himself.",
-		    SP: "cookies at the bakery",
-		    P1: "chocolate",
-		    V1: "are"
-		},
-		players: {
-		    sent_context_plural: "Last week, John and Bob were talking about the high school football game.",
-		    sent_manipulation_high: "SPEAKER watched the whole game carefully.",
-		    sent_manipulation_low: "SPEAKER saw only a single play.",
-		    SP: "players on the team",
-		    P1: "skillful",
-		    V1: "were"
-		},
-		weather: {
-		    sent_context_plural: "Bob and John were talking about the weather during the previous month.",
-		    sent_manipulation_high: "SPEAKER was around for the entire month.",
-		    sent_manipulation_low: "SPEAKER was out of town most of the time.",
-		    SP: "weekends in the month",
-		    P1: "sunny",
-		    V1: "were"
-		},
-		clothes: {
-		    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
-		    sent_manipulation_high: "SPEAKER has shopped at the store and looked at the shirt display.",
-		    sent_manipulation_low: "SPEAKER got a shirt as a present, but hasn't been to the store himself.",
-		    SP: "shirts at the store",
-		    P1: "expensive",
-		    V1: "are"
-		},
-		students: {
-		    sent_context_plural: "A year ago, Bob and John were talking about the students in a class they taught.",
-		    sent_manipulation_high: "SPEAKER has kept in touch with all of the students.",
-		    sent_manipulation_low: "SPEAKER has only kept up with one of the students.",
-		    SP: "students from the class",
-		    P1: "successful",
-		    V1: "have been"
-		}
+	training1: {
+	    sent_context_plural: "John and Bob were talking about sailing yesterday.",
+	    sent_manipulation_high: "SPEAKER spends a lot of time with his family.",
+	    sent_manipulation_low: "SPEAKER spends a lot of time with his family.",
+	},
+	training2: {
+	    sent_context_plural: "John and Bob were talking about restaurants yesterday.",
+	    sent_manipulation_high: "SPEAKER enjoys reading restaurant reviews.",
+	    sent_manipulation_low: "SPEAKER enjoys reading restaurant reviews.",
+	},
+	movies: {
+	    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
+	    sent_manipulation_high: "SPEAKER has seen every movie at the theater.",
+	    sent_manipulation_low: "SPEAKER has only had the chance to see one of the movies showing at the theater.",
+	    SP: "movies at the theater",
+	    P1: "comedies",
+	    V1: "are"
+	},
+	cookies: {
+	    sent_context_plural: "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
+	    sent_manipulation_high: "SPEAKER has been to the bakery and looked at the new cookies.",
+	    sent_manipulation_low:  "SPEAKER ate one of the cookies but hasn't been to the bakery himself.",
+	    SP: "cookies at the bakery",
+	    P1: "chocolate",
+	    V1: "are"
+	},
+	players: {
+	    sent_context_plural: "Last week, John and Bob were talking about the high school football game.",
+	    sent_manipulation_high: "SPEAKER watched the whole game carefully.",
+	    sent_manipulation_low: "SPEAKER saw only a single play.",
+	    SP: "players on the team",
+	    P1: "skillful",
+	    V1: "were"
+	},
+	weather: {
+	    sent_context_plural: "Bob and John were talking about the weather during the previous month.",
+	    sent_manipulation_high: "SPEAKER was around for the entire month.",
+	    sent_manipulation_low: "SPEAKER was out of town most of the time.",
+	    SP: "weekends in the month",
+	    P1: "sunny",
+	    V1: "were"
+	},
+	clothes: {
+	    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
+	    sent_manipulation_high: "SPEAKER has shopped at the store and looked at the shirt display.",
+	    sent_manipulation_low: "SPEAKER got a shirt as a present, but hasn't been to the store himself.",
+	    SP: "shirts at the store",
+	    P1: "expensive",
+	    V1: "are"
+	},
+	students: {
+	    sent_context_plural: "A year ago, Bob and John were talking about the students in a class they taught.",
+	    sent_manipulation_high: "SPEAKER has kept in touch with all of the students.",
+	    sent_manipulation_low: "SPEAKER has only kept up with one of the students.",
+	    SP: "students from the class",
+	    P1: "successful",
+	    V1: "have been"
+	}
     }
 }
 
