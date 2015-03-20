@@ -1,0 +1,126 @@
+
+<!-- ## Code -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Language Understanding Experiment</title>
+<script src="jquery-1.11.2.min.js"></script>
+<script src="mmturkey-0.6.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css" />
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- The instructions slide. -->
+<div class="slide" id="instructions">
+  <br>
+  <img src="images/stanford.png" alt="Stanford University">
+  <p id='logo-text'>Stanford Language and Cognition Lab</p>
+  <p class="block-text">In this experiment, you will read some sentences about two friends, John and Bob. They have many conversations about different things. Your job is to judge what some of their comments mean. You will see something one of them said, and a possible interpretation of the comments. You should choose "yes" if you think the interpretation is correct and "no" if the interpretation is false.
+  </p>
+  <button type="button" onclick="this.blur(); experiment.next()">Start</button>
+  
+  <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
+  
+  <p class="block-text" id="legal">By answering the
+  following questions, you are participating in a study being performed by
+  cognitive scientists in the Stanford Department of Psychology. If you have
+  questions about this research, please contact us at 
+  <a href="mailto://languagecoglab@gmail.com.">languagecoglab@gmail.com</a>.
+  You must be  at least 18 years old to participate. Your participation in 
+  this research is voluntary. You may decline to answer any or all of the 
+  following questions. You may decline further participation, at any time, 
+  without adverse consequences. Your anonymity is assured; the researchers 
+  who have requested your participation will not receive any personal information 
+  about you. Note however that we have recently been made aware that your public 
+  Amazon.com profile can be accessed via your worker ID if you do not choose 
+  to opt out. If you would like to opt out of this feature, you may follow instructions available 
+  <a href="http://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
+</div>
+
+<!-- The stage slide. -->
+<div class="slide" id="stage">
+  
+<div class="progress">
+  
+<!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
+
+    <div id="prog" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+
+
+    </div>
+
+  </div>
+  <br>
+  
+  <!-- Trying out table below. Maybe color for prompt? -->
+<div align="left">
+
+	<p id="sent_context">{{}}</p>
+  <p id="sent_manipulation">{{}}</p>
+	<p id="speaker">{{}}</p>
+	<p id = "sent_inference">{{}} </p> 
+ 	<p id = "sent_question">{{}} </p>
+</div>
+<br>
+<table align = "center"><tr>
+<td align="center">
+	<tr>
+	  <td>Yes</td>
+	  <td> </td>
+	  <td><input type="radio" name="judgment" value ="1" </td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;
+	  <td>No </td>	
+	  <td><input type="radio" name="judgment" value ="2" </td>
+	</tr>
+</table>
+
+
+  <table align="center"><tr>
+  <td align="center">
+	<button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
+         </td> 
+      <tr><td align="center">
+      <div id="testMessage"> </div>
+      </td></tr>
+
+ </table>
+ </div>
+
+ <!-- The debriefing slide. -->
+ <div class="slide" id="debriefing">
+	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
+   <form onsubmit="experiment.submitcomments()">
+   <p>
+	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
+   </p>
+   <p> What do you think this experiment was about? </p>
+   <p>
+	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+   </p>
+   <p> What are your thoughts about John and Bob? </p>
+   <p>
+   <textarea type="textarea" id="character_thoughts" style="width:100%" name="expgen"></textarea>
+   </p>
+   <p> Any general comments about the experiment? </p>
+   <p>
+   <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+   </p>
+	</form>
+	
+	<div align="center">
+	  <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+	</div>
+	</div>
+	
+<!-- The finish slide. -->
+<div class="slide" id="finished">
+	You're finished - thanks for participating! Submitting to Mechanical Turk...
+</div>
+
+<script src="implicatures_e4.js"></script>
+
+</body>
+</html>
