@@ -104,3 +104,7 @@ button[disabled] {
   width: 100px;
 }
 
+td {
+  text-align: center;
+  width: 60px;
+}
