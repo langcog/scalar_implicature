@@ -51,17 +51,15 @@
 <!-- The stage slide. -->
 <div class="slide" id="stage">
   
-<div class="progress">
-  
+<!-- Progress bar -->
+<div class="progress">  
 <!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
-
     <div id="prog" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-
-
     </div>
 
-  </div>
-  <br>
+</div>
+
+<br>
   
   <!-- I have commented out elements like sent_context and speaker in case future iterations of this study change speakers or contexts.-->
 <div align="left">
@@ -70,7 +68,7 @@
   <p> <b> We are trying to understand more about what people mean in Yelp(restaurant) reviews. </b> <p>
     <p> Someone clicked: </p>
   <!--
-  star-ratings go here:
+  star-ratings
   http://www.jqueryscript.net/other/Simple-jQuery-Star-Rating-System-For-Bootstrap-3.html
   -->
   <div class="star-rating rating-xs rating-active">
@@ -79,7 +77,7 @@
       </div>
     </div>
   </div>
-
+  <!--star-ratings-->
 
  	<p id = "sent_question">{{}} </p>
 </div>
@@ -88,17 +86,21 @@
 <table align = "center"><tr>
 <td align="center">
   <tr>
-    <td>No, not at all.</td>
-    <td> </td>
-    <td><input type="radio" name="judgment" value = "1">1</td>
-    <td><input type="radio" name="judgment" value = "2">2</td>
-    <td><input type="radio" name="judgment" value = "3">3</td>
-    <td><input type="radio" name="judgment" value = "4">4</td>
-    <td><input type="radio" name="judgment" value = "5">5</td>
-    <td><input type="radio" name="judgment" value = "6">6</td>
-    <td><input type="radio" name="judgment" value = "7">7</td>
-    <td>&nbsp;&nbsp;&nbsp;</td>
-    <td>Yes, definitely.</td>
+    <td>No, not at all <br>1</td>
+    <td><br>2</td>
+    <td><br>3</td>
+    <td><br>4</td>
+    <td><br>5</td>
+    <td><br>6</td>
+    <td>Yes, definitiely<br>7</td>
+  </tr>
+    <td><input type="radio" name="judgment" value = "1"></td>
+    <td><input type="radio" name="judgment" value = "2"></td>
+    <td><input type="radio" name="judgment" value = "3"></td>
+    <td><input type="radio" name="judgment" value = "4"></td>
+    <td><input type="radio" name="judgment" value = "5"></td>
+    <td><input type="radio" name="judgment" value = "6"></td>
+    <td><input type="radio" name="judgment" value = "7"></td>
   </tr>
 </table>
 
@@ -115,7 +117,7 @@
 	</tr>
 </table> -->
 
-
+  <br>
   <table align="center"><tr>
   <td align="center">
 	<button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
