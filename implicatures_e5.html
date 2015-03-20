@@ -55,17 +55,42 @@
   </div>
   <br>
   
-  <!-- Trying out table below. Maybe color for prompt? -->
+  <!-- I have commented out elements like sent_context and speaker in case future iterations of this study change speakers or contexts.-->
 <div align="left">
 
-	<p id="sent_context">{{}}</p>
-  <p id="sent_manipulation">{{}}</p>
-	<p id="speaker">{{}}</p>
-	<p id = "sent_inference">{{}} </p> 
+	<!-- <p id="sent_context">{{}}</p> -->
+  <p> <b> We are trying to understand more about what people mean in Yelp(restaurant) reviews. </b> <p>
+    <p> Someone clicked: </p>
+  <!-- The pictures of stars go here -->
+  <!-- <p id="sent_manipulation">{{}}</p> -->
+	<!-- <p id="speaker">{{}}</p> -->
+	<!-- <p id = "sent_inference">{{}} </p> -->
  	<p id = "sent_question">{{}} </p>
 </div>
 <br>
+
+
+
+
 <table align = "center"><tr>
+<td align="center">
+  <tr>
+    <td>No, not at all.</td>
+    <td> </td>
+    <td><input type="radio" name="judgment" value = "1">1</td>
+    <td><input type="radio" name="judgment" value = "2">2</td>
+    <td><input type="radio" name="judgment" value = "3">3</td>
+    <td><input type="radio" name="judgment" value = "4">4</td>
+    <td><input type="radio" name="judgment" value = "5">5</td>
+    <td><input type="radio" name="judgment" value = "6">6</td>
+    <td><input type="radio" name="judgment" value = "7">7</td>
+    <td>&nbsp;&nbsp;&nbsp;</td>
+    <td>Yes, definitely.</td>
+  </tr>
+</table>
+
+
+<!-- <table align = "center"><tr>
 <td align="center">
 	<tr>
 	  <td>Yes</td>
@@ -75,7 +100,7 @@
 	  <td>No </td>	
 	  <td><input type="radio" name="judgment" value ="2" </td>
 	</tr>
-</table>
+</table> -->
 
 
   <table align="center"><tr>
@@ -120,7 +145,7 @@
 	You're finished - thanks for participating! Submitting to Mechanical Turk...
 </div>
 
-<script src="implicatures_e4.js"></script>
+<script src="implicatures_e5.js"></script>
 
 </body>
 </html>

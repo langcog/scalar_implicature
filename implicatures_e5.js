@@ -73,16 +73,20 @@ function doSpeakerSub(speaker, manip) {
 var sents = {
     scales: {
 	training1: {
-	    sent_inference: "I enjoy going sailing with my father.",
-	    sent_question:  "he enjoys walking in the woods alone?"
+	    sent_inference: "N/A",
+	    sent_question:  "thought the restaurant deserved a high rating?"
 	},	
 	training2: {
-	    sent_inference: "I don't like eating out at upscale places.",
-	    sent_question:  "he doesn't like eating at fancy restaurants?"
+	    sent_inference: "N/A",
+	    sent_question:  "thought the restaurant deserved a low rating?"
 	},	
-	all_some: {		   
-	    sent_inference: "Some of the SP V1 P1.",
-	    sent_question:  "not all of the SP V1 P1?"
+	like_love: {		   
+	    sent_inference: "N/A",
+	    sent_question:  "loved the restaraunt?"
+	},
+	good_excellent: {
+		sent_inference: "N/A",
+		sent_question: "thought the restaurant was excellent?"
 	}
     },
     domains: {
@@ -154,11 +158,11 @@ domains.shift();
 domains.shift();
 domains = shuffle(domains);
 
-//manipulations is new
+//TODO: have manipulation be high/medium/low here and in other parts of experiment
 var manipulation =  shuffle(["high", "low"]);
 
 // now put the training trials up front and shuffle the rest of the trials.
-var scales = ["training1","all_some","training2","all_some"];
+var scales = ["training1","like_love","training2","good_excellent"];
 var domains = ["training1", domains[0], "training2", domains[1]];
 var manipulation_levels = ["training", manipulation[0], "training", manipulation[1]];
 
@@ -265,15 +269,14 @@ var experiment = {
 		    sent_materials = doSentSubs(sents, scale, domain);	
 		    
 		    //###:-----------------Display trial-----------------:###
-		    $("#sent_context").html(sent_context);
-		    //adding in manipulation
-		    $("#speaker").html(speaker);
-		    $("#sent_manipulation").html(sent_manipulation);
-		    $("#speaker").html("<b>" + speaker + " said:</b>");
-		    $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
-					      sent_materials[0] + "\"");
-		    $("#sent_question").html("Would you conclude from this sentence that, according to " +
-					     speaker + ", " +
+		    // $("#sent_context").html(sent_context);
+		    // //adding in manipulation
+		    // $("#speaker").html(speaker);
+		    // $("#sent_manipulation").html(sent_manipulation);
+		    // $("#speaker").html("<b>" + speaker + " said:</b>");
+		    // $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
+					 //      sent_materials[0] + "\"");
+		    $("#sent_question").html("Would you conclude from this sentence that this person "+
 					     sent_materials[1]);
 		    console.log(sent_materials);
 		    //###:-----------------Display trial-----------------:###

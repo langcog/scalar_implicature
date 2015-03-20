@@ -195,6 +195,7 @@ var sents = {
 //###:-----------------CONDITION PARAMETERS-------------------:###
 var speakers = ["John","Bob"];
 //manipulations is new
+//TODO: add medium into manipulation choices
 var manipulation_choices = ["high", "low"];
 var scales = Object.keys(sents.scales);
 var domains = Object.keys(sents.domains);
