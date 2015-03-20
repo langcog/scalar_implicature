@@ -159,7 +159,7 @@ domains.shift();
 domains = shuffle(domains);
 
 //TODO: have manipulation be high/medium/low here and in other parts of experiment
-var manipulation =  shuffle(["high", "low"]);
+var manipulation =  shuffle(["60", "80", "100"]);
 
 // now put the training trials up front and shuffle the rest of the trials.
 var scales = ["training1","like_love","training2","good_excellent"];
@@ -251,15 +251,15 @@ var experiment = {
 		    }
 
 		    //###:---------Manipulation code----------:###
-		    manipulation_level = manipulation_levels.shift(); //Randomize manipulation
+		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
 		    //Set manipulation sentence
-		    if (manipulation_level == "high") {
-		    	sent_manipulation = sents["domains"][domain]["sent_manipulation_high"];
-		    } else {
-		    	sent_manipulation = sents["domains"][domain]["sent_manipulation_low"];
-		    }
+		    // if (manipulation_level == "high") {
+		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_high"];
+		    // } else {
+		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_low"];
+		    // }
 		    //Replace speaker in manipulation
-		    sent_manipulation = doSpeakerSub(speaker, sent_manipulation);
+		    //sent_manipulation = doSpeakerSub(speaker, sent_manipulation);
 
 		    //###:---------Manipulation code----------:###
 		    sent_context = sents["domains"][domain]["sent_context_plural"];
@@ -276,6 +276,8 @@ var experiment = {
 		    // $("#speaker").html("<b>" + speaker + " said:</b>");
 		    // $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
 					 //      sent_materials[0] + "\"");
+			$(".rating-stars").attr("style","width: " +
+							    manipulation_level + "%");
 		    $("#sent_question").html("Would you conclude from this sentence that this person "+
 					     sent_materials[1]);
 		    console.log(sent_materials);
@@ -288,7 +290,7 @@ var experiment = {
 		    experiment.data.sent_inference.push(sent_materials[0]);
 		    experiment.data.sent_question.push(sent_materials[1]);
 		    experiment.data.manipulation_level.push(manipulation_level);
-		    experiment.data.sent_manipulation.push(sent_manipulation);
+		    //experiment.data.sent_manipulation.push(sent_manipulation);
 		    experiment.data.speaker.push(speaker); 
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
