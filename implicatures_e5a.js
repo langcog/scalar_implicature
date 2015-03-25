@@ -37,53 +37,13 @@ function shuffle (a) {
 	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
 	return o;
 }
-
-
-//sent_materials = doSentSubs(scale, type, degree);
-// substitution function - do we want to save all these factors to a data object?
-//Pass a trial object in to be populated?
-// function doSentSubs (group_type, scale, degree) {
-// 	//TODO: work with this function
-
-//     //inference = sents["scales"][scale]["sent_inference"];
-//     //question = sents["scales"][scale]["sent_question"];
-//     //manipulation = sents["domains"][domain][manip];
-//     //manipulation = sents["scales"][scale]["sent_manipulation"];
-
-//     main_sent = sents["group_type"][group_type]["sent_question"];
-//     target = sents["scale"][group_type][scale][degree];
-
-//     // SP = sents["domains"][domain]["SP"]; //Plural
-//     // SS = sents["domains"][domain]["SS"]; //Singular
-//     // P1 = sents["domains"][domain]["P1"]; //Predicate 1
-//     // P2 = sents["domains"][domain]["P2"]; //Predicate 2
-//     // V1 = sents["domains"][domain]["V1"]; //Past
-//     // V2 = sents["domains"][domain]["V2"]; //Present
-
-//     //inference = inference.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-
-
-//     //question = question.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-//     main_sent = main_sent.replace("ADJ", target).replace("VP", target);
-
-//     return main_sent;
-// }
-
-//Replace speaker name in manipulation
-// function doSpeakerSub(speaker, manip) {
-// 	manip = manip.replace("SPEAKER", speaker);
-// 	return manip;
-// }
 //############################## Helper functions ##############################	
 
-//3.24.25
-//1. Change "scale" to "type"
-//2. Change "domain" to "scale"
 var sents = {
     scale: {
 		training1: {
 		    hi:  "thought the restaurant deserved a high rating?",
-		    low:  "thought the restaurant deserved a low rating?"
+		    low:  "thought the restaurant deserved a high rating?"
 		},
 		training2: {
 		    hi:  "thought the restaurant deserved a low rating?",
@@ -112,13 +72,19 @@ var sents = {
     },
 };
 
+//###:::------Negative scalars to consider------:::###
 //dislike_horrible
 //adequate_good
 //loathed_dislike
-
+//###:::------Negative scalars to consider------:::###
 
 //###:-----------------CONDITION PARAMETERS-------------------:###
 var scales = Object.keys(sents.scale);
+scales.shift();
+scales.shift();
+scales = shuffle(scales);
+scales.unshift("training1", "training2");
+
 var scale_degrees = ["hi", "low"];
 var manipulation =  shuffle(["60", "80", "100"]);
 //###:-----------------CONDITION PARAMETERS-------------------:###
@@ -201,17 +167,14 @@ var experiment = {
 
 		    //###:---------Manipulation code----------:###
 		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
-		    //
-		    //
+		    
 		    //###:-----------------Display trial-----------------:###
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
-		    $("#sent_question").html("Do you think that the person "+
+		    $("#sent_question").html("How natural is it so say that the person "+
 					     sent_materials);
 		    //###:-----------------Display trial-----------------:###
-		    //
-		    //
-		    //
+
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
