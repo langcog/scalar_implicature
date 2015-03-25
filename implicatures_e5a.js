@@ -118,33 +118,18 @@ var sents = {
 
 
 //###:-----------------CONDITION PARAMETERS-------------------:###
-//var speakers = ["John","Bob"];
 var scales = Object.keys(sents.scale);
-//var group_types = Object.keys(sents.group_type);
 var scale_degrees = ["hi", "low"];
-//scale rating appearance
 var manipulation =  shuffle(["60", "80", "100"]);
-//domains.shift(); This was for training
-//domains.shift(); This was for training
-//domains = shuffle(domains);
-
-//TODO: have manipulation be high/medium/low here and in other parts of experiment
-
-
-// now put the training trials up front and shuffle the rest of the trials.
-//var scales = ["training1","like_love","training2","good_excellent"];
-//var domains = ["training1", domains[0], "training2", domains[1]];
-//var manipulation_levels = ["training", manipulation[0], "training", manipulation[1]];
-
 //###:-----------------CONDITION PARAMETERS-------------------:###
-var totalTrials = scales.length; //One trial for each domain
 
+
+var totalTrials = scales.length; //One trial for each domain
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
 //###:-----------------MAIN EVENT-------------------:###
 var experiment = {
-
     //Data object for logging responses, etc
     data: {
 		scale: [],
@@ -153,7 +138,6 @@ var experiment = {
 		judgment: [],
 		language: [],
 		expt_aim: [],
-		character_thoughts: [],
 		expt_gen: [],
     },
     
@@ -204,79 +188,34 @@ var experiment = {
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - scales.length/totalTrials)) + "%");
 		    
-		    //#####:---Get the current trial parameters - scale, domain, speaker---:#####
+		    //Get current scale
 		    var current_scale = scales.shift();
+		    //If current scale is undefined we've reached end and send to debreif
 		    if (typeof current_scale == "undefined") {
 				return experiment.debriefing();
 		    }
-		    console.log("current_scale:", current_scale);
-		    // if (scale != "training1" && group_type != "training2") {
-		    // 	var scale = scales.shift();
-		    // }
+		    //else set rest of conditional params
 		    var degree = shuffle(scale_degrees)[0];
+		    //sent materials to aggregate and display
 		    sent_materials = sents.scale[current_scale][degree];
-		    console.log("degree:", degree);
-
-		    console.log("sent_materials", sent_materials);
-			//var group_type = group_types.shift();
-		    //speaker = shuffle(speakers)[0]; //Randomize speaker
-
-		    // If the current trial domain is undefined, move to debrief
-		    
 
 		    //###:---------Manipulation code----------:###
 		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
-		    //Set manipulation sentence
-		    // if (manipulation_level == "high") {
-		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_high"];
-		    // } else {
-		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_low"];
-		    // }
-		    //Replace speaker in manipulation
-		    //sent_manipulation = doSpeakerSub(speaker, sent_manipulation);
-
-		    //###:---------Manipulation code----------:###
-		    //sent_context = sents["domains"][domain]["sent_context_plural"];
-
-
-		    //Main substitition function (everything but manipulation)
-		    //console.log("scale: ", current_scale);
-		    //console.log("group_type", group_type);
-		    //console.log("degree", degree);
-		    // if (group_type != "training1" && group_type != "training2") {
-		    // 	sent_materials = //doSentSubs(scale, group_type, degree);		
-		    // } else {
-		    // 	sent_materials = sents["group_type"][group_type];
-		    // }
-		    
-		    //console.log("sent_materials: ", sent_materials);
-		    
+		    //
+		    //
 		    //###:-----------------Display trial-----------------:###
-		    // $("#sent_context").html(sent_context);
-		    // //adding in manipulation
-		    // $("#speaker").html(speaker);
-		    // $("#sent_manipulation").html(sent_manipulation);
-		    // $("#speaker").html("<b>" + speaker + " said:</b>");
-		    // $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
-					 //      sent_materials[0] + "\"");
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
 		    $("#sent_question").html("Do you think that the person "+
 					     sent_materials);
 		    //###:-----------------Display trial-----------------:###
-		    
+		    //
+		    //
+		    //
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
-		    //experiment.data.group_type.push(group_type);
 		    experiment.data.manipulation_level.push(manipulation_level);
-		    //experiment.data.domain.push(domain);
-		    //experiment.data.sent_context.push(sent_context);
-		    //experiment.data.sent_inference.push(sent_materials[0]);
-		    //experiment.data.sent_question.push(sent_materials);
-		    
-		    //experiment.data.sent_manipulation.push(sent_manipulation);
-		    //experiment.data.speaker.push(speaker); 
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
@@ -292,7 +231,6 @@ var experiment = {
     submit_comments: function() {
 		experiment.data.language.push(document.getElementById("homelang").value);
 		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
-		experiment.data.character_thoughts.push(document.getElementById("character_thoughts").value);
 		experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 		experiment.end();
     }
