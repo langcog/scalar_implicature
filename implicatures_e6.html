@@ -64,28 +64,32 @@
 <div align="left">
 
   <p> <b> We need help understanding what people really mean in their restaurant recommendation ratings... </b> <p>
-    <p> Someone clicked: </p>
+    <p id = "sent_question">{{}} </p>
+  <p> Please select the number of stars you think they gave the restaurant: </p>
 
   <!--
   ###############################################################
   Star-ratings
   http://www.jqueryscript.net/other/Simple-jQuery-Star-Rating-System-For-Bootstrap-3.html
   -->
-  <div class="star-rating rating-xs rating-active">
-    <div class="rating-container rating-gly-star" data-content="">
+  <div align="left">
+    <input id="rating-system" type="number" class="rating" min="1" max="5" step="1">
+  </div>
+  <!-- <div class="star-rating rating-xs rating-active">
+    <div class="rating-container rating-gly-star" data-content="" readonly="false">
       <div class="rating-stars" data-content="">
       </div>
     </div>
-  </div>
+  </div> -->
   <!--star-ratings
   ###############################################################
   -->
 
- 	<p id = "sent_question">{{}} </p>
+ 	<!--<p id = "sent_question">{{}} </p> -->
 </div>
 <br>
 
-<table align = "center"><tr>
+<!-- <table align = "center"><tr>
 <td align="center">
   <tr>
     <td>No, not at all <br>1</td>
@@ -104,7 +108,7 @@
     <td><input type="radio" name="judgment" value = "6"></td>
     <td><input type="radio" name="judgment" value = "7"></td>
   </tr>
-</table>
+</table> -->
 
   <br>
 <table align="center"><tr>
@@ -146,7 +150,7 @@
 	You're finished - thanks for participating! Submitting to Mechanical Turk...
 </div>
 
-<script src="implicatures_e5a.js"></script>
+<script src="implicatures_e6.js"></script>
 
 </body>
 </html>

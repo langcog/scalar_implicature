@@ -82,32 +82,32 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-		    hi:  "thought the restaurant deserved a high rating?",
-		    low:  "thought the restaurant deserved a low rating?"
+		    hi:  "thought the restaurant deserved a <b>high</b> rating.",
+		    low:  "thought the restaurant deserved a <b>high</b> rating"
 		},
 		training2: {
-		    hi:  "thought the restaurant deserved a low rating?",
-		    low:  "thought the restaurant deserved a low rating?"
+		    hi:  "thought the restaurant deserved a <b>low</b> rating.",
+		    low:  "thought the restaurant deserved a <b>low</b> rating."
 		},	
 		liked_loved: {		   
-		    hi:  "loved the restaurant?",
-		    low:  "loved the restaurant?"
+		    hi:  "<b>loved</b> the restaurant.",
+		    low:  "<b>liked</b> the restaurant."
 		},
 		good_excellent: {
-			hi:  "thought the restaurant was excellent?",
-		    low:  "thought the restaurant was good?"
+			hi:  "thought the restaurant was <b>excellent</b>.",
+		    low:  "thought the restaurant <b>was good</b>."
 		},
 		palatable_delicious: {
-			hi:  "thought the restaurant was delicious?",
-		    low:  "thought the restaurant was palatable?"
+			hi:  "thought the restaurant was <b>delicious</b>.",
+		    low:  "thought the restaurant was <b>palatable/b>."
 		},
 		memorabe_unforgettable: {
-			hi:  "thought the restaurant was unforgettable?",
-		    low:  "thought the restaurant was memorable?"
+			hi:  "thought the restaurant was <b>unforgettable</b>.",
+		    low:  "thought the restaurant was <b>memorable</b>."
 		},
 		some_all: {
-			hi: "enjoyed all of the food",
-			low: "enjoyed some of the food"
+			hi: "enjoyed <b>all</b> of the food.",
+			low: "enjoyed <b>some</b> of the food."
 		}
     },
 };
@@ -173,9 +173,10 @@ var experiment = {
 		    experiment.next(); //Move to next condition
 		} else {
 			//Else respondent didn't make a response
-		    $("#testMessage").html('<font color="red">' + 
-					   'Please make a response!' + 
-					   '</font>');
+		    // $("#testMessage").html('<font color="red">' + 
+					 //   'Please make a response!' + 
+					 //   '</font>');
+		    experiment.next();
 		}
 	},
     
@@ -183,10 +184,24 @@ var experiment = {
     next: function() {
 		//Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top || turk.workerId.length > 0) {
+
+			//Stars practice
+			$( '.star-rating' ).attr('class', 'rating-md');
+			console.log("val(): ", $( '.rating-stars' ).val())
+			// $( '#rating-system' ).getStars();
+			//$( '.caption' ).remove();
+			$( '.clear-rating').remove();
+			//$('#rating-container').rating('update', 3);
+
+			// $( '.star-rating' ).rating('update', 5);
+
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - scales.length/totalTrials)) + "%");
+
+		    //$("rating-stars").click(function(console.log("click!!!!")));
+		    ///$( '#rating-system' ).(console.log("hello!!!"));
 		    
 		    //Get current scale
 		    var current_scale = scales.shift();
@@ -204,9 +219,9 @@ var experiment = {
 		    //
 		    //
 		    //###:-----------------Display trial-----------------:###
-			$(".rating-stars").attr("style","width: " +
-							    manipulation_level + "%");
-		    $("#sent_question").html("Do you think that the person "+
+			// $(".rating-stars").attr("style","width: " +
+			// 				    manipulation_level + "%");
+		    $("#sent_question").html("Someone said they "+
 					     sent_materials);
 		    //###:-----------------Display trial-----------------:###
 		    //
