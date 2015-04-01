@@ -186,11 +186,11 @@ var experiment = {
 		if (window.self == window.top || turk.workerId.length > 0) {
 
 			//Stars practice
-			$( '.star-rating' ).attr('class', 'rating-md');
+			//$( '.star-rating' ).attr('class', 'rating-md');
 			console.log("val(): ", $( '.rating-stars' ).val())
 			// $( '#rating-system' ).getStars();
-			//$( '.caption' ).remove();
-			$( '.clear-rating').remove();
+			$( '.caption' ).remove();
+			//$( '.clear-rating').remove();
 			//$('#rating-container').rating('update', 3);
 
 			// $( '.star-rating' ).rating('update', 5);
