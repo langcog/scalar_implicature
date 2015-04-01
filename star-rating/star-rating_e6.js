@@ -92,7 +92,7 @@
                 if (!self.hoverEnabled || self.inactive || self.starClicked) {
                     return;
                 }
-                out = self.cache;
+                out = /*self.cache*/0;
                 self.toggleHover(out);
                 self.$element.trigger('rating.hoverleave', ['stars']);
             });
@@ -327,7 +327,7 @@
             if (val >= max) {
                 return 100;
             }
-            return /*val*(1 / max) * 100;*/(val - min) * 100 / (max - min);
+            return (val - min) * 100 / (max - min);
         },
         getValueFromPosition: function (pos) {
             var self = this, precision = getDecimalPlaces(self.step),
@@ -347,6 +347,26 @@
             if (self.hoverChangeStars) {
                 w = self.getWidthFromValue(self.clearValue);
                 width = out.val <= self.clearValue ? (self.rtl ? (100 - w) + '%' : w + '%') : out.width;
+                /*Ben code
+                switch(width) {
+                    case "0%":
+                        width = "0%";
+                        break;
+                    case "25%":
+                        width = "20%";
+                        break;
+                    case "50%":
+                        width = "40%";
+                        break;
+                    case "75%":
+                        width = "60%";
+                        break;
+                    case "100%":
+                        width = "80%";
+                    default:
+                        break;
+                }
+                Ben code*/
                 self.$stars.css('width', width);
             }
         },
