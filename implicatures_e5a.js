@@ -50,7 +50,7 @@ var sents = {
 		    low:  "thought the restaurant deserved a low rating?"
 		},	
 		liked_loved: {		   
-		    hi:  "loved the restaurant?",
+		    hi:  "liked the restaurant?",
 		    low:  "loved the restaurant?"
 		},
 		good_excellent: {
@@ -66,8 +66,8 @@ var sents = {
 		    low:  "thought the restaurant was memorable?"
 		},
 		some_all: {
-			hi: "enjoyed all of the food",
-			low: "enjoyed some of the food"
+			hi: "enjoyed all of the food they ate?",
+			low: "enjoyed some of the food they ate?"
 		}
     },
 };
@@ -171,7 +171,7 @@ var experiment = {
 		    //###:-----------------Display trial-----------------:###
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
-		    $("#sent_question").html("How natural is it so say that the person "+
+		    $("#sent_question").html("How natural is it to say that the person "+
 					     sent_materials);
 		    //###:-----------------Display trial-----------------:###
 
