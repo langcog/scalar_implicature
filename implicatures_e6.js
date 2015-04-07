@@ -95,11 +95,11 @@ var sents = {
 		},
 		good_excellent: {
 			hi:  "thought the restaurant was <b>excellent</b>.",
-		    low:  "thought the restaurant <b>was good</b>."
+		    low:  "thought the restaurant was <b>good</b>."
 		},
 		palatable_delicious: {
 			hi:  "thought the restaurant was <b>delicious</b>.",
-		    low:  "thought the restaurant was <b>palatable/b>."
+		    low:  "thought the restaurant was <b>palatable</b>."
 		},
 		memorabe_unforgettable: {
 			hi:  "thought the restaurant was <b>unforgettable</b>.",
@@ -185,23 +185,10 @@ var experiment = {
 		//Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top || turk.workerId.length > 0) {
 
-			//Stars practice
-			//$( '.star-rating' ).attr('class', 'rating-md');
-			console.log("val(): ", $( '.rating-stars' ).val())
-			// $( '#rating-system' ).getStars();
-			$( '.caption' ).remove();
-			//$( '.clear-rating').remove();
-			//$('#rating-container').rating('update', 3);
-
-			// $( '.star-rating' ).rating('update', 5);
-
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - scales.length/totalTrials)) + "%");
-
-		    //$("rating-stars").click(function(console.log("click!!!!")));
-		    ///$( '#rating-system' ).(console.log("hello!!!"));
 		    
 		    //Get current scale
 		    var current_scale = scales.shift();
@@ -209,6 +196,7 @@ var experiment = {
 		    if (typeof current_scale == "undefined") {
 				return experiment.debriefing();
 		    }
+
 		    //else set rest of conditional params
 		    var degree = shuffle(scale_degrees)[0];
 		    //sent materials to aggregate and display
@@ -219,14 +207,19 @@ var experiment = {
 		    //
 		    //
 		    //###:-----------------Display trial-----------------:###
-			// $(".rating-stars").attr("style","width: " +
-			// 				    manipulation_level + "%");
 		    $("#sent_question").html("Someone said they "+
 					     sent_materials);
+		    $(".rating-stars").on("click", function(event) {
+				$(".rating-stars").fadeOut(100).fadeIn(100);
+				event.stopImmediatePropagation();
+			});
+			var judgment = $(".rating-stars").attr("style");
+			judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
+			judgment /= 20;
+			experiment.data.judgment.push(judgment);
+			console.log(judgment);
 		    //###:-----------------Display trial-----------------:###
-		    //
-		    //
-		    //
+		    
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
@@ -234,12 +227,16 @@ var experiment = {
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
+			//Clear stars
+			$(".rating-stars").attr({"style":"width: 0%"});
 		}
     },
 
     //Show debrief
     debriefing: function() {
 		showSlide("debriefing");
+		//Remove first item (0) from judgments
+		//experiment.data.judgment.shift();
     },
 
     //###:-------------Log debrief data-------------:###
