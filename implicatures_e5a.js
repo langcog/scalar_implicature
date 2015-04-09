@@ -56,7 +56,7 @@ var sents = {
 		    low:  "<b>loved</b> the restaurant?"
 		},
 		good_excellent: {
-			hi:  "thought the restaurant was excellent</b>?",
+			hi:  "thought the restaurant was <b>excellent</b>?",
 		    low:  "thought the restaurant was <b>good</b>?"
 		},
 		palatable_delicious: {
@@ -173,7 +173,7 @@ var experiment = {
 		    //###:-----------------Display trial-----------------:###
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
-		    $("#sent_question").html("How natural is it to say that the person "+
+		    $("#sent_question").html("How much would you agree that the person "+
 					     sent_materials);
 		    //###:-----------------Display trial-----------------:###
 
