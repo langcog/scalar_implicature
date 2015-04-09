@@ -26,7 +26,7 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this task, you're going to help us understand what people really mean by their restaurant ratings. We've anonymized all the ratings so you'll see a sent_questionence like "someone selected..." and then you'll see the ratings they gave. We'd like to know how much you agree with how particular descriptions fit those ratings. If you think the description fits exactly select "7 - Yes, definitely". If the description doesn't fit at all, select "1 - No, not at all." If you feel like it's somewhere in between these options, choose a number in between 1 and 7.
+  <p class="block-text">In this task, you're going to help us understand what people really mean by their restaurant ratings. We've anonymized all the ratings so you'll see a sentence like "someone said they thought the restaurant deserved a ____ rating" or "someone said the restaurant was ____." Depending on what they said, we'd like you to estimate the rating the they likely gave by selecting a number stars.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
@@ -75,12 +75,6 @@
   <div id="test" align="center">
     <input id="rating-system" type="number" class="rating" min="0" max="5" step="1">
   </div>
-  <!-- <div class="star-rating rating-xs rating-active">
-    <div class="rating-container rating-gly-star" data-content="" readonly="false">
-      <div class="rating-stars" data-content="">
-      </div>
-    </div>
-  </div> -->
   <!--star-ratings
   ###############################################################
   -->
@@ -88,27 +82,6 @@
  	<!--<p id = "sent_question">{{}} </p> -->
 </div>
 <br>
-
-<!-- <table align = "center"><tr>
-<td align="center">
-  <tr>
-    <td>No, not at all <br>1</td>
-    <td><br>2</td>
-    <td><br>3</td>
-    <td><br>4</td>
-    <td><br>5</td>
-    <td><br>6</td>
-    <td>Yes, definitiely<br>7</td>
-  </tr>
-    <td><input type="radio" name="judgment" value = "1"></td>
-    <td><input type="radio" name="judgment" value = "2"></td>
-    <td><input type="radio" name="judgment" value = "3"></td>
-    <td><input type="radio" name="judgment" value = "4"></td>
-    <td><input type="radio" name="judgment" value = "5"></td>
-    <td><input type="radio" name="judgment" value = "6"></td>
-    <td><input type="radio" name="judgment" value = "7"></td>
-  </tr>
-</table> -->
 
   <br>
 <table align="center"><tr>
