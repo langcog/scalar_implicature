@@ -42,32 +42,34 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-		    hi:  "thought the restaurant deserved a high rating?",
-		    low:  "thought the restaurant deserved a high rating?"
+			//because training trial hi and low are the same
+		    hi:  "thought the restaurant deserved a <b>high</b> rating?",
+		    low:  "thought the restaurant deserved a <b>high</b> rating?"
 		},
 		training2: {
-		    hi:  "thought the restaurant deserved a low rating?",
-		    low:  "thought the restaurant deserved a low rating?"
+			//because training trial hi and low are the same
+		    hi:  "thought the restaurant deserved a <b>low</b> rating?",
+		    low:  "thought the restaurant deserved a <b>low</b> rating?"
 		},	
 		liked_loved: {		   
-		    hi:  "liked the restaurant?",
-		    low:  "loved the restaurant?"
+		    hi:  "<b>liked</b> the restaurant?",
+		    low:  "<b>loved</b> the restaurant?"
 		},
 		good_excellent: {
-			hi:  "thought the restaurant was excellent?",
-		    low:  "thought the restaurant was good?"
+			hi:  "thought the restaurant was excellent</b>?",
+		    low:  "thought the restaurant was <b>good</b>?"
 		},
 		palatable_delicious: {
-			hi:  "thought the restaurant was delicious?",
-		    low:  "thought the restaurant was palatable?"
+			hi:  "thought the restaurant was <b>delicious</b>?",
+		    low:  "thought the restaurant was <b>palatable</b>?"
 		},
 		memorabe_unforgettable: {
-			hi:  "thought the restaurant was unforgettable?",
-		    low:  "thought the restaurant was memorable?"
+			hi:  "thought the restaurant was <b>unforgettable</b>?",
+		    low:  "thought the restaurant was <b>memorable</b>?"
 		},
 		some_all: {
-			hi: "enjoyed all of the food they ate?",
-			low: "enjoyed some of the food they ate?"
+			hi: "enjoyed <b>all</b> of the food they ate?",
+			low: "enjoyed <b>some</b> of the food they ate?"
 		}
     },
 };
