@@ -152,32 +152,15 @@ var experiment = {
     //Log response
     log_response: function() {
 		var response_logged = false;
-		//Array of radio buttons
-		var radio = document.getElementsByName("judgment");
 		
-		// Loop through radio buttons
-		for (i = 0; i < radio.length; i++) {
-		    if (radio[i].checked) {
-				experiment.data.judgment.push(radio[i].value);
-				response_logged = true;		    
-		    }
-		}
-		
-		if (response_logged) {
-		    nextButton.blur();
-		    
-		    //Uncheck radio buttons
-		    for (i = 0; i < radio.length; i++) {
-				radio[i].checked = false
-		    }
-		    experiment.next(); //Move to next condition
-		} else {
-			//Else respondent didn't make a response
-		    // $("#testMessage").html('<font color="red">' + 
-					 //   'Please make a response!' + 
-					 //   '</font>');
-		    experiment.next();
-		}
+		var judgment = $(".rating-stars").attr("style");
+		judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
+		judgment /= 20;
+		experiment.data.judgment.push(judgment);
+		console.log(judgment);
+
+		nextButton.blur();
+		experiment.next();
 	},
     
     //Run every trial
@@ -213,11 +196,6 @@ var experiment = {
 				$(".rating-stars").fadeOut(100).fadeIn(100);
 				event.stopImmediatePropagation();
 			});
-			var judgment = $(".rating-stars").attr("style");
-			judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
-			judgment /= 20;
-			experiment.data.judgment.push(judgment);
-			console.log(judgment);
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
