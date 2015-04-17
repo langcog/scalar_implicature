@@ -347,26 +347,6 @@
             if (self.hoverChangeStars) {
                 w = self.getWidthFromValue(self.clearValue);
                 width = out.val <= self.clearValue ? (self.rtl ? (100 - w) + '%' : w + '%') : out.width;
-                /*Ben code
-                switch(width) {
-                    case "0%":
-                        width = "0%";
-                        break;
-                    case "25%":
-                        width = "20%";
-                        break;
-                    case "50%":
-                        width = "40%";
-                        break;
-                    case "75%":
-                        width = "60%";
-                        break;
-                    case "100%":
-                        width = "80%";
-                    default:
-                        break;
-                }
-                Ben code*/
                 self.$stars.css('width', width);
             }
         },
