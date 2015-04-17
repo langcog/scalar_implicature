@@ -43,14 +43,9 @@ var sents = {
     scale: {
 		training1: {
 			//because training trial hi and low are the same
-		    hi:  "thought the restaurant deserved a <b>high</b> rating?",
-		    low:  "thought the restaurant deserved a <b>high</b> rating?"
+		    hi:  "thought the food deserved a <b>high</b> rating?",
+		    low:  "thought the food deserved a <b>low</b> rating?"
 		},
-		training2: {
-			//because training trial hi and low are the same
-		    hi:  "thought the restaurant deserved a <b>low</b> rating?",
-		    low:  "thought the restaurant deserved a <b>low</b> rating?"
-		},	
 		liked_loved: {		   
 		    hi:  "<b>liked</b> the food?",
 		    low:  "<b>loved</b> the food?"
@@ -187,18 +182,18 @@ var experiment = {
 		    	manipulation_level = 100;
 		    } else if (trials.length == 51) {
 		    	trials.shift();
-		    	current_scale = scales[1];
+		    	current_scale = scales[0];
 		    	degree = "low";
 		    	manipulation_level = 80;
 		    } else if (trials.length == 50) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();
-		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 2];
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
 		    	degree = scale_degrees[current_trial % 2];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    } else {
 		    	current_trial = trials.shift();
-		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 2];
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
 		    	degree = scale_degrees[current_trial % 2];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    }
