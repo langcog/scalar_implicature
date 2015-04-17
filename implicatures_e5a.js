@@ -68,24 +68,6 @@ var sents = {
 		}
     },
 };
-
-//Idea for implementatino of all scales
-//arry all_possible_conditions[1:50];
-//shuffle(all_possible_conditions);
-//int current_condition = shift(all_possible_conditions)
-//level = current_condition % 2;
-//rating = current_conditinon % 5;
-//scale = (current_conditinon / 10) % 5 ( + 2); //+ 2 to account for training trials
-//Example:
-//current_condition = 32
-//level = 0 = 'hi';
-//rating = 2 = two-stars
-//scale = 3 = memorable_unforgettable
-
-
-
-
-
 //###:::------Negative scalars to consider------:::###
 //dislike_horrible
 //adequate_good
