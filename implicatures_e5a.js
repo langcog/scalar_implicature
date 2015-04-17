@@ -52,20 +52,20 @@ var sents = {
 		    low:  "thought the restaurant deserved a <b>low</b> rating?"
 		},	
 		liked_loved: {		   
-		    hi:  "<b>liked</b> the restaurant?",
-		    low:  "<b>loved</b> the restaurant?"
+		    hi:  "<b>liked</b> the food?",
+		    low:  "<b>loved</b> the food?"
 		},
 		good_excellent: {
-			hi:  "thought the restaurant was <b>excellent</b>?",
-		    low:  "thought the restaurant was <b>good</b>?"
+			hi:  "thought the food was <b>excellent</b>?",
+		    low:  "thought the food was <b>good</b>?"
 		},
 		palatable_delicious: {
-			hi:  "thought the restaurant was <b>delicious</b>?",
-		    low:  "thought the restaurant was <b>palatable</b>?"
+			hi:  "thought the food was <b>delicious</b>?",
+		    low:  "thought the food was <b>palatable</b>?"
 		},
 		memorabe_unforgettable: {
-			hi:  "thought the restaurant was <b>unforgettable</b>?",
-		    low:  "thought the restaurant was <b>memorable</b>?"
+			hi:  "thought the food was <b>unforgettable</b>?",
+		    low:  "thought the food was <b>memorable</b>?"
 		},
 		some_all: {
 			hi: "enjoyed <b>all</b> of the food they ate?",
