@@ -97,19 +97,20 @@ var sents = {
 //loathed_dislike
 //###:::------Negative scalars to consider------:::###
 
-//###:-----------------CONDITION PARAMETERS-------------------:###
+//Trial condition params initializations ------------------->
+var TOTAL_TRIALS = 52;
+var trials = [];
+for(var i = TOTAL_TRIALS; i > 0; --i) {
+	trials.push(i);
+}
 var scales = Object.keys(sents.scale);
-scales.shift();
-scales.shift();
-scales = shuffle(scales);
-scales.unshift("training1", "training2");
-
 var scale_degrees = ["hi", "low"];
-var manipulation =  shuffle(["60", "80", "100"]);
-//###:-----------------CONDITION PARAMETERS-------------------:###
+var manipulation = ["20", "40", "60", "80", "100"];
+//var totalTrials = trials.length;
+//Trial condition params initializations ------------------->
 
 
-var totalTrials = scales.length; //One trial for each domain
+
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
@@ -166,39 +167,57 @@ var experiment = {
     
     //Run every trial
     next: function() {
+    	//If no trials are left go to debreifing
+		if (!trials.length) {
+			return experiment.debriefing();
+		}
+		
 		//Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top || turk.workerId.length > 0) {
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
-				    String(100 * (1 - scales.length/totalTrials)) + "%");
+				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
-		    //Get current scale
-		    var current_scale = scales.shift();
-		    //If current scale is undefined we've reached end and send to debreif
-		    if (typeof current_scale == "undefined") {
-				return experiment.debriefing();
+		    //Trial params ---------------------------->
+		    if(trials.length == 52) {
+		    	trials.shift();
+		    	current_scale = scales[0];
+		    	degree = "hi";
+		    	manipulation_level = 100;
+		    } else if (trials.length == 51) {
+		    	trials.shift();
+		    	current_scale = scales[1];
+		    	degree = "low";
+		    	manipulation_level = 80;
+		    } else if (trials.length == 50) {
+		    	trials = shuffle(trials); 
+		    	current_trial = trials.shift();
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 2];
+		    	degree = scale_degrees[current_trial % 2];
+		    	manipulation_level = manipulation[current_trial % 5];
+		    } else {
+		    	current_trial = trials.shift();
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 2];
+		    	degree = scale_degrees[current_trial % 2];
+		    	manipulation_level = manipulation[current_trial % 5];
 		    }
-		    //else set rest of conditional params
-		    var degree = shuffle(scale_degrees)[0];
-		    //sent materials to aggregate and display
-		    sent_materials = sents.scale[current_scale][degree];
+			sent_materials = sents.scale[current_scale][degree];
+		    //Trial params ---------------------------->
 
-		    //###:---------Manipulation code----------:###
-		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
-		    
-		    //###:-----------------Display trial-----------------:###
+
+		    //Display Trials -------------------------->
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
 		    $("#sent_question").html("How much would you agree that the person "+
 					     sent_materials);
-		    //###:-----------------Display trial-----------------:###
+		    //Display Trials -------------------------->
 
-		    //###:-------------Log trial data (push to data object)-------------:###
+		    //Log Data -------------------------------->
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
 		    experiment.data.manipulation_level.push(manipulation_level);
-		    //###:-------------Log trial data (push to data object)-------------:###
+		    //Log Data -------------------------------->
 		    
 		    showSlide("stage");
 		}
