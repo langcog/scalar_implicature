@@ -83,12 +83,8 @@ var sents = {
     scale: {
 		training1: {
 		    hi:  "thought the restaurant deserved a <b>high</b> rating.",
-		    low:  "thought the restaurant deserved a <b>high</b> rating"
+		    low:  "thought the restaurant deserved a <b>low</b> rating"
 		},
-		training2: {
-		    hi:  "thought the restaurant deserved a <b>low</b> rating.",
-		    low:  "thought the restaurant deserved a <b>low</b> rating."
-		},	
 		liked_loved: {		   
 		    hi:  "<b>loved</b> the restaurant.",
 		    low:  "<b>liked</b> the restaurant."
@@ -112,16 +108,16 @@ var sents = {
     },
 };
 
-//dislike_horrible
-//adequate_good
-//loathed_dislike
-
-
-//###:-----------------CONDITION PARAMETERS-------------------:###
+//Trial condition params initializations ------------------->
+var TOTAL_TRIALS = 12;
+var trials = [];
+for(var i = TOTAL_TRIALS; i > 0; --i) {
+	trials.push(i);
+}
 var scales = Object.keys(sents.scale);
 var scale_degrees = ["hi", "low"];
-var manipulation =  shuffle(["60", "80", "100"]);
-//###:-----------------CONDITION PARAMETERS-------------------:###
+//var totalTrials = trials.length;
+//Trial condition params initializations ------------------->
 
 
 var totalTrials = scales.length; //One trial for each domain
@@ -165,6 +161,11 @@ var experiment = {
     
     //Run every trial
     next: function() {
+    	//If no trials are left go to debreifing
+		if (!trials.length) {
+			return experiment.debriefing();
+		}
+
 		//Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top || turk.workerId.length > 0) {
 
@@ -173,40 +174,56 @@ var experiment = {
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - scales.length/totalTrials)) + "%");
 		    
-		    //Get current scale
-		    var current_scale = scales.shift();
-		    //If current scale is undefined we've reached end and send to debreif
-		    if (typeof current_scale == "undefined") {
-				return experiment.debriefing();
+
+		    //Trial params ---------------------------->
+		    if(trials.length == 12) {
+		    	trials.shift();
+		    	current_scale = scales[0];
+		    	degree = "hi";
+		    } else if (trials.length == 11) {
+		    	trials.shift();
+		    	current_scale = scales[0];
+		    	degree = "low";
+		    } else if (trials.length == 10) {
+		    	trials = shuffle(trials); 
+		    	current_trial = trials.shift();
+		    	current_scale = scales[current_trial % 5 + 1];
+		    	degree = scale_degrees[current_trial % 2];
+		    } else {
+		    	current_trial = trials.shift();
+		    	current_scale = scales[current_trial % 5 + 1];
+		    	degree = scale_degrees[current_trial % 2];
 		    }
+			sent_materials = sents.scale[current_scale][degree];
+			//Trial params ---------------------------->
 
-		    //else set rest of conditional params
-		    var degree = shuffle(scale_degrees)[0];
-		    //sent materials to aggregate and display
-		    sent_materials = sents.scale[current_scale][degree];
 
-		    //###:---------Manipulation code----------:###
-		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
-		    //
-		    //
 		    //###:-----------------Display trial-----------------:###
 		    $("#sent_question").html("Someone said they "+
 					     sent_materials);
 		    $(".rating-stars").on("click", function(event) {
 				$(".rating-stars").fadeOut(100).fadeIn(100);
 				event.stopImmediatePropagation();
+				//Set attribute once clicked
+				var selection = $(".rating-stars").attr("style");
+				selection = Math.floor(parseInt(selection.replace(/[^\d.]/g, '')) / 10);
+				console.log("selection", selection);
+				$(".rating-stars").attr({"style":"width: " + selection.toString() + "%"});
+
+				//document.getElementsByClassName("rating-stars").hoverEnabled = false;
 			});
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
-		    experiment.data.manipulation_level.push(manipulation_level);
+		    //experiment.data.manipulation_level.push(manipulation_level);
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
 			//Clear stars
 			$(".rating-stars").attr({"style":"width: 0%"});
+			//document.getElementsByClassName("rating-stars").hoverEnabled = true;
 		}
     },
 
