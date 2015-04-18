@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css" />
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
 <!--Star-ratings-->
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link href="star-rating/star-rating.css" media="all" rel="stylesheet" type="text/css" />
@@ -26,26 +25,17 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this experiment, you will read some sentences about two friends, John and Bob. They have many conversations about different things. Your job is to judge what some of their comments mean. You will see something one of them said, and a possible interpretation of the comments. You should choose "yes" if you think the interpretation is correct and "no" if the interpretation is false.
+  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "When rating the food someone selected:" and then you'll see the ratings they gave. We'd like to know how much you agree with how particular descriptions fit those ratings. If you think the description fits exactly select "7 - Yes, definitely". If the description doesn't fit at all, select "1 - No, not at all." If you feel like it's somewhere in between these options, choose a number between 1 and 7.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
   <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
   
-  <p class="block-text" id="legal">By answering the
-  following questions, you are participating in a study being performed by
-  cognitive scientists in the Stanford Department of Psychology. If you have
-  questions about this research, please contact us at 
-  <a href="mailto://languagecoglab@gmail.com.">languagecoglab@gmail.com</a>.
-  You must be  at least 18 years old to participate. Your participation in 
-  this research is voluntary. You may decline to answer any or all of the 
-  following questions. You may decline further participation, at any time, 
-  without adverse consequences. Your anonymity is assured; the researchers 
-  who have requested your participation will not receive any personal information 
-  about you. Note however that we have recently been made aware that your public 
-  Amazon.com profile can be accessed via your worker ID if you do not choose 
-  to opt out. If you would like to opt out of this feature, you may follow instructions available 
-  <a href="http://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
+  <p class="block-text" id="legal">By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at langcoglab@stanford.edu <mailto:langcoglab@stanford.edu>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
+ 
+  We have recently been made aware that your public Amazon.com profile can be accessed via your worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available here:
+  <a href="http://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.
+  </p>
 </div>
 
 <!-- The stage slide. -->
@@ -58,26 +48,28 @@
     </div>
 
 </div>
-
 <br>
   
   <!-- I have commented out elements like sent_context and speaker in case future iterations of this study change speakers or contexts.-->
-<div align="left">
+<div align="center">
 
-	<!-- <p id="sent_context">{{}}</p> -->
-  <p> <b> We are trying to understand more about what people mean in Yelp(restaurant) reviews. </b> <p>
-    <p> Someone clicked: </p>
+  <p> <b> We need help understanding what people mean when they give star ratings... </b> <p>
+    <p> When rating the food someone selected: </p>
+
   <!--
-  star-ratings
+  ###############################################################
+  Star-ratings
   http://www.jqueryscript.net/other/Simple-jQuery-Star-Rating-System-For-Bootstrap-3.html
   -->
-  <div class="star-rating rating-xs rating-active">
+  <div align="center" class="star-rating rating-sm rating-active">
     <div class="rating-container rating-gly-star" data-content="">
       <div class="rating-stars" data-content="">
       </div>
     </div>
   </div>
-  <!--star-ratings-->
+  <!--star-ratings
+  ###############################################################
+  -->
 
  	<p id = "sent_question">{{}} </p>
 </div>
@@ -86,46 +78,34 @@
 <table align = "center"><tr>
 <td align="center">
   <tr>
-    <td>No, not at all <br>1</td>
+    <td>Completely <b>disagree</b><br>1</td>
     <td><br>2</td>
     <td><br>3</td>
     <td><br>4</td>
-    <td><br>5</td>
-    <td><br>6</td>
-    <td>Yes, definitiely<br>7</td>
+    <td>Completely <b>agree</b><br>5</td>
+    <!-- <td><br>6</td>
+    <td>Very natural<br>7</td> -->
   </tr>
     <td><input type="radio" name="judgment" value = "1"></td>
     <td><input type="radio" name="judgment" value = "2"></td>
     <td><input type="radio" name="judgment" value = "3"></td>
     <td><input type="radio" name="judgment" value = "4"></td>
     <td><input type="radio" name="judgment" value = "5"></td>
-    <td><input type="radio" name="judgment" value = "6"></td>
-    <td><input type="radio" name="judgment" value = "7"></td>
+    <!-- <td><input type="radio" name="judgment" value = "6"></td>
+    <td><input type="radio" name="judgment" value = "7"></td> -->
   </tr>
 </table>
 
-
-<!-- <table align = "center"><tr>
-<td align="center">
-	<tr>
-	  <td>Yes</td>
-	  <td> </td>
-	  <td><input type="radio" name="judgment" value ="1" </td>
-          <td>&nbsp;&nbsp;&nbsp;&nbsp;
-	  <td>No </td>	
-	  <td><input type="radio" name="judgment" value ="2" </td>
-	</tr>
-</table> -->
-
   <br>
-  <table align="center"><tr>
+<table align="center"><tr>
   <td align="center">
-	<button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
-         </td> 
-      <tr><td align="center">
-      <div id="testMessage"> </div>
-      </td></tr>
-
+  	<button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
+  </td> 
+  <tr>
+    <td align="center">
+      <div id="testMessage"></div>
+    </td>
+  </tr>
  </table>
  </div>
 
@@ -139,10 +119,6 @@
    <p> What do you think this experiment was about? </p>
    <p>
 	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
-   </p>
-   <p> What are your thoughts about John and Bob? </p>
-   <p>
-   <textarea type="textarea" id="character_thoughts" style="width:100%" name="expgen"></textarea>
    </p>
    <p> Any general comments about the experiment? </p>
    <p>
@@ -160,7 +136,7 @@
 	You're finished - thanks for participating! Submitting to Mechanical Turk...
 </div>
 
-<script src="implicatures_e5.js"></script>
+<script src="implicatures_e5a.js"></script>
 
 </body>
 </html>

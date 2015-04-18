@@ -37,158 +37,70 @@ function shuffle (a) {
 	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
 	return o;
 }
-
-// substitution function - do we want to save all these factors to a data object?
-//Pass a trial object in to be populated?
-function doSentSubs (sents, scale, domain) {
-	//TODO: work with this function
-
-    inference = sents["scales"][scale]["sent_inference"];
-    question = sents["scales"][scale]["sent_question"];
-    //manipulation = sents["domains"][domain][manip];
-    //manipulation = sents["scales"][scale]["sent_manipulation"];
-
-    SP = sents["domains"][domain]["SP"]; //Plural
-    SS = sents["domains"][domain]["SS"]; //Singular
-    P1 = sents["domains"][domain]["P1"]; //Predicate 1
-    P2 = sents["domains"][domain]["P2"]; //Predicate 2
-    V1 = sents["domains"][domain]["V1"]; //Past
-    V2 = sents["domains"][domain]["V2"]; //Present
-
-    inference = inference.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-
-    question = question.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-
-	//TODO: return manipulation
-    return [inference, question];
-}
-
-//Replace speaker name in manipulation
-function doSpeakerSub(speaker, manip) {
-	manip = manip.replace("SPEAKER", speaker);
-	return manip;
-}
-//############################## Helper functions ##############################
+//############################## Helper functions ##############################	
 
 var sents = {
-    scales: {
-	training1: {
-	    sent_inference: "N/A",
-	    sent_question:  "thought the restaurant deserved a high rating?"
-	},	
-	training2: {
-	    sent_inference: "N/A",
-	    sent_question:  "thought the restaurant deserved a low rating?"
-	},	
-	like_love: {		   
-	    sent_inference: "N/A",
-	    sent_question:  "loved the restaraunt?"
-	},
-	good_excellent: {
-		sent_inference: "N/A",
-		sent_question: "thought the restaurant was excellent?"
-	}
+    scale: {
+		training1: {
+			//because training trial hi and low are the same
+		    hi:  "thought the food deserved a <b>high</b> rating?",
+		    low:  "thought the food deserved a <b>low</b> rating?"
+		},
+		liked_loved: {		   
+		    hi:  "<b>liked</b> the food?",
+		    low:  "<b>loved</b> the food?"
+		},
+		good_excellent: {
+			hi:  "thought the food was <b>excellent</b>?",
+		    low:  "thought the food was <b>good</b>?"
+		},
+		palatable_delicious: {
+			hi:  "thought the food was <b>delicious</b>?",
+		    low:  "thought the food was <b>palatable</b>?"
+		},
+	memorable_unforgettable: {
+			hi:  "thought the food was <b>unforgettable</b>?",
+		    low:  "thought the food was <b>memorable</b>?"
+		},
+		some_all: {
+			hi: "enjoyed <b>all</b> of the food they ate?",
+			low: "enjoyed <b>some</b> of the food they ate?"
+		}
     },
-    domains: {
-	training1: {
-	    sent_context_plural: "John and Bob were talking about sailing yesterday.",
-	    sent_manipulation_high: "SPEAKER spends a lot of time with his family.",
-	    sent_manipulation_low: "SPEAKER spends a lot of time with his family.",
-	},
-	training2: {
-	    sent_context_plural: "John and Bob were talking about restaurants yesterday.",
-	    sent_manipulation_high: "SPEAKER enjoys reading restaurant reviews.",
-	    sent_manipulation_low: "SPEAKER enjoys reading restaurant reviews.",
-	},
-	movies: {
-	    sent_context_plural: "Yesterday, John and Bob were talking about the movies at a local theater.",
-	    sent_manipulation_high: "SPEAKER has seen every movie at the theater.",
-	    sent_manipulation_low: "SPEAKER has only had the chance to see one of the movies showing at the theater.",
-	    SP: "movies at the theater",
-	    P1: "comedies",
-	    V1: "are"
-	},
-	cookies: {
-	    sent_context_plural: "A few days ago, John and Bob were talking about the current selection of cookies at a local bakery.",
-	    sent_manipulation_high: "SPEAKER has been to the bakery and looked at the new cookies.",
-	    sent_manipulation_low:  "SPEAKER ate one of the cookies but hasn't been to the bakery himself.",
-	    SP: "cookies at the bakery",
-	    P1: "chocolate",
-	    V1: "are"
-	},
-	players: {
-	    sent_context_plural: "Last week, John and Bob were talking about the high school football game.",
-	    sent_manipulation_high: "SPEAKER watched the whole game carefully.",
-	    sent_manipulation_low: "SPEAKER saw only a single play.",
-	    SP: "players on the team",
-	    P1: "skillful",
-	    V1: "were"
-	},
-	weather: {
-	    sent_context_plural: "Bob and John were talking about the weather during the previous month.",
-	    sent_manipulation_high: "SPEAKER was around for the entire month.",
-	    sent_manipulation_low: "SPEAKER was out of town most of the time.",
-	    SP: "weekends in the month",
-	    P1: "sunny",
-	    V1: "were"
-	},
-	clothes: {
-	    sent_context_plural: "Last month, Bob and John were talking about the selection of shirts at a local store.",
-	    sent_manipulation_high: "SPEAKER has shopped at the store and looked at the shirt display.",
-	    sent_manipulation_low: "SPEAKER got a shirt as a present, but hasn't been to the store himself.",
-	    SP: "shirts at the store",
-	    P1: "expensive",
-	    V1: "are"
-	},
-	students: {
-	    sent_context_plural: "A year ago, Bob and John were talking about the students in a class they taught.",
-	    sent_manipulation_high: "SPEAKER has kept in touch with all of the students.",
-	    sent_manipulation_low: "SPEAKER has only kept up with one of the students.",
-	    SP: "students from the class",
-	    P1: "successful",
-	    V1: "have been"
-	}
-    }
+};
+//###:::------Negative scalars to consider------:::###
+//dislike_horrible
+//adequate_good
+//loathed_dislike
+//###:::------Negative scalars to consider------:::###
+
+//Trial condition params initializations ------------------->
+var TOTAL_TRIALS = 52;
+var trials = [];
+for(var i = TOTAL_TRIALS; i > 0; --i) {
+	trials.push(i);
 }
+var scales = Object.keys(sents.scale);
+var scale_degrees = ["hi", "low"];
+var manipulation = ["20", "40", "60", "80", "100"];
+//var totalTrials = trials.length;
+//Trial condition params initializations ------------------->
 
-//###:-----------------CONDITION PARAMETERS-------------------:###
-var speakers = ["John","Bob"];
-var domains = Object.keys(sents.domains);
-domains.shift();
-domains.shift();
-domains = shuffle(domains);
 
-//TODO: have manipulation be high/medium/low here and in other parts of experiment
-var manipulation =  shuffle(["60", "80", "100"]);
-
-// now put the training trials up front and shuffle the rest of the trials.
-var scales = ["training1","like_love","training2","good_excellent"];
-var domains = ["training1", domains[0], "training2", domains[1]];
-var manipulation_levels = ["training", manipulation[0], "training", manipulation[1]];
-
-//###:-----------------CONDITION PARAMETERS-------------------:###
-var totalTrials = domains.length; //One trial for each domain
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
 //###:-----------------MAIN EVENT-------------------:###
 var experiment = {
-
     //Data object for logging responses, etc
     data: {
 		scale: [],
-		domain: [],
-		sent_context: [],
+		degree: [],
 		manipulation_level: [],
-		sent_manipulation: [],
-		sent_inference: [],
-		sent_question: [],
-		speaker: [],
 		judgment: [],
 		language: [],
 		expt_aim: [],
-		character_thoughts: [],
 		expt_gen: [],
     },
     
@@ -232,67 +144,57 @@ var experiment = {
     
     //Run every trial
     next: function() {
+    	//If no trials are left go to debreifing
+		if (!trials.length) {
+			return experiment.debriefing();
+		}
+		
 		//Allow experiment to start if it's a turk worker OR if it's a test run
-		if (window.self == window.top | turk.workerId.length > 0) {
-
+		if (window.self == window.top || turk.workerId.length > 0) {
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
-				    String(100 * (1 - domains.length/totalTrials)) + "%");
+				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
-		    //#####:---Get the current trial parameters - scale, domain, speaker---:#####
-		    var scale = scales.shift();
-		    var domain = domains.shift();
-		    speaker = shuffle(speakers)[0]; //Randomize speaker
-
-		    // If the current trial domain is undefined, move to debrief
-		    if (typeof domain == "undefined") {
-				return experiment.debriefing();
+		    //Trial params ---------------------------->
+		    if(trials.length == 52) {
+		    	trials.shift();
+		    	current_scale = scales[0];
+		    	degree = "hi";
+		    	manipulation_level = 100;
+		    } else if (trials.length == 51) {
+		    	trials.shift();
+		    	current_scale = scales[0];
+		    	degree = "low";
+		    	manipulation_level = 80;
+		    } else if (trials.length == 50) {
+		    	trials = shuffle(trials); 
+		    	current_trial = trials.shift();
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
+		    	degree = scale_degrees[current_trial % 2];
+		    	manipulation_level = manipulation[current_trial % 5];
+		    } else {
+		    	current_trial = trials.shift();
+		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
+		    	degree = scale_degrees[current_trial % 2];
+		    	manipulation_level = manipulation[current_trial % 5];
 		    }
-
-		    //###:---------Manipulation code----------:###
-		    manipulation_level = shuffle(manipulation)[0]; //Randomize manipulation
-		    //Set manipulation sentence
-		    // if (manipulation_level == "high") {
-		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_high"];
-		    // } else {
-		    // 	sent_manipulation = sents["domains"][domain]["sent_manipulation_low"];
-		    // }
-		    //Replace speaker in manipulation
-		    //sent_manipulation = doSpeakerSub(speaker, sent_manipulation);
-
-		    //###:---------Manipulation code----------:###
-		    sent_context = sents["domains"][domain]["sent_context_plural"];
+			sent_materials = sents.scale[current_scale][degree];
+		    //Trial params ---------------------------->
 
 
-		    //Main substitition function (everything but manipulation)
-		    sent_materials = doSentSubs(sents, scale, domain);	
-		    
-		    //###:-----------------Display trial-----------------:###
-		    // $("#sent_context").html(sent_context);
-		    // //adding in manipulation
-		    // $("#speaker").html(speaker);
-		    // $("#sent_manipulation").html(sent_manipulation);
-		    // $("#speaker").html("<b>" + speaker + " said:</b>");
-		    // $("#sent_inference").html("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\"" +
-					 //      sent_materials[0] + "\"");
+		    //Display Trials -------------------------->
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
-		    $("#sent_question").html("Would you conclude from this sentence that this person "+
-					     sent_materials[1]);
-		    console.log(sent_materials);
-		    //###:-----------------Display trial-----------------:###
-		    
-		    //###:-------------Log trial data (push to data object)-------------:###
-		    experiment.data.scale.push(scale);
-		    experiment.data.domain.push(domain);
-		    experiment.data.sent_context.push(sent_context);
-		    experiment.data.sent_inference.push(sent_materials[0]);
-		    experiment.data.sent_question.push(sent_materials[1]);
+		    $("#sent_question").html("How much would you agree that the person "+
+					     sent_materials);
+		    //Display Trials -------------------------->
+
+		    //Log Data -------------------------------->
+		    experiment.data.scale.push(current_scale);
+		    experiment.data.degree.push(degree);
 		    experiment.data.manipulation_level.push(manipulation_level);
-		    //experiment.data.sent_manipulation.push(sent_manipulation);
-		    experiment.data.speaker.push(speaker); 
-		    //###:-------------Log trial data (push to data object)-------------:###
+		    //Log Data -------------------------------->
 		    
 		    showSlide("stage");
 		}
@@ -307,7 +209,6 @@ var experiment = {
     submit_comments: function() {
 		experiment.data.language.push(document.getElementById("homelang").value);
 		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
-		experiment.data.character_thoughts.push(document.getElementById("character_thoughts").value);
 		experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 		experiment.end();
     }
