@@ -161,12 +161,12 @@ var experiment = {
 		    	trials.shift();
 		    	current_scale = scales[0];
 		    	degree = "hi";
-		    	manipulation_level = 100;
+		    	manipulation_level = "100";
 		    } else if (trials.length == 51) {
 		    	trials.shift();
 		    	current_scale = scales[0];
 		    	degree = "low";
-		    	manipulation_level = 80;
+		    	manipulation_level = "80";
 		    } else if (trials.length == 50) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();

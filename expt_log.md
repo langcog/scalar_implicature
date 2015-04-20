@@ -39,3 +39,11 @@ Experiment 4
   * try to be as direct as possible about perceptual access to a particular set
 * remove all scalars except "some"
 * run on 3/5
+
+Experiment 5
+------------
+
+* began development class project
+* star rating system
+* 50 trials
+* run on 4/17
