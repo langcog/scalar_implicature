@@ -201,15 +201,17 @@ var experiment = {
 		    //###:-----------------Display trial-----------------:###
 		    $("#sent_question").html("Someone said they "+
 					     sent_materials);
-		    $(".rating-stars").on("click", function(event) {
-				$(".rating-stars").fadeOut(100).fadeIn(100);
-				event.stopImmediatePropagation();
-				$('.rating-stars').unbind();
+
+		    $("#rating-stars").on("click", 
+			    	function(event) {
+						$("#rating-stars").fadeOut(100).fadeIn(100);
+				// event.stopImmediatePropagation();
+				// $('.rating-stars').unbind();
 				//Set attribute once clicked
-				var selection = $(".rating-stars").attr("style");
-				selection = Math.floor(parseInt(selection.replace(/[^\d.]/g, '')) / 10);
-				console.log("selection", selection);
-				$(".rating-stars").attr({"style":"width: " + selection.toString() + "%"});
+						var selection = $("#rating-stars").val();
+				// selection = Math.floor(parseInt(selection.replace(/[^\d.]/g, '')) / 10);
+				// console.log("selection", selection);
+				// $(".rating-stars").attr({"style":"width: " + selection.toString() + "%"});
 
 				//document.getElementsByClassName("rating-stars").hoverEnabled = false;
 			});
