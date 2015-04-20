@@ -28,22 +28,23 @@ for (f in files) {
 }
 ```
 
-Exclude non-compliant participants and non-English speakers. 
+Holding off on exclusions - everyone put English, and training 2 was confusing. 
 
 ```{r}
-compliant <- d.raw %>% 
-  filter(grepl("training", scale)) %>%
-  group_by(workerid) %>%
-  summarise(compliant = judgment[scale == "training1"] == 5 & 
-              judgment[scale == "training2"] == 1)
-  
-d <- d.raw %>% 
-  left_join(compliant) %>%
-  filter(grepl(pattern = "english", 
-               language, ignore.case = TRUE), 
-         domain != "training1", 
-         domain != "training2", 
-         compliant == TRUE)
+# compliant <- d.raw %>% 
+#   filter(grepl("training", scale)) %>%
+#   group_by(workerid) %>%
+#   summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
+#               judgment[scale == "training1" & degree == "low"] < 3)
+#   
+# d <- d.raw %>% 
+#   left_join(compliant) %>%
+#   filter(grepl(pattern = "english", 
+#                language, ignore.case = TRUE), 
+#          domain != "training1", 
+#          domain != "training2", 
+#          compliant == TRUE)
+d <- d.raw %>% filter(scale != "training1")
 ```
 
 Main Analysis
@@ -53,58 +54,18 @@ First look at means broken down by epistemic condition.
 
 ```{r}
 ms <- d %>%
-  group_by(knowledge) %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
   summarise(cil = ci.low(judgment), 
             cih = ci.high(judgment), 
             judgment = mean(judgment))
 
-pdf("plots/e4.pdf",width=4)
-qplot(x = knowledge, y = judgment, fill=knowledge, 
-      geom = "bar", stat = "identity", 
+qplot(x = stars, y = judgment, col = degree,
+      geom = "line", stat = "identity", 
       position = "dodge", 
       data = ms) + 
   geom_linerange(aes(ymin = judgment - cil, 
-                     ymax = judgment + cih),
-                 position = position_dodge(width=.9)) + 
-  ylab("Does the inference follow? 1=yes, 0=no")
-dev.off()
+                     ymax = judgment + cih)) + 
+  facet_wrap(~scale)
 ```
 
-Next break down by domain condition. 
-
-```{r}
-ms <- d %>%
-  group_by(domain, knowledge) %>%
-  summarise(cil = ci.low(judgment), 
-            cih = ci.high(judgment), 
-            judgment = mean(judgment), 
-            n = n())
-
-# pdf("plots/e3_level.pdf")
-qplot(x = domain, y = judgment, 
-      fill = knowledge,
-      geom = "bar", stat = "identity", 
-      position = "dodge", 
-      data = ms) + 
-  geom_linerange(aes(ymin = judgment - cil, 
-                     ymax = judgment + cih),
-                 position = position_dodge(width=.9)) + 
-  ylab("Does the inference follow? 1=yes, 0=no")
-# dev.off()
-```
-
-Statistics 
-
-```{r}
-
-summary(glmer(judgment ~ knowledge + (1 | workerid) + 
-                (knowledge | domain), 
-              data = d,
-              family = "binomial"))
-
-summary(glmer(judgment ~ knowledge + (1 | workerid) + 
-                (1 | domain), 
-              data = d,
-              family = "binomial"))
-
-```
