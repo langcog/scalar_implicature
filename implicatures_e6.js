@@ -130,7 +130,6 @@ var experiment = {
     data: {
 		scale: [],
 		degree: [],
-		manipulation_level: [],
 		judgment: [],
 		language: [],
 		expt_aim: [],
@@ -148,15 +147,27 @@ var experiment = {
     //Log response
     log_response: function() {
 		var response_logged = false;
-		
+
 		var judgment = $(".rating-stars").attr("style");
 		judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
-		judgment /= 20;
-		experiment.data.judgment.push(judgment);
-		console.log(judgment);
-
-		nextButton.blur();
-		experiment.next();
+		console.log("judgment: ", judgment);
+		if (judgment == 0) {
+			//Else respondent didn't make a response
+		    $("#testMessage").html('<font color="red">' + 
+					   'Please make a response!' + 
+					   '</font>');
+		    judgment = $(".rating-stars").attr("style");
+		    judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
+		} else {
+			judgment /= 20;
+			experiment.data.judgment.push(judgment);
+		//console.log(judgment);
+			nextButton.blur();
+			experiment.next();
+		}
+		//judgment = $(".rating-stars").attr("style");
+		//judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
+		
 	},
     
     //Run every trial
@@ -172,7 +183,7 @@ var experiment = {
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
-				    String(100 * (1 - scales.length/totalTrials)) + "%");
+				    String(100 * (1 - trials.length/TOTAL_TRIALS)) + "%");
 		    
 
 		    //Trial params ---------------------------->
@@ -205,22 +216,13 @@ var experiment = {
 		    $("#rating-stars").on("click", 
 			    	function(event) {
 						$("#rating-stars").fadeOut(100).fadeIn(100);
-				// event.stopImmediatePropagation();
-				// $('.rating-stars').unbind();
-				//Set attribute once clicked
 						var selection = $("#rating-stars").val();
-				// selection = Math.floor(parseInt(selection.replace(/[^\d.]/g, '')) / 10);
-				// console.log("selection", selection);
-				// $(".rating-stars").attr({"style":"width: " + selection.toString() + "%"});
-
-				//document.getElementsByClassName("rating-stars").hoverEnabled = false;
 			});
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
-		    experiment.data.scale.push(current_scale);
+		    experiment.data.scale.push(current_scale + "\n");
 		    experiment.data.degree.push(degree);
-		    //experiment.data.manipulation_level.push(manipulation_level);
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
