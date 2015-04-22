@@ -82,24 +82,24 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-		    hi:  "thought the restaurant deserved a <b>high</b> rating.",
-		    low:  "thought the restaurant deserved a <b>low</b> rating"
+		    hi:  "thought the food deserved a <b>high</b> rating.",
+		    low:  "thought the food deserved a <b>low</b> rating"
 		},
 		liked_loved: {		   
-		    hi:  "<b>loved</b> the restaurant.",
-		    low:  "<b>liked</b> the restaurant."
+		    hi:  "<b>loved</b> the food.",
+		    low:  "<b>liked</b> the food."
 		},
 		good_excellent: {
-			hi:  "thought the restaurant was <b>excellent</b>.",
-		    low:  "thought the restaurant was <b>good</b>."
+			hi:  "thought the food was <b>excellent</b>.",
+		    low:  "thought the food was <b>good</b>."
 		},
 		palatable_delicious: {
-			hi:  "thought the restaurant was <b>delicious</b>.",
-		    low:  "thought the restaurant was <b>palatable</b>."
+			hi:  "thought the food was <b>delicious</b>.",
+		    low:  "thought the food was <b>palatable</b>."
 		},
 		memorabe_unforgettable: {
-			hi:  "thought the restaurant was <b>unforgettable</b>.",
-		    low:  "thought the restaurant was <b>memorable</b>."
+			hi:  "thought the food was <b>unforgettable</b>.",
+		    low:  "thought the food was <b>memorable</b>."
 		},
 		some_all: {
 			hi: "enjoyed <b>all</b> of the food.",
@@ -150,7 +150,7 @@ var experiment = {
 
 		var judgment = $(".rating-stars").attr("style");
 		judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
-		console.log("judgment: ", judgment);
+		//console.log("judgment: ", judgment); for debuggging
 		if (judgment == 0) {
 			//Else respondent didn't make a response
 		    $("#testMessage").html('<font color="red">' + 
@@ -159,15 +159,12 @@ var experiment = {
 		    judgment = $(".rating-stars").attr("style");
 		    judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
 		} else {
+			//Log judgment
 			judgment /= 20;
 			experiment.data.judgment.push(judgment);
-		//console.log(judgment);
 			nextButton.blur();
 			experiment.next();
 		}
-		//judgment = $(".rating-stars").attr("style");
-		//judgment = parseInt(judgment.replace(/[^\d.]/g, ''));
-		
 	},
     
     //Run every trial
@@ -215,28 +212,25 @@ var experiment = {
 
 		    $("#rating-stars").on("click", 
 			    	function(event) {
-						$("#rating-stars").fadeOut(100).fadeIn(100);
 						var selection = $("#rating-stars").val();
 			});
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
-		    experiment.data.scale.push(current_scale + "\n");
+		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
 		    //###:-------------Log trial data (push to data object)-------------:###
 		    
 		    showSlide("stage");
+
 			//Clear stars
 			$(".rating-stars").attr({"style":"width: 0%"});
-			//document.getElementsByClassName("rating-stars").hoverEnabled = true;
 		}
     },
 
     //Show debrief
     debriefing: function() {
 		showSlide("debriefing");
-		//Remove first item (0) from judgments
-		//experiment.data.judgment.shift();
     },
 
     //###:-------------Log debrief data-------------:###
