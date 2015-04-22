@@ -47,8 +47,8 @@ var sents = {
 		    low:  "thought the food deserved a <b>low</b> rating?"
 		},
 		liked_loved: {		   
-		    hi:  "<b>liked</b> the food?",
-		    low:  "<b>loved</b> the food?"
+		    hi:  "<b>loved</b> the food?",
+		    low:  "<b>liked</b> the food?"
 		},
 		good_excellent: {
 			hi:  "thought the food was <b>excellent</b>?",
