@@ -56,7 +56,7 @@ var sents = {
 			hi:  "thought the food was <b>delicious</b>.",
 		    low:  "thought the food was <b>palatable</b>."
 		},
-		memorabe_unforgettable: {
+		memorable_unforgettable: {
 			hi:  "thought the food was <b>unforgettable</b>.",
 		    low:  "thought the food was <b>memorable</b>."
 		},
