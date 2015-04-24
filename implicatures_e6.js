@@ -1,4 +1,4 @@
-//############################## Helper functions ##############################
+//############################## Helper functions #############################
 // Shows slides. We're using jQuery here - the **$** is the jQuery selector function, which takes as input either a DOM element or a CSS selector string.
 function showSlide(id) {
 	// Hide all slides
