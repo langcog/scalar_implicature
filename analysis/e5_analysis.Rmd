@@ -60,6 +60,7 @@ ms <- d %>%
             cih = ci.high(judgment), 
             judgment = mean(judgment))
 
+pdf("plots/e5.pdf", width=8, height = 5)
 qplot(x = stars, y = judgment, col = degree,
       geom = "line", stat = "identity", 
       position = "dodge", 
@@ -67,5 +68,6 @@ qplot(x = stars, y = judgment, col = degree,
   geom_linerange(aes(ymin = judgment - cil, 
                      ymax = judgment + cih)) + 
   facet_wrap(~scale)
+dev.off()
 ```
 
