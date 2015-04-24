@@ -1,5 +1,5 @@
 
-<!-- ## Code -->
+<!--Code-->
 <html>
 <head>
 <meta charset="utf-8">
@@ -26,7 +26,7 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this task, you're going to help us understand what people really mean by their restaurant ratings. We've anonymized all the ratings so you'll see a sentence like "someone said they thought the restaurant deserved a ____ rating" or "someone said the restaurant was ____." Depending on what they said, we'd like you to estimate the rating the they likely gave by selecting a number stars.
+  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "someone said they thought the <i>food</i> deserved a ____ rating" or "someone said the <i>food</i> was ____." Depending on what they said, we'd like you to estimate the rating the they likely gave by selecting a number stars.
   </p>
   <button type="button" onclick="this.blur(); $('#rating-system').rating('refresh', {disabled: false, showClear: false, showCaption: false, hoverEnabled: false}); experiment.next()">Start</button>
   
@@ -52,11 +52,13 @@
 <br>
   
   <!-- I have commented out elements like sent_context and speaker in case future iterations of this study change speakers or contexts.-->
-<div align="left">
+<div align="center">
 
-  <p> <b> We need help understanding what people really mean in their restaurant recommendation ratings... </b> <p>
-    <p id = "sent_question">{{}} </p>
-  <p> Please select the number of stars you think they gave the restaurant: </p>
+  <p> <b> We need help understanding what people really mean in their star ratings... </b> <p>
+    <p>&nbsp;</p>
+	<p id = "sent_question">{{}} </p>
+	<p>&nbsp;</p>
+	<p> <b> Please select the number of stars you think they gave: </b> </p>
 
   <!--
   ###############################################################
