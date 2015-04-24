@@ -38,47 +38,6 @@ function shuffle (a) {
 	return o;
 }
 
-
-//sent_materials = doSentSubs(scale, type, degree);
-// substitution function - do we want to save all these factors to a data object?
-//Pass a trial object in to be populated?
-// function doSentSubs (group_type, scale, degree) {
-// 	//TODO: work with this function
-
-//     //inference = sents["scales"][scale]["sent_inference"];
-//     //question = sents["scales"][scale]["sent_question"];
-//     //manipulation = sents["domains"][domain][manip];
-//     //manipulation = sents["scales"][scale]["sent_manipulation"];
-
-//     main_sent = sents["group_type"][group_type]["sent_question"];
-//     target = sents["scale"][group_type][scale][degree];
-
-//     // SP = sents["domains"][domain]["SP"]; //Plural
-//     // SS = sents["domains"][domain]["SS"]; //Singular
-//     // P1 = sents["domains"][domain]["P1"]; //Predicate 1
-//     // P2 = sents["domains"][domain]["P2"]; //Predicate 2
-//     // V1 = sents["domains"][domain]["V1"]; //Past
-//     // V2 = sents["domains"][domain]["V2"]; //Present
-
-//     //inference = inference.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-
-
-//     //question = question.replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
-//     main_sent = main_sent.replace("ADJ", target).replace("VP", target);
-
-//     return main_sent;
-// }
-
-//Replace speaker name in manipulation
-// function doSpeakerSub(speaker, manip) {
-// 	manip = manip.replace("SPEAKER", speaker);
-// 	return manip;
-// }
-//############################## Helper functions ##############################	
-
-//3.24.25
-//1. Change "scale" to "type"
-//2. Change "domain" to "scale"
 var sents = {
     scale: {
 		training1: {
@@ -116,11 +75,9 @@ for(var i = TOTAL_TRIALS; i > 0; --i) {
 }
 var scales = Object.keys(sents.scale);
 var scale_degrees = ["hi", "low"];
-//var totalTrials = trials.length;
+var totalTrials = scales.length; //One trial for each domain
 //Trial condition params initializations ------------------->
 
-
-var totalTrials = scales.length; //One trial for each domain
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
@@ -181,7 +138,6 @@ var experiment = {
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
 				    String(100 * (1 - trials.length/TOTAL_TRIALS)) + "%");
-		    
 
 		    //Trial params ---------------------------->
 		    if(trials.length == 12) {
