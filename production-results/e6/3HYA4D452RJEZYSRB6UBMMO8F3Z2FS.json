@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T16:47:00Z",
+    "AutoApprovalTime": "2015-04-24T16:41:46Z",
+    "AssignmentId": "3HYA4D452RJEZYSRB6UBMMO8F3Z2FS",
+    "WorkerId": "A1CC1ESUM2JWJ2",
+    "AcceptTime": "2015-04-24T16:35:59Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "some_all",
+            "good_excellent",
+            "palatable_delicious",
+            "liked_loved",
+            "memorable_unforgettable",
+            "some_all",
+            "liked_loved",
+            "palatable_delicious",
+            "good_excellent",
+            "memorable_unforgettable"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "hi",
+            "hi",
+            "hi",
+            "hi",
+            "low",
+            "low",
+            "low",
+            "low",
+            "low",
+            "hi"
+        ],
+        "language": [
+            "english"
+        ],
+        "expt_aim": [
+            "i don't know"
+        ],
+        "expt_gen": [
+            "none"
+        ],
+        "judgment": [
+            5,
+            1,
+            5,
+            5,
+            5,
+            5,
+            5,
+            3,
+            4,
+            3,
+            4,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T16:36:46Z"
+}

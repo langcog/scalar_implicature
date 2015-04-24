@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T19:01:59Z",
+    "AutoApprovalTime": "2015-04-24T18:58:39Z",
+    "AssignmentId": "3KOPY89HM82JPIA6YWZ1KULSEOT3JK",
+    "WorkerId": "A2HSCKH5NKN5LP",
+    "AcceptTime": "2015-04-24T18:52:51Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "memorable_unforgettable",
+            "some_all",
+            "palatable_delicious",
+            "good_excellent",
+            "liked_loved",
+            "memorable_unforgettable",
+            "liked_loved",
+            "palatable_delicious",
+            "good_excellent",
+            "some_all"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "hi",
+            "hi",
+            "low",
+            "hi",
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "low",
+            "low"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Seeing if you could predict how people use the 5 star system."
+        ],
+        "expt_gen": [
+            "As always, great pay, fun hit, thank you."
+        ],
+        "judgment": [
+            4,
+            1,
+            5,
+            4,
+            2,
+            5,
+            5,
+            5,
+            3,
+            4,
+            3,
+            3
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T18:53:39Z"
+}

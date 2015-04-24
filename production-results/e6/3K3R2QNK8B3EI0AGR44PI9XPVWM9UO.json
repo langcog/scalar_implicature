@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T16:06:55Z",
+    "AutoApprovalTime": "2015-04-24T16:04:28Z",
+    "AssignmentId": "3K3R2QNK8B3EI0AGR44PI9XPVWM9UO",
+    "WorkerId": "A115UFR6VA6OM1",
+    "AcceptTime": "2015-04-24T15:57:57Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "some_all",
+            "liked_loved",
+            "liked_loved",
+            "memorable_unforgettable",
+            "good_excellent",
+            "memorable_unforgettable",
+            "palatable_delicious",
+            "palatable_delicious",
+            "some_all",
+            "good_excellent"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "low",
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "low",
+            "hi",
+            "hi"
+        ],
+        "language": [
+            "ENGLISH"
+        ],
+        "expt_aim": [
+            "HOW WE RATE FOOD"
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "judgment": [
+            4,
+            2,
+            3,
+            4,
+            3,
+            5,
+            4,
+            4,
+            5,
+            2,
+            3,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T15:59:28Z"
+}

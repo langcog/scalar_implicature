@@ -1,0 +1,66 @@
+PSYCH 130 - EXPERIMENT 4 ANALYSIS
+=================================
+
+Preliminaries.
+
+```{r}
+rm(list=ls())
+source("analysis/useful_dplyr.R")
+library("rjson")
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("production-results/e6/", pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("production-results/e6/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answer$scale,
+                   degree = jd$answer$degree,
+                   stars = as.numeric(jd$answer$judgment),
+                   language = jd$answer$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Holding off on exclusions - everyone put English, and training 2 was confusing. 
+
+```{r}
+compliant <- d.raw %>% 
+  filter(grepl("training", scale)) %>%
+  group_by(workerid) %>%
+  summarise(compliant = stars[scale == "training1" & degree == "hi"] > 3 & 
+              stars[scale == "training1" & degree == "low"] < 3)
+  
+d <- d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         scale != "training1", 
+         scale != "training2", 
+         compliant == TRUE)
+d <- d.raw %>% filter(scale != "training1")
+```
+
+Main Analysis
+-------------
+
+Plot histograms
+
+```{r}
+density <- d %>%
+  group_by(degree, scale) %>%
+  mutate(n = n()) %>%
+  group_by(degree, scale, stars) %>%
+  summarise(prop = n() / n[1])
+
+pdf("plots/e6.pdf", width = 8, height = 4)
+qplot(stars, prop, facets = degree ~ scale, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=density)
+dev.off()
+```

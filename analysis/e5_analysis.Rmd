@@ -71,3 +71,12 @@ qplot(x = stars, y = judgment, col = degree,
 dev.off()
 ```
 
+barplot
+
+```{r}
+qplot(stars, judgment, facets = degree ~ scale, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=ms)
+```
+
+

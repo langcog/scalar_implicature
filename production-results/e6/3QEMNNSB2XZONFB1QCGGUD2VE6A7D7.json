@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T17:31:48Z",
+    "AutoApprovalTime": "2015-04-24T17:30:07Z",
+    "AssignmentId": "3QEMNNSB2XZONFB1QCGGUD2VE6A7D7",
+    "WorkerId": "A3O8XSREPU77OG",
+    "AcceptTime": "2015-04-24T17:24:20Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "good_excellent",
+            "liked_loved",
+            "some_all",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "good_excellent",
+            "some_all"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "low",
+            "low",
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "hi",
+            "hi",
+            "hi",
+            "low"
+        ],
+        "language": [
+            "english"
+        ],
+        "expt_aim": [
+            "helping to understand online restaurant ratings"
+        ],
+        "expt_gen": [
+            "no"
+        ],
+        "judgment": [
+            5,
+            1,
+            4,
+            4,
+            5,
+            2,
+            5,
+            5,
+            5,
+            5,
+            4,
+            2
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T17:25:07Z"
+}

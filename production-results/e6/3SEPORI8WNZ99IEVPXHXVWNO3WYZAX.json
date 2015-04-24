@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T19:01:59Z",
+    "AutoApprovalTime": "2015-04-24T18:59:49Z",
+    "AssignmentId": "3SEPORI8WNZ99IEVPXHXVWNO3WYZAX",
+    "WorkerId": "A1B79AW7Z2QNHI",
+    "AcceptTime": "2015-04-24T18:53:36Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "good_excellent",
+            "good_excellent",
+            "some_all",
+            "some_all",
+            "memorable_unforgettable",
+            "liked_loved",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "palatable_delicious"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "low",
+            "hi",
+            "hi",
+            "hi",
+            "low",
+            "low",
+            "low",
+            "hi"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "How people perceive certain words."
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "judgment": [
+            5,
+            2,
+            3,
+            5,
+            3,
+            5,
+            5,
+            4,
+            3,
+            3,
+            5,
+            4
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T18:54:49Z"
+}

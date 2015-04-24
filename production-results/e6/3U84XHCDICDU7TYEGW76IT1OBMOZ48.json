@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T16:41:55Z",
+    "AutoApprovalTime": "2015-04-24T16:41:39Z",
+    "AssignmentId": "3U84XHCDICDU7TYEGW76IT1OBMOZ48",
+    "WorkerId": "A12D4VXQXMSMT5",
+    "AcceptTime": "2015-04-24T16:34:13Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "palatable_delicious",
+            "good_excellent",
+            "palatable_delicious",
+            "some_all",
+            "good_excellent",
+            "memorable_unforgettable",
+            "memorable_unforgettable",
+            "liked_loved",
+            "liked_loved",
+            "some_all"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "hi",
+            "hi",
+            "low",
+            "low",
+            "low",
+            "low",
+            "hi",
+            "hi",
+            "low",
+            "hi"
+        ],
+        "language": [
+            "english"
+        ],
+        "expt_aim": [
+            "rating systems"
+        ],
+        "expt_gen": [
+            "I think it's a great idea. Often I see someone give something 4 or 5 stars, and then a negative review. Makes me wonder if people fully understand these rating systems."
+        ],
+        "judgment": [
+            4,
+            1,
+            4,
+            5,
+            2,
+            3,
+            4,
+            4,
+            5,
+            5,
+            4,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T16:36:39Z"
+}

@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T15:56:51Z",
+    "AutoApprovalTime": "2015-04-24T15:53:49Z",
+    "AssignmentId": "3TE22NPXPBCE4WAPV3HGOXOFARK440",
+    "WorkerId": "A2UX7ZJEGGU5",
+    "AcceptTime": "2015-04-24T15:47:39Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "good_excellent",
+            "good_excellent",
+            "liked_loved",
+            "some_all",
+            "some_all",
+            "liked_loved",
+            "memorable_unforgettable",
+            "palatable_delicious",
+            "palatable_delicious",
+            "memorable_unforgettable"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "hi",
+            "low",
+            "hi",
+            "low",
+            "low",
+            "low",
+            "hi",
+            "hi"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "I think this was about how people interpret words and their meanings."
+        ],
+        "expt_gen": [
+            "Thank you."
+        ],
+        "judgment": [
+            5,
+            1,
+            4,
+            5,
+            5,
+            3,
+            4,
+            4,
+            5,
+            3,
+            4,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T15:48:49Z"
+}

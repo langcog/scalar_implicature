@@ -1,0 +1,64 @@
+{
+    "ApprovalTime": "2015-04-24T18:51:59Z",
+    "AutoApprovalTime": "2015-04-24T18:49:29Z",
+    "AssignmentId": "39RP059MEHTETLK4GMRZI5BL6A0MBX",
+    "WorkerId": "A17QOT9NFOE4HW",
+    "AcceptTime": "2015-04-24T18:42:48Z",
+    "HITId": "341YLJU21IZVM5WNMCVU0Z6DZYZI21",
+    "Assignment": "",
+    "answer": {
+        "scale": [
+            "training1",
+            "training1",
+            "memorable_unforgettable",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all",
+            "good_excellent",
+            "palatable_delicious",
+            "liked_loved",
+            "good_excellent",
+            "some_all"
+        ],
+        "degree": [
+            "hi",
+            "low",
+            "low",
+            "hi",
+            "hi",
+            "hi",
+            "low",
+            "low",
+            "low",
+            "low",
+            "hi",
+            "hi"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Trying to figure out how different people view star ratings?"
+        ],
+        "expt_gen": [
+            "Fun!  Thank you very much!"
+        ],
+        "judgment": [
+            5,
+            2,
+            4,
+            5,
+            5,
+            5,
+            3,
+            4,
+            3,
+            4,
+            5,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-04-24T18:44:29Z"
+}
