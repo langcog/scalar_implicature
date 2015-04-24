@@ -43,7 +43,15 @@ Experiment 4
 Experiment 5
 ------------
 
+* get adjective appropriateness judgments for star ratings ("speaker")
 * began development class project
 * star rating system
 * 50 trials
 * run on 4/17
+
+Experiment 6
+------------
+
+* get star ratings for adjectives ("listener")
+* run 4/23
+* 10 trials
