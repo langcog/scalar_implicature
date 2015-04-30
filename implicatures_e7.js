@@ -38,6 +38,74 @@ function shuffle (a) {
 	return o;
 }
 
+// substitution function - do we want to save all these factors to a data object?
+//Pass a trial object in to be populated?
+function doSentSubs (base_sent, x, y)
+{
+    var name = x;
+    var c = context[x][y];
+    var gender = context[x]["pro"];
+    /*SP = sents["domains"][domain]["SP"]; //Plural
+    SS = sents["domains"][domain]["SS"]; //Singular
+    P1 = sents["domains"][domain]["P1"]; //Predicate 1
+    P2 = sents["domains"][domain]["P2"]; //Predicate 2
+    V1 = sents["domains"][domain]["V1"]; //Past
+    V2 = sents["domains"][domain]["V2"]; //Present*/
+    sent = base_sent.replace("PERSON", name).replace("SETTING", c).replace("GEN", gender);
+    //sent = sent.replace("Q",Q).replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
+    return sent;
+}
+
+function get_context (name, pro) {
+	return context[name][pro];
+}
+
+var base_sent = "PERSON went out to a restaurant SETTING. Without knowing anything about the food, \
+how many stars do you think GEN gave?";
+
+var context = {
+	Bob: {
+		c1: "with his friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "he"
+	},
+	John: {
+		c1: "with his friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "he"
+	},
+	Chris: {
+		c1: "with his friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "he"
+	},
+	Lisa: {
+		c1: "with her friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "she"
+	},
+	Jenny: {
+		c1: "with her friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "she"
+	},
+	Alice: {
+		c1: "with her friend",
+		c2: "alone",
+		c3: "for a birthday",
+		pro: "she"
+	}
+};
+
+var names = Object.keys(context);
+names = shuffle(names);
+var settings = ["c1", "c2", "c3"];
+/*
 var sents = {
     scale: {
 		training1: {
@@ -66,17 +134,18 @@ var sents = {
 		}
     },
 };
+*/
+var TOTAL_TRIALS = 6;
+/*Trial condition params initializations ------------------->
 
-//Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 12;
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
 }
 var scales = Object.keys(sents.scale);
 var scale_degrees = ["hi", "low"];
-var totalTrials = scales.length; //One trial for each domain
-//Trial condition params initializations ------------------->
+var totalTrials = scales.length; //One  for each domain
+//Trial condition params initializations ------------------->*/
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -85,8 +154,8 @@ showSlide("instructions");
 var experiment = {
     //Data object for logging responses, etc
     data: {
-		scale: [],
-		degree: [],
+		name: [],
+		context: [],
 		judgment: [],
 		language: [],
 		expt_aim: [],
@@ -127,7 +196,7 @@ var experiment = {
     //Run every trial
     next: function() {
     	//If no trials are left go to debreifing
-		if (!trials.length) {
+		if (!names.length) {
 			return experiment.debriefing();
 		}
 
@@ -137,34 +206,28 @@ var experiment = {
 		    //Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
-				    String(100 * (1 - trials.length/TOTAL_TRIALS)) + "%");
+				    String(100 * (1 - names.length/TOTAL_TRIALS)) + "%");
 
 		    //Trial params ---------------------------->
-		    if(trials.length == 12) {
-		    	trials.shift();
-		    	current_scale = scales[0];
-		    	degree = "hi";
-		    } else if (trials.length == 11) {
-		    	trials.shift();
-		    	current_scale = scales[0];
-		    	degree = "low";
-		    } else if (trials.length == 10) {
-		    	trials = shuffle(trials); 
-		    	current_trial = trials.shift();
-		    	current_scale = scales[current_trial % 5 + 1];
-		    	degree = scale_degrees[current_trial % 2];
-		    } else {
-		    	current_trial = trials.shift();
-		    	current_scale = scales[current_trial % 5 + 1];
-		    	degree = scale_degrees[current_trial % 2];
-		    }
-			sent_materials = sents.scale[current_scale][degree];
+			var cur_name = names.shift(); //current name
+			var num = random(3);
+			var cur_setting = settings[num]; //current context
+			console.log("here!!1");
+			console.log("cur_name: ", cur_name);
+			console.log("cur_setting: ", cur_setting);
+
+			var sent_materials = doSentSubs(base_sent, cur_name, cur_setting);
+			console.log(sent_materials);
 			//Trial params ---------------------------->
 
 
 		    //###:-----------------Display trial-----------------:###
-		    $("#sent_question").html("Someone said they "+
-					     sent_materials);
+		    $("#sent_question").html(sent_materials);
+		    if (context[cur_name]["pro"] == "he") {
+		    	$("#rating_prompt").html("<i>Please select the number of stars you think he gave:</i>");
+		    } else {
+		    	$("#rating_prompt").html("<i>Please select the number of stars you think she gave:</i>");
+		    }
 
 		    $("#rating-stars").on("click", 
 			    	function(event) {
@@ -173,14 +236,14 @@ var experiment = {
 		    //###:-----------------Display trial-----------------:###
 		    
 		    //###:-------------Log trial data (push to data object)-------------:###
-		    experiment.data.scale.push(current_scale);
-		    experiment.data.degree.push(degree);
+		    experiment.data.name.push(cur_name);
+		    experiment.data.context.push(get_context(cur_name, cur_setting));
 		    //###:-------------Log trial data (push to data object)-------------:###
-		    
 		    showSlide("stage");
 
 			//Clear stars
 			$(".rating-stars").attr({"style":"width: 0%"});
+			//$("#rating_prompt").html("Please select the number of stars you think PRO gave:");
 		}
     },
 
