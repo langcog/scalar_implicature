@@ -45,14 +45,7 @@ function doSentSubs (base_sent, x, y)
     var name = x;
     var c = context[x][y];
     var gender = context[x]["pro"];
-    /*SP = sents["domains"][domain]["SP"]; //Plural
-    SS = sents["domains"][domain]["SS"]; //Singular
-    P1 = sents["domains"][domain]["P1"]; //Predicate 1
-    P2 = sents["domains"][domain]["P2"]; //Predicate 2
-    V1 = sents["domains"][domain]["V1"]; //Past
-    V2 = sents["domains"][domain]["V2"]; //Present*/
     sent = base_sent.replace("PERSON", name).replace("SETTING", c).replace("GEN", gender);
-    //sent = sent.replace("Q",Q).replace("SP",SP).replace("SS",SS).replace("P1",P1).replace("P2",P2).replace("V1",V1).replace("V2",V2);
     return sent;
 }
 
@@ -67,85 +60,47 @@ var context = {
 	Bob: {
 		c1: "with his friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "he"
 	},
 	John: {
 		c1: "with his friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "he"
 	},
 	Chris: {
 		c1: "with his friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "he"
 	},
 	Lisa: {
 		c1: "with her friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "she"
 	},
 	Jenny: {
 		c1: "with her friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "she"
 	},
 	Alice: {
 		c1: "with her friend",
 		c2: "alone",
-		c3: "for a birthday",
+		c3: "for a birthday party",
 		pro: "she"
 	}
 };
 
+//Basic trial data--------------------->
 var names = Object.keys(context);
 names = shuffle(names);
 var settings = ["c1", "c2", "c3"];
-/*
-var sents = {
-    scale: {
-		training1: {
-		    hi:  "thought the food deserved a <b>high</b> rating.",
-		    low:  "thought the food deserved a <b>low</b> rating"
-		},
-		liked_loved: {		   
-		    hi:  "<b>loved</b> the food.",
-		    low:  "<b>liked</b> the food."
-		},
-		good_excellent: {
-			hi:  "thought the food was <b>excellent</b>.",
-		    low:  "thought the food was <b>good</b>."
-		},
-		palatable_delicious: {
-			hi:  "thought the food was <b>delicious</b>.",
-		    low:  "thought the food was <b>palatable</b>."
-		},
-		memorable_unforgettable: {
-			hi:  "thought the food was <b>unforgettable</b>.",
-		    low:  "thought the food was <b>memorable</b>."
-		},
-		some_all: {
-			hi: "enjoyed <b>all</b> of the food.",
-			low: "enjoyed <b>some</b> of the food."
-		}
-    },
-};
-*/
 var TOTAL_TRIALS = 6;
-/*Trial condition params initializations ------------------->
-
-var trials = [];
-for(var i = TOTAL_TRIALS; i > 0; --i) {
-	trials.push(i);
-}
-var scales = Object.keys(sents.scale);
-var scale_degrees = ["hi", "low"];
-var totalTrials = scales.length; //One  for each domain
-//Trial condition params initializations ------------------->*/
+//Basic trial data--------------------->
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -212,18 +167,13 @@ var experiment = {
 			var cur_name = names.shift(); //current name
 			var num = random(3);
 			var cur_setting = settings[num]; //current context
-			console.log("here!!1");
-			console.log("cur_name: ", cur_name);
-			console.log("cur_setting: ", cur_setting);
-
 			var sent_materials = doSentSubs(base_sent, cur_name, cur_setting);
-			console.log(sent_materials);
 			//Trial params ---------------------------->
 
-
-		    //###:-----------------Display trial-----------------:###
+		    //Display trial---------------------------->
 		    $("#sent_question").html(sent_materials);
-		    if (context[cur_name]["pro"] == "he") {
+		    //Vary ratings prompt by name gender
+		    if (context[cur_name]["pro"] == "he") { 
 		    	$("#rating_prompt").html("<i>Please select the number of stars you think he gave:</i>");
 		    } else {
 		    	$("#rating_prompt").html("<i>Please select the number of stars you think she gave:</i>");
@@ -233,14 +183,14 @@ var experiment = {
 			    	function(event) {
 						var selection = $("#rating-stars").val();
 			});
-		    //###:-----------------Display trial-----------------:###
+		    //Display trial---------------------------->
 		    
-		    //###:-------------Log trial data (push to data object)-------------:###
+		    //Log trial data--------------------------->
 		    experiment.data.name.push(cur_name);
 		    experiment.data.context.push(get_context(cur_name, cur_setting));
-		    //###:-------------Log trial data (push to data object)-------------:###
+		    //Log trial data--------------------------->
+		    
 		    showSlide("stage");
-
 			//Clear stars
 			$(".rating-stars").attr({"style":"width: 0%"});
 			//$("#rating_prompt").html("Please select the number of stars you think PRO gave:");
