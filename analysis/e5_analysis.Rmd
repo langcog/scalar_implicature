@@ -58,7 +58,8 @@ ms <- d %>%
   group_by(scale, degree, stars) %>%
   summarise(cil = ci.low(judgment), 
             cih = ci.high(judgment), 
-            judgment = mean(judgment))
+            judgment = mean(judgment), 
+            p = (judgment - 1)/4)
 
 pdf("plots/e5.pdf", width=8, height = 5)
 qplot(x = stars, y = judgment, col = degree,
@@ -77,6 +78,21 @@ barplot
 qplot(stars, judgment, facets = degree ~ scale, 
       geom="bar", stat = "identity",
       binwidth = 1, data=ms)
+```
+
+difference scores
+
+```{r}
+ms.delta <- ms %>% 
+  select(-cil, -cih) %>%
+  spread(degree, judgment) %>%
+  mutate(delta = ifelse(scale != "liked_loved", hi - low, low - hi))
+
+pdf("plots/e5_delta.pdf", width = 8, height = 3)
+qplot(stars, delta, facets = . ~ scale, geom = "line",
+      data = ms.delta) + 
+  geom_hline(yintercept = 0, lty=2)
+dev.off()
 ```
 
 

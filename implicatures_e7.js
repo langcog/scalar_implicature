@@ -45,7 +45,7 @@ function doSentSubs (base_sent, x, y)
     var name = x;
     var c = context[x][y];
     var gender = context[x]["pro"];
-    sent = base_sent.replace("PERSON", name).replace("SETTING", c).replace("GEN", gender);
+    sent = base_sent.replace("PERSON", name).replace("SETTING", c).replace("GEN", gender).replace("GEN", gender);
     return sent;
 }
 
@@ -53,44 +53,62 @@ function get_context (name, pro) {
 	return context[name][pro];
 }
 
-var base_sent = "PERSON went out to a restaurant SETTING. Without knowing anything about the food, \
-how many stars do you think GEN gave?";
+var base_sent = "<b>PERSON went out to a restaurant SETTING.</b> <br><br>Without knowing anything about the food GEN ate, \
+how many stars do you think GEN gave the restaurant?";
 
 var context = {
 	Bob: {
-		c1: "with his friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with his co-workers",
+	        c6: "with his parents",
 		pro: "he"
 	},
 	John: {
-		c1: "with his friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with his co-workers",
+	        c6: "with his parents",
 		pro: "he"
 	},
 	Chris: {
-		c1: "with his friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with his co-workers",
+	        c6: "with his parents",
 		pro: "he"
 	},
 	Lisa: {
-		c1: "with her friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with her co-workers",
+	        c6: "with her parents",
 		pro: "she"
 	},
 	Jenny: {
-		c1: "with her friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with her co-workers",
+	        c6: "with her parents",
 		pro: "she"
 	},
 	Alice: {
-		c1: "with her friend",
+		c1: "with a friend",
 		c2: "alone",
-		c3: "for a birthday party",
+	        c3: "for a birthday party",
+	        c4: "on a date",
+	        c5: "with her co-workers",
+	        c6: "with her parents",
 		pro: "she"
 	}
 };
@@ -98,7 +116,8 @@ var context = {
 //Basic trial data--------------------->
 var names = Object.keys(context);
 names = shuffle(names);
-var settings = ["c1", "c2", "c3"];
+var settings = ["c1", "c2", "c3", "c4", "c5", "c6"];
+settings = shuffle(settings);
 var TOTAL_TRIALS = 6;
 //Basic trial data--------------------->
 
@@ -151,7 +170,7 @@ var experiment = {
     //Run every trial
     next: function() {
     	//If no trials are left go to debreifing
-		if (!names.length) {
+		if (settings.length == 0) {
 			return experiment.debriefing();
 		}
 
@@ -164,9 +183,8 @@ var experiment = {
 				    String(100 * (1 - names.length/TOTAL_TRIALS)) + "%");
 
 		    //Trial params ---------------------------->
-			var cur_name = names.shift(); //current name
-			var num = random(3);
-			var cur_setting = settings[num]; //current context
+			var cur_name = names.shift(); //current name			
+		        var cur_setting = settings.shift(); //current context
 			var sent_materials = doSentSubs(base_sent, cur_name, cur_setting);
 			//Trial params ---------------------------->
 
@@ -174,9 +192,9 @@ var experiment = {
 		    $("#sent_question").html(sent_materials);
 		    //Vary ratings prompt by name gender
 		    if (context[cur_name]["pro"] == "he") { 
-		    	$("#rating_prompt").html("<i>Please select the number of stars you think he gave:</i>");
+		    	$("#rating_prompt").html("<i>Make your best guess:</i>");
 		    } else {
-		    	$("#rating_prompt").html("<i>Please select the number of stars you think she gave:</i>");
+		    	$("#rating_prompt").html("<i>Make your best guess:</i>");
 		    }
 
 		    $("#rating-stars").on("click", 
