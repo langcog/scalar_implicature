@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:11:48Z",
+    "AutoApprovalTime": "2015-05-01T21:07:11Z",
+    "AssignmentId": "3JCG6DTRV3QSI6KLRXV6U3QP2RHQQF",
+    "WorkerId": "A311PBA5IUHH5",
+    "AcceptTime": "2015-05-01T20:59:12Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Chris",
+            "Lisa",
+            "Alice",
+            "Bob",
+            "John",
+            "Jenny"
+        ],
+        "language": [
+            "Chinese"
+        ],
+        "expt_aim": [
+            "How social settings might affect our emotional joy when eating in a restaurant."
+        ],
+        "expt_gen": [
+            "Too vague. People might randomly choose any star because it doesn't convey a conscious message."
+        ],
+        "context": [
+            "alone",
+            "with a friend",
+            "with her parents",
+            "on a date",
+            "with his co-workers",
+            "for a birthday party"
+        ],
+        "judgment": [
+            2,
+            4,
+            4,
+            5,
+            4,
+            4
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:02:11Z"
+}

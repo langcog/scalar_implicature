@@ -58,9 +58,31 @@ density <- d %>%
   group_by(degree, scale, stars) %>%
   summarise(prop = n() / n[1])
 
-pdf("plots/e6.pdf", width = 8, height = 4)
+# pdf("plots/e6.pdf", width = 8, height = 4)
 qplot(stars, prop, facets = degree ~ scale, 
       geom="bar", stat = "identity",
       binwidth = 1, data=density)
-dev.off()
+# dev.off()
 ```
+
+Order effects
+
+```{r}
+ms <- d %>%
+  group_by(workerid) %>%
+  mutate(trial_num = 1:n()) %>%
+  group_by(workerid, scale) %>%
+  mutate(hi_first = ifelse(trial_num[degree=="hi"] < trial_num[degree=="low"],
+                           TRUE, FALSE)) %>%
+  group_by(degree, scale, hi_first) %>%
+  summarise(m = mean(stars))
+
+qplot(scale, m, 
+      fill = hi_first, 
+      position = "dodge", 
+      facets = . ~ degree, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=ms)                      
+
+```
+

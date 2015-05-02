@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:11:48Z",
+    "AutoApprovalTime": "2015-05-01T21:08:04Z",
+    "AssignmentId": "3K9FOBBF2HJWOCRGJ0VT9NWQNA7LNY",
+    "WorkerId": "A154XH0IEZG247",
+    "AcceptTime": "2015-05-01T21:02:26Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Alice",
+            "Chris",
+            "Lisa",
+            "Bob",
+            "John",
+            "Jenny"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "how purpose of going out and company influenced our judgments about star ratings/enjoyment"
+        ],
+        "expt_gen": [
+            "no"
+        ],
+        "context": [
+            "with her parents",
+            "on a date",
+            "with a friend",
+            "alone",
+            "with his co-workers",
+            "for a birthday party"
+        ],
+        "judgment": [
+            3,
+            4,
+            4,
+            2,
+            4,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:03:04Z"
+}

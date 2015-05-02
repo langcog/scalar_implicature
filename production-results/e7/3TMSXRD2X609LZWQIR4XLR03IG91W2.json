@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T22:16:46Z",
+    "AutoApprovalTime": "2015-05-01T22:14:57Z",
+    "AssignmentId": "3TMSXRD2X609LZWQIR4XLR03IG91W2",
+    "WorkerId": "A1CIRAH2RTE7G8",
+    "AcceptTime": "2015-05-01T22:01:55Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Alice",
+            "Bob",
+            "Jenny",
+            "Lisa",
+            "John",
+            "Chris"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "how social settings affect our perception of a place"
+        ],
+        "expt_gen": [
+            "none"
+        ],
+        "context": [
+            "with her co-workers",
+            "on a date",
+            "with a friend",
+            "with her parents",
+            "alone",
+            "for a birthday party"
+        ],
+        "judgment": [
+            4,
+            5,
+            5,
+            4,
+            3,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T22:09:57Z"
+}

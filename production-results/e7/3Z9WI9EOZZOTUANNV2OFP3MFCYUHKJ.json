@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:26:49Z",
+    "AutoApprovalTime": "2015-05-01T21:25:16Z",
+    "AssignmentId": "3Z9WI9EOZZOTUANNV2OFP3MFCYUHKJ",
+    "WorkerId": "A4VE2G6MHTDFQ",
+    "AcceptTime": "2015-05-01T21:09:41Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Lisa",
+            "Bob",
+            "Chris",
+            "John",
+            "Alice",
+            "Jenny"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Research what people will assume is the quality of the restaurant based on who the sentence say is going."
+        ],
+        "expt_gen": [
+            "No"
+        ],
+        "context": [
+            "alone",
+            "for a birthday party",
+            "with his co-workers",
+            "with his parents",
+            "on a date",
+            "with a friend"
+        ],
+        "judgment": [
+            3,
+            5,
+            3,
+            5,
+            4,
+            3
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:20:16Z"
+}

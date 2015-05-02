@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:11:48Z",
+    "AutoApprovalTime": "2015-05-01T21:07:14Z",
+    "AssignmentId": "3VSOLARPKB9UJ6XXCK8OV07PIZ093A",
+    "WorkerId": "A18FK1XR73EQ2W",
+    "AcceptTime": "2015-05-01T21:00:58Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Alice",
+            "Jenny",
+            "Lisa",
+            "Chris",
+            "Bob",
+            "John"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Guessing how much people enjoyed restaurants based on a small amount of context."
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "context": [
+            "for a birthday party",
+            "with her co-workers",
+            "alone",
+            "with his parents",
+            "on a date",
+            "with a friend"
+        ],
+        "judgment": [
+            5,
+            3,
+            4,
+            3,
+            5,
+            4
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:02:14Z"
+}

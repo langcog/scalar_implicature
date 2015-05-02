@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:46:47Z",
+    "AutoApprovalTime": "2015-05-01T21:41:43Z",
+    "AssignmentId": "3AAPLD8UCCHSXTDAPB27QU9BVBMHTQ",
+    "WorkerId": "A3PIAHR6PGXZNT",
+    "AcceptTime": "2015-05-01T21:35:49Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Bob",
+            "John",
+            "Jenny",
+            "Lisa",
+            "Alice",
+            "Chris"
+        ],
+        "language": [
+            "english"
+        ],
+        "expt_aim": [
+            "I DONT KNOW"
+        ],
+        "expt_gen": [
+            "no"
+        ],
+        "context": [
+            "alone",
+            "with his co-workers",
+            "with a friend",
+            "for a birthday party",
+            "on a date",
+            "with his parents"
+        ],
+        "judgment": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:36:43Z"
+}

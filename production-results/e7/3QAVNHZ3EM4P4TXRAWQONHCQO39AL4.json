@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:26:48Z",
+    "AutoApprovalTime": "2015-05-01T21:22:25Z",
+    "AssignmentId": "3QAVNHZ3EM4P4TXRAWQONHCQO39AL4",
+    "WorkerId": "A1TI1BG9I7H75",
+    "AcceptTime": "2015-05-01T21:15:49Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Jenny",
+            "Chris",
+            "John",
+            "Alice",
+            "Lisa",
+            "Bob"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Seeing whether people think their experiences at a restaurant are going to be better/worse depending on who they are with."
+        ],
+        "expt_gen": [
+            ""
+        ],
+        "context": [
+            "for a birthday party",
+            "alone",
+            "with his parents",
+            "on a date",
+            "with a friend",
+            "with his co-workers"
+        ],
+        "judgment": [
+            3,
+            2,
+            5,
+            4,
+            4,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:17:25Z"
+}

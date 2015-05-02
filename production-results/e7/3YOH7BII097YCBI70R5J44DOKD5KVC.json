@@ -1,0 +1,46 @@
+{
+    "ApprovalTime": "2015-05-01T21:26:49Z",
+    "AutoApprovalTime": "2015-05-01T21:25:21Z",
+    "AssignmentId": "3YOH7BII097YCBI70R5J44DOKD5KVC",
+    "WorkerId": "A3UHH82CMKJEWG",
+    "AcceptTime": "2015-05-01T21:19:27Z",
+    "HITId": "33N1S8XHHMLASA313CJ2VBZY38SZ19",
+    "Assignment": "",
+    "answer": {
+        "name": [
+            "Bob",
+            "Alice",
+            "Lisa",
+            "John",
+            "Chris",
+            "Jenny"
+        ],
+        "language": [
+            "English"
+        ],
+        "expt_aim": [
+            "Seeing how eating with certain people can affect a perspective on the food at the restaurant."
+        ],
+        "expt_gen": [
+            "None"
+        ],
+        "context": [
+            "with his co-workers",
+            "alone",
+            "with a friend",
+            "with his parents",
+            "on a date",
+            "for a birthday party"
+        ],
+        "judgment": [
+            4,
+            3,
+            5,
+            4,
+            3,
+            5
+        ]
+    },
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-05-01T21:20:21Z"
+}
