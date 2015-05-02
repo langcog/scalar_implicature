@@ -1,0 +1,83 @@
+PSYCH 130 - EXPERIMENT 4 ANALYSIS
+=================================
+
+Preliminaries.
+
+```{r}
+rm(list=ls())
+p = file.path("~/Desktop/Projects/scalar_implicature/")
+source(paste0(p,"analysis/useful_dplyr.R"))
+library("rjson")
+source("analysis/useful_dplyr.R")
+library("rjson")
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+
+files <- dir(paste0(p,"production-results/e7/"), pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste(p,"production-results/e7/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   context = jd$answer$context,
+                   stars = as.numeric(jd$answer$judgment),
+                   language = jd$answer$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+No exclusions 
+
+```{r}
+d1 <- d.raw
+byContext <- group_by(d1,context)
+context_ms <- summarize(byContext,mn=mean(stars))
+pdf(paste0(p,"plots/e7.pdf", width = 8, height = 4))
+qplot(context, mn,
+      geom="bar", stat = "identity",
+      binwidth = 1, data=context_ms)
+dev.off()
+alone = d1[which(d1[, "context"] == "alone"),]
+birthday = d1[which(d1[, "context"] == "for a birthday party"),]
+t.test(x=alone$stars, y=birthday$stars)
+```
+
+Main Analysis
+-------------
+
+Plot histogram mean
+
+```{r}
+density <- d %>%
+  mutate(n = n()) %>%
+  group_by(stars) %>%
+  summarise(prop = n() / n[1])
+
+# pdf("plots/e6.pdf", width = 8, height = 4)
+qplot(stars, prop, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=density)
+# dev.off()
+```
+
+Plot by conditions
+
+```{r}
+density <- d %>%
+  group_by(context) %>%
+  mutate(n = n()) %>%
+  group_by(stars, context) %>%
+  summarise(prop = n() / n[1])
+
+# pdf("plots/e6.pdf", width = 8, height = 4)
+qplot(stars, prop, facets = . ~ context, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=density)
+# dev.off()
+
+
+```
