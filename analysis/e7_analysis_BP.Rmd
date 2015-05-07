@@ -34,6 +34,7 @@ No exclusions
 
 ```{r}
 d1 <- d.raw
+
 byContext <- group_by(d1,context)
 context_ms <- summarize(byContext,mn=mean(stars))
 pdf(paste0(p,"plots/e7.pdf", width = 8, height = 4))
@@ -52,11 +53,14 @@ Main Analysis
 Plot histogram mean
 
 ```{r}
+
+d <- d.raw
 density <- d %>%
   mutate(n = n()) %>%
   group_by(stars) %>%
   summarise(prop = n() / n[1])
 
+sum(density$prop)
 # pdf("plots/e6.pdf", width = 8, height = 4)
 qplot(stars, prop, 
       geom="bar", stat = "identity",

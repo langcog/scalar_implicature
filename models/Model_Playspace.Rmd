@@ -1,0 +1,127 @@
+---
+title: "Scalar_M1"
+author: "BPeloquin"
+date: "April 23, 2015"
+output: html_document
+---
+
+
+```{r}
+p = file.path("~/Desktop/Projects/scalar_implicature/")
+source(paste0(p,"analysis/useful_dplyr.R"))
+library("rjson")
+
+#############   NOTES   #################
+# <none, some, all> condition: the model correctly produces implicature.
+# However "all"" condition is predicted to be compabitible with a 4 rating.
+# This appears to be driven by several factors
+# 1) High priors over 4
+# 2) Fairly high compabitibiliy with All and four stars from e5
+#
+#
+#########################################
+
+#Basic form of the model
+##############################################################################################
+##########  p.Lp(r | u) ~ [p.S(u | r) * p.L(r)] / SIGMA_over_alts(p.S('u|r)*p.L(r)) ##########
+##############################################################################################
+
+
+r = seq(from=1, to=5) #Ratings
+raw.priors = c(0.003, 0.053, 0.403, 0.387, 0.150) #Measured priors
+unif.priors = rep(.2, times=5) #Uniform priors
+
+#Informatitivy data from e5
+none.prob = c(1, 0, 0, 0, 0)
+some.prob = c(.16, .36, .68, .83, .83)
+all.prob = c(.01, .11, .35, .68, .98)
+
+scale.info = c(none.prob, some.prob, all.prob)
+scale.matrix = matrix(data = scale.info, nrow = 5, ncol = 3)
+scale = c("none", "some", "all")
+colnames(scale.matrix) = c(scale)
+
+#Informatitivy data from e5 normalized
+n.none.prob = none.prob / sum(none.prob)
+n.some.prob = some.prob / sum(some.prob)
+n.all.prob = all.prob / sum(all.prob)
+n.scale.info = c(n.none.prob, n.some.prob, n.all.prob)
+n.scale.matrix = matrix(data = n.scale.info, nrow = 5, ncol = 3)
+colnames(n.scale.matrix) = c(scale)
+alpha = 4;
+
+#cost function in length of chars
+u.cost = function(u) {
+  return(nchar(u))
+}
+
+##############################################################################################
+##########                            MODEL IMPLEMENTATION                          ##########
+##############################################################################################
+#Key------------------------>
+#u = utterance [string]
+#alts = alternative utterances
+#r = rating index [1-5]
+#d.info = informativity judgements
+#Key------------------------>
+
+#speaker likelihood helper 
+speaker.lhd = function(utt, info) {
+  exp(alpha*(log(info) - 3)) #Rething cost??? 
+}
+#speaker likelihood normalized
+speaker.prob = function(utt, rating, s.matrix) {
+  num = speaker.lhd(utt, s.matrix[rating, utt])
+  norm = 0
+  for (i in 1:length(scale) ) {
+    current.u = scale[i] #current utterance
+    norm = norm + speaker.lhd(current.u, s.matrix[rating, current.u])
+  }
+  return(num / norm)
+}
+
+#non-normalized posterior------------------------------>
+nn.post = function(utt, rating, s.matrix, priors) {
+  return(speaker.prob(utt, rating, s.matrix) * priors[rating])
+}
+
+#normalized posterior---------------------------------->
+norm.post = function(utt, rating, s.matrix, priors) {
+  nn = nn.post(utt, rating, s.matrix, priors)
+  norm = 0
+  for (i in 1:5) {
+    norm = norm + nn.post(utt, i, s.matrix, priors)
+  }
+  return(nn / norm)
+}
+speaker.prob = function(utt, rating, s.matrix)
+##############################################################################################
+##########                              DATA / PLOTS                                ##########
+##############################################################################################
+#priors
+qplot(c(1:5), raw.priors,
+      geom="bar", stat = "identity",
+      binwidth = 1, main="Priors over ratings")
+
+#SOME ---------------------------------------------->
+d.some.unif.priors = sapply(1:5, FUN=function(i){
+  norm.post("some", i, scale.matrix, unif.priors)})
+d.some.raw.priors = sapply(1:5, FUN=function(i){
+  norm.post("some", i, scale.matrix, raw.priors)})
+qplot(c(1:5), d.some.raw.priors,
+      geom="bar", stat = "identity",
+      binwidth = 1, main="Some Posteriors")
+
+#ALL ------------------------------------------------>
+d.all.raw.priors = sapply(1:5, FUN=function(i){
+  norm.post("all", i, scale.matrix, raw.priors)})
+d.all.unif.priors = sapply(1:5, FUN=function(i){
+  norm.post("all", i, n.scale.matrix, unif.priors)})
+qplot(c(1:5), d.all.raw.priors,
+      geom="bar", stat = "identity",
+      binwidth = 1, main="All Posteriors, Raw priors")
+qplot(c(1:5), d.all.unif.priors,
+      geom="bar", stat = "identity",
+      binwidth = 1, main="All Posteriors, Uniform priors")
+```
+
