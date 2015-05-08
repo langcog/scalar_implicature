@@ -5,9 +5,6 @@ Preliminaries.
 
 ```{r}
 rm(list=ls())
-p = file.path("~/Desktop/Projects/scalar_implicature/")
-source(paste0(p,"analysis/useful_dplyr.R"))
-library("rjson")
 source("analysis/useful_dplyr.R")
 library("rjson")
 ```
@@ -16,11 +13,11 @@ Read in files and consolidate to the same directory.
 
 ```{r}
 
-files <- dir(paste0(p,"production-results/e7/"), pattern = "*.json")
+files <- dir("production-results/e7/", pattern = "*.json")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste(p,"production-results/e7/",f,sep="")
+  jf <- paste("production-results/e7/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    context = jd$answer$context,
@@ -66,6 +63,8 @@ qplot(stars, prop,
       geom="bar", stat = "identity",
       binwidth = 1, data=density)
 # dev.off()
+
+write.csv(density, "models/e7.csv", row.names = FALSE)
 ```
 
 Plot by conditions

@@ -25,34 +25,17 @@ library(rjson)
 
 $$ p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S(u' \mid r) p_{L_0}(r)}}$$
 
+Read Data 
+---------
+
 ```{r}
-r = seq(from=1, to=5) #Ratings
-raw.priors = c(0.003, 0.053, 0.403, 0.387, 0.150) #Measured priors
-unif.priors = rep(.2, times=5) #Uniform priors
+priors = read.csv("models/prior.csv")
+speaker = read.csv("models/speaker.csv")
+listener = read.csv("models/listener.csv")
+# none.prob = c(1, 0, 0, 0, 0)
+# some.prob = c(.16, .36, .68, .83, .83)
+# all.prob = c(.01, .11, .35, .68, .98)
 
-#Informatitivy data from e5
-none.prob = c(1, 0, 0, 0, 0)
-some.prob = c(.16, .36, .68, .83, .83)
-all.prob = c(.01, .11, .35, .68, .98)
-
-scale.info = c(none.prob, some.prob, all.prob)
-scale.matrix = matrix(data = scale.info, nrow = 5, ncol = 3)
-scale = c("none", "some", "all")
-colnames(scale.matrix) = c(scale)
-
-#Informatitivy data from e5 normalized
-n.none.prob = none.prob / sum(none.prob)
-n.some.prob = some.prob / sum(some.prob)
-n.all.prob = all.prob / sum(all.prob)
-n.scale.info = c(n.none.prob, n.some.prob, n.all.prob)
-n.scale.matrix = matrix(data = n.scale.info, nrow = 5, ncol = 3)
-colnames(n.scale.matrix) = c(scale)
-alpha = 4;
-
-#cost function in length of chars
-u.cost = function(u) {
-  return(nchar(u))
-}
 ```
 
 ## MODEL IMPLEMENTATION
@@ -64,38 +47,85 @@ Key:
 * d.info = informativity judgements
 
 ```{r}
+#cost function in length of chars
+u.cost = function(u) {
+  return(nchar(u))
+}
 
 #speaker likelihood helper 
-speaker.lhd = function(utt, info) {
+speaker.lhd = function(utt, info, alpha) {
   exp(alpha*(log(info) - 3)) #Rething cost??? 
 }
+
 #speaker likelihood normalized
-speaker.prob = function(utt, rating, s.matrix) {
-  num = speaker.lhd(utt, s.matrix[rating, utt])
+speaker.prob = function(utt, rating, s.matrix, alpha, scale) {
+  num = speaker.lhd(utt, s.matrix[rating, utt], alpha)
   norm = 0
   for (i in 1:length(scale) ) {
     current.u = scale[i] #current utterance
-    norm = norm + speaker.lhd(current.u, s.matrix[rating, current.u])
+    norm = norm + speaker.lhd(current.u, s.matrix[rating, current.u], alpha)
   }
   return(num / norm)
 }
 
-#non-normalized posterior------------------------------>
-nn.post = function(utt, rating, s.matrix, priors) {
-  return(speaker.prob(utt, rating, s.matrix) * priors[rating])
+#non-normalized posterior
+nn.post = function(utt, rating, s.matrix, priors, alpha, scale) {
+  return(speaker.prob(utt, rating, s.matrix, alpha, scale) * priors[rating])
 }
 
-#normalized posterior---------------------------------->
-norm.post = function(utt, rating, s.matrix, priors) {
-  nn = nn.post(utt, rating, s.matrix, priors)
+#normalized posterior
+norm.post = function(utt, rating, s.matrix, priors, 
+                     alpha = 1, scale = c("low","hi")) {
+  nn = nn.post(utt, rating, s.matrix, priors, alpha, scale)
   norm = 0
   for (i in 1:5) {
-    norm = norm + nn.post(utt, i, s.matrix, priors)
+    norm = norm + nn.post(utt, i, s.matrix, priors, alpha, scale)
   }
   return(nn / norm)
 }
   
 ```
+
+model wrapper functions:
+
+```{r}
+run.rsa <- function(d) {
+  
+  scale.matrix <- d %>% 
+    select(stars, degree, speaker.p, prior.p) %>% 
+    spread(degree, speaker.p) %>% 
+    mutate(hi = hi / sum(hi), 
+           low = low / sum(low)) %>%
+    as.matrix
+  
+  preds <- expand.grid(stars = 1:5, 
+              degree = c("low","hi")) %>%
+    rowwise %>%
+    mutate(listener.pred =  norm.post(scale, stars, 
+                                      s.matrix = scale.matrix[,c("low","hi")], 
+                                      prior = scale.matrix[,"prior.p"]))
+    
+  return(preds)
+} 
+```
+
+
+RUN MODEL
+--------
+
+Run model on actual data
+
+```{r}
+data <- left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale) %>%
+  do(model.preds = run.rsa(.))
+
+```
+
 
 ## DATA / PLOTS
 

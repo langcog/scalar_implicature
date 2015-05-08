@@ -61,6 +61,8 @@ ms <- d %>%
             judgment = mean(judgment), 
             p = (judgment - 1)/4)
 
+write.csv(ms, "models/e5.csv", row.names=FALSE)
+
 pdf("plots/e5.pdf", width=8, height = 5)
 qplot(x = stars, y = judgment, col = degree,
       geom = "line", stat = "identity", 

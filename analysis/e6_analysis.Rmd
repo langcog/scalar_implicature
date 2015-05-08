@@ -58,6 +58,8 @@ density <- d %>%
   group_by(degree, scale, stars) %>%
   summarise(prop = n() / n[1])
 
+write.csv(density, "models/e6.csv", row.names=FALSE)
+
 # pdf("plots/e6.pdf", width = 8, height = 4)
 qplot(stars, prop, facets = degree ~ scale, 
       geom="bar", stat = "identity",
