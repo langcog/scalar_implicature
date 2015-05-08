@@ -5,28 +5,27 @@ date: "April 23, 2015"
 output: html_document
 ---
 
+Preliminaries.
 
 ```{r}
-p = file.path("~/Desktop/Projects/scalar_implicature/")
+rm(list=ls())
+p = file.path("~/Projects/Scalar Implicature/scalar_implicature/")
 source(paste0(p,"analysis/useful_dplyr.R"))
-library("rjson")
+library(rjson)
+```
 
-#############   NOTES   #################
-# <none, some, all> condition: the model correctly produces implicature.
-# However "all"" condition is predicted to be compabitible with a 4 rating.
-# This appears to be driven by several factors
-# 1) High priors over 4
-# 2) Fairly high compabitibiliy with All and four stars from e5
-#
-#
-#########################################
+## Notes
+* <none, some, all> condition: the model correctly produces implicature.
+* However "all"" condition is predicted to be compabitible with a 4 rating.
+* This appears to be driven by several factors
+  * 1) High priors over 4
+  * 2) Fairly high compabitibiliy with All and four stars from e5
 
-#Basic form of the model
-##############################################################################################
-##########  p.Lp(r | u) ~ [p.S(u | r) * p.L(r)] / SIGMA_over_alts(p.S('u|r)*p.L(r)) ##########
-##############################################################################################
+## Basic form of the model
 
+$$ p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S(u' \mid r) p_{L_0}(r)}}$$
 
+```{r}
 r = seq(from=1, to=5) #Ratings
 raw.priors = c(0.003, 0.053, 0.403, 0.387, 0.150) #Measured priors
 unif.priors = rep(.2, times=5) #Uniform priors
@@ -54,16 +53,17 @@ alpha = 4;
 u.cost = function(u) {
   return(nchar(u))
 }
+```
 
-##############################################################################################
-##########                            MODEL IMPLEMENTATION                          ##########
-##############################################################################################
-#Key------------------------>
-#u = utterance [string]
-#alts = alternative utterances
-#r = rating index [1-5]
-#d.info = informativity judgements
-#Key------------------------>
+## MODEL IMPLEMENTATION
+
+Key:
+* u = utterance [string]
+* alts = alternative utterances
+* r = rating index [1-5]
+* d.info = informativity judgements
+
+```{r}
 
 #speaker likelihood helper 
 speaker.lhd = function(utt, info) {
@@ -94,34 +94,39 @@ norm.post = function(utt, rating, s.matrix, priors) {
   }
   return(nn / norm)
 }
-speaker.prob = function(utt, rating, s.matrix)
-##############################################################################################
-##########                              DATA / PLOTS                                ##########
-##############################################################################################
-#priors
+  
+```
+
+## DATA / PLOTS
+
+Priors
+```{r}
 qplot(c(1:5), raw.priors,
       geom="bar", stat = "identity",
       binwidth = 1, main="Priors over ratings")
+```
 
-#SOME ---------------------------------------------->
+SOME
+```{r}
 d.some.unif.priors = sapply(1:5, FUN=function(i){
   norm.post("some", i, scale.matrix, unif.priors)})
 d.some.raw.priors = sapply(1:5, FUN=function(i){
   norm.post("some", i, scale.matrix, raw.priors)})
+
 qplot(c(1:5), d.some.raw.priors,
       geom="bar", stat = "identity",
       binwidth = 1, main="Some Posteriors")
+```
 
-#ALL ------------------------------------------------>
+ALL
+```{r}
 d.all.raw.priors = sapply(1:5, FUN=function(i){
   norm.post("all", i, scale.matrix, raw.priors)})
 d.all.unif.priors = sapply(1:5, FUN=function(i){
   norm.post("all", i, n.scale.matrix, unif.priors)})
+
 qplot(c(1:5), d.all.raw.priors,
       geom="bar", stat = "identity",
       binwidth = 1, main="All Posteriors, Raw priors")
-qplot(c(1:5), d.all.unif.priors,
-      geom="bar", stat = "identity",
-      binwidth = 1, main="All Posteriors, Uniform priors")
 ```
 
