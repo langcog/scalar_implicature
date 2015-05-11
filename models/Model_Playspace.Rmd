@@ -9,8 +9,8 @@ Preliminaries.
 
 ```{r}
 rm(list=ls())
-p = file.path("~/Projects/Scalar Implicature/scalar_implicature/")
-source(paste0(p,"analysis/useful_dplyr.R"))
+#p = file.path("~/Projects/Scalar Implicature/scalar_implicature/")
+source("analysis/useful_dplyr.R")
 library(rjson)
 ```
 
@@ -131,7 +131,7 @@ data <- left_join(speaker, listener) %>%
 
 Priors
 ```{r}
-qplot(c(1:5), raw.priors,
+qplot(c(1:5), priors$prior.p,
       geom="bar", stat = "identity",
       binwidth = 1, main="Priors over ratings")
 ```
