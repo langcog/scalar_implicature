@@ -43,39 +43,43 @@ Key:
 
 ```{r}
 #cost function in length of chars
-u.cost = function(u) {
-  return(nchar(u))
-}
+# u.cost = function(u) {
+#   return(nchar(u))
+# }
 
 #speaker likelihood helper 
-#speaker.lhd = function(utt, info, alpha) {
-#  exp(alpha*(log(info) - 3)) #Rething cost??? 
-#}
-speaker.lhd = function(d) {
-  exp(4*(log(d) - 3)) #Rethink alpha and costs?
+speaker.lhd = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost)) #Rethink alpha and costs?
 }
 
 #speaker likelihood normalized
-speaker.prob = function(rating, degree, m) {
-  num = speaker.lhd(m[rating, degree])
+speaker.prob = function(rating, degree, m, alpha) {
+  num = speaker.lhd(m[rating, degree], alpha)
   norm = 0
-  for ( i in 1:2 ) {
-    norm = norm + speaker.lhd(m[rating, i])
+  for (i in 1:ncol(m)) {
+    norm = norm + speaker.lhd(m[rating, i], alpha)
   }
   return(num / norm)
 }
 
 #non-normalized posterior
-nn.post = function(rating, degree, m) {
-  return(speaker.prob(rating, degree, m) * priors[rating, "prior.p"])
+nn.post = function(rating, degree, m, alpha, useprior) {
+  
+  if (useprior) {
+    prior <- priors[rating, "prior.p"]
+  } else {
+    prior = .2 
+  }
+  
+  speaker.prob(rating, degree, m, alpha) * prior
 }
 
 #normalized posterior
-norm.post = function(rating, degree, m) {
-  nn = nn.post(rating, degree, m)
+norm.post = function(rating, degree, m, alpha, useprior) {
+  nn = nn.post(rating, degree, m, alpha, useprior)
   norm = 0
   for (i in 1:5) {
-    norm = norm + nn.post(i, degree, m)
+    norm = norm + nn.post(i, degree, m, alpha, useprior)
   }
   return(nn / norm)
 }  
@@ -84,48 +88,28 @@ norm.post = function(rating, degree, m) {
 model wrapper functions:
 
 ```{r}
-run.rsa <- function(d) {
-  #BP------->
-  #Get current matrix
-  get.m = function(s, m) {
-    m2 <- filter(m, scale == s) %>%
-      spread(degree, speaker.p) %>%
-      mutate(hi = hi / sum(hi), 
-                  low = low / sum(low)) %>%
-      select(hi, low)
-    return(m2)
-  }
-  
-  m = d.m
-  s = "liked_loved"
-  get.m(s, d.m)
-  
-  d.m <- data %>% 
-    select(stars, degree, speaker.p, prior.p)
-  
-  scale.matrix <- data %>% 
-    select(stars, degree, speaker.p, prior.p) %>% 
-    rowwise() %>%
-    mutate(listener.pred = norm.post(stars, degree, get.m(scale, d.m)))
+run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
 
-  
-  #return scale.matrx$
- #BP------->
-  
-  #Old Mike code------>
-  scale.matrix <- data %>% 
-    select(stars, degree, speaker.p, prior.p) %>% 
-    spread(degree, speaker.p) %>% 
+  mat <- d %>%
+    select(stars, degree, speaker.p) %>%
+    spread(degree, speaker.p) %>%
     mutate(hi = hi / sum(hi), 
            low = low / sum(low)) %>%
-    as.matrix
+    select(hi, low)
   
-  preds <- expand.grid(stars = 1:5, 
-              degree = c("low","hi")) %>%
+  if (usenone) {
+    mat$none <- c(1, 0, 0, 0, 0)
+  } 
   
-    scale.matrix %>% 
-    mutate(listener.pred = norm.post(stars, degree, get.m(scale, scale.matrix)))
-  return(preds)
+  d$pred <- round(as.numeric(mapply(norm.post, 
+                                    d$stars, 
+                                    d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
 } 
 ```
 
@@ -141,11 +125,20 @@ data <- left_join(speaker, listener) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
-  group_by(scale) %>%
-  do(model.preds = run.rsa(.))
-
+  group_by(scale)
 ```
 
+run it. 
+
+```{r}
+md <- data %>%
+  do(run.rsa(., alpha = 1, useprior = FALSE, usenone = TRUE))
+
+qplot(stars, listener.p, col=degree, 
+      data = md) + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 2)
+```
 
 ## DATA / PLOTS
 
