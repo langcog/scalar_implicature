@@ -96,9 +96,18 @@ run.rsa <- function(d) {
     return(m2)
   }
   
+  m = d.m
+  s = "liked_loved"
+  get.m(s, d.m)
+  
+  d.m <- data %>% 
+    select(stars, degree, speaker.p, prior.p)
+  
   scale.matrix <- data %>% 
-    select(stars, degree, speaker.p, prior.p) %>%
-    mutate(listener.pred = norm.post(stars, degree, get.m(scale, .)))
+    select(stars, degree, speaker.p, prior.p) %>% 
+    rowwise() %>%
+    mutate(listener.pred = norm.post(stars, degree, get.m(scale, d.m)))
+
   
   #return scale.matrx$
  #BP------->
