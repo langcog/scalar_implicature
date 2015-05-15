@@ -9,7 +9,6 @@ Preliminaries.
 
 ```{r}
 rm(list=ls())
-#p = file.path("~/Projects/Scalar Implicature/scalar_implicature/")
 source("analysis/useful_dplyr.R")
 library(rjson)
 ```
