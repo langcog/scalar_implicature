@@ -31,10 +31,6 @@ Read Data
 priors = read.csv("models/prior.csv")
 speaker = read.csv("models/speaker.csv")
 listener = read.csv("models/listener.csv")
-# none.prob = c(1, 0, 0, 0, 0)
-# some.prob = c(.16, .36, .68, .83, .83)
-# all.prob = c(.01, .11, .35, .68, .98)
-
 ```
 
 ## MODEL IMPLEMENTATION
@@ -52,45 +48,63 @@ u.cost = function(u) {
 }
 
 #speaker likelihood helper 
-speaker.lhd = function(utt, info, alpha) {
-  exp(alpha*(log(info) - 3)) #Rething cost??? 
+#speaker.lhd = function(utt, info, alpha) {
+#  exp(alpha*(log(info) - 3)) #Rething cost??? 
+#}
+speaker.lhd = function(d) {
+  exp(4*(log(d) - 3)) #Rethink alpha and costs?
 }
 
 #speaker likelihood normalized
-speaker.prob = function(utt, rating, s.matrix, alpha, scale) {
-  num = speaker.lhd(utt, s.matrix[rating, utt], alpha)
+speaker.prob = function(rating, degree, m) {
+  num = speaker.lhd(m[rating, degree])
   norm = 0
-  for (i in 1:length(scale) ) {
-    current.u = scale[i] #current utterance
-    norm = norm + speaker.lhd(current.u, s.matrix[rating, current.u], alpha)
+  for ( i in 1:2 ) {
+    norm = norm + speaker.lhd(m[rating, i])
   }
   return(num / norm)
 }
 
 #non-normalized posterior
-nn.post = function(utt, rating, s.matrix, priors, alpha, scale) {
-  return(speaker.prob(utt, rating, s.matrix, alpha, scale) * priors[rating])
+nn.post = function(rating, degree, m) {
+  return(speaker.prob(rating, degree, m) * priors[rating, "prior.p"])
 }
 
 #normalized posterior
-norm.post = function(utt, rating, s.matrix, priors, 
-                     alpha = 1, scale = c("low","hi")) {
-  nn = nn.post(utt, rating, s.matrix, priors, alpha, scale)
+norm.post = function(rating, degree, m) {
+  nn = nn.post(rating, degree, m)
   norm = 0
   for (i in 1:5) {
-    norm = norm + nn.post(utt, i, s.matrix, priors, alpha, scale)
+    norm = norm + nn.post(i, degree, m)
   }
   return(nn / norm)
-}
-  
+}  
 ```
 
 model wrapper functions:
 
 ```{r}
 run.rsa <- function(d) {
+  #BP------->
+  #Get current matrix
+  get.m = function(s, m) {
+    m2 <- filter(m, scale == s) %>%
+      spread(degree, speaker.p) %>%
+      mutate(hi = hi / sum(hi), 
+                  low = low / sum(low)) %>%
+      select(hi, low)
+    return(m2)
+  }
   
-  scale.matrix <- d %>% 
+  scale.matrix <- data %>% 
+    select(stars, degree, speaker.p, prior.p) %>%
+    mutate(listener.pred = norm.post(stars, degree, get.m(scale, .)))
+  
+  return scale.matrx$
+ #BP------->
+  
+  #Old Mike code------>
+  scale.matrix <- data %>% 
     select(stars, degree, speaker.p, prior.p) %>% 
     spread(degree, speaker.p) %>% 
     mutate(hi = hi / sum(hi), 
@@ -99,11 +113,9 @@ run.rsa <- function(d) {
   
   preds <- expand.grid(stars = 1:5, 
               degree = c("low","hi")) %>%
-    rowwise %>%
-    mutate(listener.pred =  norm.post(scale, stars, 
-                                      s.matrix = scale.matrix[,c("low","hi")], 
-                                      prior = scale.matrix[,"prior.p"]))
-    
+  
+    scale.matrix %>% 
+    mutate(listener.pred = norm.post(stars, degree, get.m(scale, scale.matrix)))
   return(preds)
 } 
 ```
