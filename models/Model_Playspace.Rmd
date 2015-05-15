@@ -98,7 +98,9 @@ run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
     select(hi, low)
   
   if (usenone) {
-    mat$none <- c(1, 0, 0, 0, 0)
+    mat$none <- c(.8, .2, 0, 0, 0)
+    mat$bad <- c(.25, .5, .25, 0, 0)
+
   } 
   
   d$pred <- round(as.numeric(mapply(norm.post, 
@@ -132,7 +134,7 @@ run it.
 
 ```{r}
 md <- data %>%
-  do(run.rsa(., alpha = 1, useprior = FALSE, usenone = TRUE))
+  do(run.rsa(., alpha = 4, useprior = FALSE, usenone = TRUE))
 
 qplot(stars, listener.p, col=degree, 
       data = md) + 
