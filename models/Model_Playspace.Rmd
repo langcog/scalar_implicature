@@ -100,7 +100,7 @@ run.rsa <- function(d) {
     select(stars, degree, speaker.p, prior.p) %>%
     mutate(listener.pred = norm.post(stars, degree, get.m(scale, .)))
   
-  return scale.matrx$
+  #return scale.matrx$
  #BP------->
   
   #Old Mike code------>
