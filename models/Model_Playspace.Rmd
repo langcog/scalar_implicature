@@ -67,7 +67,7 @@ nn.post = function(rating, degree, m, alpha, useprior) {
   
   if (useprior) {
     prior <- priors[rating, "prior.p"]
-  } else {
+  } else { #unif prior
     prior = .2 
   }
   
@@ -103,9 +103,7 @@ run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
 
   } 
   
-  d$pred <- round(as.numeric(mapply(norm.post, 
-                                    d$stars, 
-                                    d$degree, 
+  d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
                                     MoreArgs = list(m = mat, 
                                                     alpha = alpha, 
                                                     useprior = useprior))), 
@@ -134,10 +132,10 @@ run it.
 
 ```{r}
 md <- data %>%
-  do(run.rsa(., alpha = 4, useprior = FALSE, usenone = TRUE))
+  do(run.rsa(., alpha = 10, useprior = FALSE, usenone = TRUE))
 
 qplot(stars, listener.p, col=degree, 
-      data = md) + 
+      data = md, main="Model vs Human judgments") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 2)
 ```
