@@ -132,12 +132,22 @@ run it.
 
 ```{r}
 md <- data %>%
-  do(run.rsa(., alpha = 10, useprior = FALSE, usenone = TRUE))
+  do(run.rsa(., alpha = best.alpha, useprior = FALSE, usenone = TRUE))
 
 qplot(stars, listener.p, col=degree, 
       data = md, main="Model vs Human judgments") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 2)
+
+#Which alpha has tightest correlation with human judgements
+alphas = seq(from=1, to=25)
+cors = sapply(alphas, FUN=function(n) {
+  md <- data %>%
+    do(run.rsa(., alpha = n, useprior = FALSE, usenone = TRUE))
+  cor(md$pred, md$listener.p)
+})
+qplot(alphas, cors)
+best.alpha = which(cors == max(cors))
 ```
 
 ## DATA / PLOTS
