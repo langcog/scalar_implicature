@@ -24,7 +24,7 @@ library(rjson)
 
 $$p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S(u' \mid r) p_{L_0}(r)}}$$
 
-Read Data 
+Read Data ---->
 ---------
 
 ```{r}
