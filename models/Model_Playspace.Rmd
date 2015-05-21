@@ -22,14 +22,19 @@ library(rjson)
 
 ## Basic form of the model
 
-$$ p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S(u' \mid r) p_{L_0}(r)}}$$
+$$p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S(u' \mid r) p_{L_0}(r)}}$$
 
 Read Data 
 ---------
 
 ```{r}
 priors = read.csv("models/prior.csv")
+# Possible transformations
+#priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
+priors$prior.p = (1/(-log(priors$prior.p))) / sum((1/(-log(priors$prior.p))))
+
 speaker = read.csv("models/speaker.csv")
+speaker.alt = read.csv("models/e5a.csv")
 listener = read.csv("models/listener.csv")
 ```
 
@@ -100,7 +105,6 @@ run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
   if (usenone) {
     mat$none <- c(.8, .2, 0, 0, 0)
     mat$bad <- c(.25, .5, .25, 0, 0)
-
   } 
   
   d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
@@ -128,29 +132,40 @@ data <- left_join(speaker, listener) %>%
   group_by(scale)
 ```
 
-run it. 
+## RUN MODEL 
 
 ```{r}
+# Which alpha has tightest correlation with human judgements
+alphas = seq(from=1, to=20)
+fit = sapply(alphas, FUN=function(n) {
+  md <- data %>%
+    do(run.rsa(., alpha = n, useprior = FALSE, usenone = TRUE))
+
+  mean((md$pred - md$listener.p)^2)
+})
+qplot(alphas, fit, main="MSE for alpha values", ylab="MSE")
+best.alpha = which(fit == min(fit))
+best.alpha
+
+# RUN MODEL
 md <- data %>%
   do(run.rsa(., alpha = best.alpha, useprior = FALSE, usenone = TRUE))
+```
 
+## DATA / PLOTS ------------>
+
+```{r}
+# Facets all scales, Model vs Human judgements
 qplot(stars, listener.p, col=degree, 
       data = md, main="Model vs Human judgments") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 2)
 
-#Which alpha has tightest correlation with human judgements
-alphas = seq(from=1, to=25)
-cors = sapply(alphas, FUN=function(n) {
-  md <- data %>%
-    do(run.rsa(., alpha = n, useprior = FALSE, usenone = TRUE))
-  cor(md$pred, md$listener.p)
-})
-qplot(alphas, cors)
-best.alpha = which(cors == max(cors))
+ggplot(md, aes(x=listener.p, y=pred)) +
+    geom_point(aes(colour = stars)) +
+    geom_smooth(method=lm) + ggtitle("Model pred vs Human judgment")
+cor(md$pred, md$listener.p)
 ```
-
-## DATA / PLOTS
 
 Priors
 ```{r}
@@ -158,28 +173,3 @@ qplot(c(1:5), priors$prior.p,
       geom="bar", stat = "identity",
       binwidth = 1, main="Priors over ratings")
 ```
-
-SOME
-```{r}
-d.some.unif.priors = sapply(1:5, FUN=function(i){
-  norm.post("some", i, scale.matrix, unif.priors)})
-d.some.raw.priors = sapply(1:5, FUN=function(i){
-  norm.post("some", i, scale.matrix, raw.priors)})
-
-qplot(c(1:5), d.some.raw.priors,
-      geom="bar", stat = "identity",
-      binwidth = 1, main="Some Posteriors")
-```
-
-ALL
-```{r}
-d.all.raw.priors = sapply(1:5, FUN=function(i){
-  norm.post("all", i, scale.matrix, raw.priors)})
-d.all.unif.priors = sapply(1:5, FUN=function(i){
-  norm.post("all", i, n.scale.matrix, unif.priors)})
-
-qplot(c(1:5), d.all.raw.priors,
-      geom="bar", stat = "identity",
-      binwidth = 1, main="All Posteriors, Raw priors")
-```
-

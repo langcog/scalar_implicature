@@ -53,6 +53,8 @@ Main Analysis
 First look at means broken down by epistemic condition.
 
 ```{r}
+n = length(unique(d$workerid))
+
 ms <- d %>%
   mutate(stars = as.numeric(as.character(stars))/20) %>%
   group_by(scale, degree, stars) %>%
@@ -60,9 +62,16 @@ ms <- d %>%
             cih = ci.high(judgment), 
             judgment = mean(judgment), 
             p = (judgment - 1)/4)
-
 write.csv(ms, "models/e5.csv", row.names=FALSE)
 
+# Different take on speaker.p
+ma <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(speaker.p = mean( ifelse( (judgment >= 4), 1, 0)))
+write.csv(ma, "models/e5a.csv", row.names=FALSE)
+
+#Original lexical semantics plot
 pdf("plots/e5.pdf", width=8, height = 5)
 qplot(x = stars, y = judgment, col = degree,
       geom = "line", stat = "identity", 
@@ -72,6 +81,12 @@ qplot(x = stars, y = judgment, col = degree,
                      ymax = judgment + cih)) + 
   facet_wrap(~scale)
 dev.off()
+
+#New lexical semantics plot
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = ma) + facet_wrap(~scale)
 ```
 
 barplot
@@ -80,6 +95,10 @@ barplot
 qplot(stars, judgment, facets = degree ~ scale, 
       geom="bar", stat = "identity",
       binwidth = 1, data=ms)
+
+qplot(stars, p, facets = degree ~ scale, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=ma)
 ```
 
 difference scores
