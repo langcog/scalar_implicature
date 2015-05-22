@@ -9,6 +9,7 @@ Preliminaries.
 
 ```{r}
 rm(list=ls())
+setwd("~/Desktop/Projects/scalar_implicature/")
 source("analysis/useful_dplyr.R")
 library(rjson)
 ```
@@ -29,12 +30,12 @@ Read Data ---->
 
 ```{r}
 priors = read.csv("models/prior.csv")
-# Possible transformations
-#priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
-priors$prior.p = (1/(-log(priors$prior.p))) / sum((1/(-log(priors$prior.p))))
-
+# Possible transformations --->
+priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
+#priors$prior.p = (1/(-log(priors$prior.p))) / sum((1/(-log(priors$prior.p))))
+#priors$prior.p = (log(priors$prior.p + 1)) / sum((log(priors$prior.p + 1)))
 speaker = read.csv("models/speaker.csv")
-speaker.alt = read.csv("models/e5a.csv")
+#speaker.alt = read.csv("models/e5a.csv")
 listener = read.csv("models/listener.csv")
 ```
 
@@ -75,7 +76,6 @@ nn.post = function(rating, degree, m, alpha, useprior) {
   } else { #unif prior
     prior = .2 
   }
-  
   speaker.prob(rating, degree, m, alpha) * prior
 }
 
@@ -103,8 +103,8 @@ run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
     select(hi, low)
   
   if (usenone) {
-    mat$none <- c(.8, .2, 0, 0, 0)
-    mat$bad <- c(.25, .5, .25, 0, 0)
+    mat$none <- c(.9, .1, 0, 0, 0)
+    mat$neg_valence <- c(.2, .5, .2, .1, 0)
   } 
   
   d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
@@ -139,9 +139,10 @@ data <- left_join(speaker, listener) %>%
 alphas = seq(from=1, to=20)
 fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
-    do(run.rsa(., alpha = n, useprior = FALSE, usenone = TRUE))
-
+    do(run.rsa(., alpha = n, useprior = TRUE, usenone = TRUE))
+  
   mean((md$pred - md$listener.p)^2)
+  #cor(md$pred, md$listener.p)
 })
 qplot(alphas, fit, main="MSE for alpha values", ylab="MSE")
 best.alpha = which(fit == min(fit))
@@ -149,7 +150,7 @@ best.alpha
 
 # RUN MODEL
 md <- data %>%
-  do(run.rsa(., alpha = best.alpha, useprior = FALSE, usenone = TRUE))
+  do(run.rsa(., alpha = best.alpha, useprior = TRUE, usenone = TRUE))
 ```
 
 ## DATA / PLOTS ------------>
@@ -157,9 +158,10 @@ md <- data %>%
 ```{r}
 # Facets all scales, Model vs Human judgements
 qplot(stars, listener.p, col=degree, 
-      data = md, main="Model vs Human judgments") + 
+      data=md, main="Model vs Human judgments",
+      ylab="Posterior judgments p(r|u)") + 
   facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 2)
+  geom_line(aes(y = pred), lty = 4)
 
 ggplot(md, aes(x=listener.p, y=pred)) +
     geom_point(aes(colour = stars)) +
@@ -167,9 +169,67 @@ ggplot(md, aes(x=listener.p, y=pred)) +
 cor(md$pred, md$listener.p)
 ```
 
+
+Speaker informativity measures
+```{r}
+# Scalar judgment scores by rating
+qplot(x = stars, y = speaker.judgment, col = degree, ymax = 5,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = speaker, main= "Scalar + Rating compabililty") + 
+  geom_linerange(aes(ymin = speaker.judgment - speaker.cil, 
+                     ymax = speaker.judgment + speaker.cih)) + 
+  facet_wrap(~scale)
+
+# Scalar compatibility (information ratings)
+qplot(x = stars, y = speaker.p, col = degree, ymax = 1,
+      geom = c("point", "smooth"), stat = "identity", 
+      position = "dodge", 
+      data = speaker, main= "Scalar Compaibility distr") + 
+  facet_wrap(~scale)
+```
+
+
+Pragmatic Listener Judgments
+```{r}
+qplot(x=stars, y=listener.p, col=degree, ymax=1,
+      geom=c("point", "smooth"), stat = "identity",
+      ylab="Compatibility", position="dodge", 
+      data=listener, main="Pragmatic listener judgements") + 
+  facet_wrap(~scale)
+```
+
+
+Model judgments
+```{r}
+qplot(x = stars, y = pred, col = degree, ymax = 1, ylab="Posterior judgments",
+      geom = c("point", "smooth"), stat = "identity", 
+      position = "dodge", 
+      data = md, main= "Scalar + Rating compabililty") + 
+  facet_wrap(~scale)
+```
+
+
 Priors
 ```{r}
 qplot(c(1:5), priors$prior.p,
       geom="bar", stat = "identity",
       binwidth = 1, main="Priors over ratings")
+
+shapiro.test(priors$prior.p)
+ks.test(priors$prior.p, "pnorm", mean=mean(priors$prior.p), sd=sd(priors$prior.p))
+```
+
+```{r}
+#Some properties of our scales
+scales = levels(d$scale)[1:5]
+scales.info = sapply(scales, FUN=function(s) {
+    curr <- data %>%
+      filter(scale == s, degree == "hi") %>%
+      select(speaker.p)
+    return( c(sd(as.numeric(unlist(curr[,2]))),
+              mean(as.numeric(unlist(curr[,2])))))
+})
+row.names(scales.info) = c("sd", "mean")
+scales.info <- t(scales.info)
 ```
