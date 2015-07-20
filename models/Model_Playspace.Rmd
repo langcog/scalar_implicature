@@ -28,18 +28,24 @@ $$p_{L_p} (r \mid u) \propto \frac{p_S(u | r) p_{L_0}(r)}{\sum_{u' \in alts}{p_S
 Read Data ---->
 ---------
 
-```{r}
-priors = read.csv("models/prior.csv")
 
-# Yelp priors
-priors$prior.p = c(0.09020902, 0.10561056, 0.16281628, 0.30463046, 0.33673367)
+```{r}
+# Priors ---------------->
+emp.priors = read.csv("models/prior.csv")
+yelp.priors = read.csv("models/yelp1_priors.csv")
+priors = yelp.priors
 # Possible transformations --->
-priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
+#priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
 #priors$prior.p = (1/(-log(priors$prior.p))) / sum((1/(-log(priors$prior.p))))
 #priors$prior.p = (log(priors$prior.p + 1)) / sum((log(priors$prior.p + 1)))
+
+# Speaker informativity ------------------------->
 speaker = read.csv("models/speaker.csv")
-#speaker = read.csv("models/e5a.csv")
+speaker = read.csv("models/speaker_normed.csv") # for printing out semantic distr's
 speaker = read.csv("models/yelp1.csv")
+#speaker = read.csv("models/e5a.csv")
+
+# Listener judgments ---------------------------->
 listener = read.csv("models/listener.csv")
 ```
 
@@ -52,17 +58,20 @@ Key:
 * d.info = informativity judgements
 
 ```{r}
-#cost function in length of chars
+# cost 
+# ----
 # u.cost = function(u) {
 #   return(nchar(u))
 # }
 
-#speaker likelihood helper 
+# speaker likelihood helper 
+# ------------------------
 speaker.lhd = function(d, alpha, cost = 0) {
   exp(alpha*(log(d) - cost)) #Rethink alpha and costs?
 }
 
-#speaker likelihood normalized
+# speaker likelihood normalized
+# -----------------------------
 speaker.prob = function(rating, degree, m, alpha) {
   num = speaker.lhd(m[rating, degree], alpha)
   norm = 0
@@ -72,13 +81,8 @@ speaker.prob = function(rating, degree, m, alpha) {
   return(num / norm)
 }
 
-# speaker.prob = function(rating, degree, m, alpha) {
-#   p = m[rating, degree] / sum(m[rating, ])
-#   
-#   return(p)
-# }
-
-#non-normalized posterior
+# non-normalized posterior 
+# ------------------------
 nn.post = function(rating, degree, m, alpha, useprior) {
   
   if (useprior) {
@@ -89,7 +93,8 @@ nn.post = function(rating, degree, m, alpha, useprior) {
   speaker.prob(rating, degree, m, alpha) * prior
 }
 
-#normalized posterior
+# normalized posterior
+# --------------------
 norm.post = function(rating, degree, m, alpha, useprior) {
   nn = nn.post(rating, degree, m, alpha, useprior)
   norm = 0
@@ -103,6 +108,8 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 model wrapper functions:
 
 ```{r}
+# Run rsa model
+# --------------------
 run.rsa <- function(d, alpha = 1, useprior = TRUE, usenone = FALSE) {
 
   mat <- d %>%
@@ -134,8 +141,10 @@ RUN MODEL
 Run model on actual data
 
 ```{r}
+# data
+# ----
 data <- left_join(speaker, listener) %>%
-  left_join(priors) %>%
+  left_join(emp.priors) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
@@ -145,22 +154,26 @@ data <- left_join(speaker, listener) %>%
 ## RUN MODEL 
 
 ```{r}
+# Tuning alpha, experimenting with params
+# ---------------------------------------
+
 # Which alpha has tightest correlation with human judgements
 alphas = seq(from=1, to=20)
 fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
-    do(run.rsa(., alpha = n, useprior = FALSE, usenone = TRUE))
+    do(run.rsa(., alpha = n, useprior = T, usenone = TRUE))
   
-  #mean((md$pred - md$listener.p)^2)
-  cor(md$pred, md$listener.p)
+  #return(mean((md$pred - md$listener.p)^2))
+  return(cor(md$pred, md$listener.p))
 })
-qplot(alphas, fit, main="MSE for alpha values", ylab="MSE")
+qplot(alphas, fit, main="Cor for alpha values", ylab="MSE")
 best.alpha = which(fit == max(fit))
 best.alpha
 
 # RUN MODEL
+# ---------
 md <- data %>%
-  do(run.rsa(., alpha = best.alpha, useprior = FALSE, usenone = TRUE))
+  do(run.rsa(., alpha = best.alpha, useprior = T, usenone = TRUE))
 ```
 
 ## DATA / PLOTS ------------>
@@ -168,15 +181,30 @@ md <- data %>%
 ```{r}
 # Facets all scales, Model vs Human judgements
 qplot(stars, listener.p, col=degree, 
-      data=md, main="Model vs Human judgments",
-      ylab="Posterior judgments p(r|u)") + 
+      data=md, main="Model vs Human judgments\nSemantics measured empirically",
+      ylab="Posteriors p(r|u)") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
-ggplot(md, aes(x=listener.p, y=pred)) +
+ggplot(md, aes(x=pred, y=listener.p)) +
     geom_point(aes(colour = stars)) +
-    geom_smooth(method=lm) + ggtitle("Model pred vs Human judgment")
+    geom_smooth(method=lm) +
+  ggtitle("Model performance\nCorpus based") +
+  labs(x = "model prediction", y="human judgments")
 cor(md$pred, md$listener.p)
+
+# Individual scales ---------->
+# Scalar compatibility (information ratings) - individual plot
+current_scale = subset(md, scale=="good_excellent",
+                    select=c(stars, scale, speaker.p, listener.p, degree, pred))
+levels(current_scale$degree) = c("excellent", "good")
+qplot(stars, listener.p, col=degree, 
+      data=current_scale, main="Model vs Human judgments\nCorpus based",
+      ylab="p(stars|scalar_term)") +
+geom_line(aes(y = pred), lty = 4)
+
+
+
 ```
 
 
@@ -187,16 +215,27 @@ qplot(x = stars, y = speaker.judgment, col = degree, ymax = 5,
       geom = "line", stat = "identity", 
       position = "dodge", 
       data = speaker, main= "Scalar + Rating compabililty") + 
-  #geom_linerange(aes(ymin = speaker.judgment - speaker.cil, 
-  #                   ymax = speaker.judgment + speaker.cih)) + 
+  geom_linerange(aes(ymin = speaker.judgment - speaker.cil, 
+                     ymax = speaker.judgment + speaker.cih)) + 
   facet_wrap(~scale)
 
-# Scalar compatibility (information ratings)
-qplot(x = stars, y = speaker.p, col = degree, ymax = 1,
+# Scalar compatibility (information ratings) - facet plot
+qplot(x = stars, y = speaker.normed, col = degree, ymax = 1,
       geom = c("point", "smooth"), stat = "identity", 
-      position = "dodge", 
-      data = speaker, main= "Scalar Compaibility distr") + 
+      position = "dodge", ylab="P(r|u)",
+      data = speaker, main= "Scalar compatibility\nCorpus based") + 
   facet_wrap(~scale)
+
+# Scalar compatibility (information ratings) - individual plot
+current_scale = subset(speaker, scale=="good_excellent",
+                    select=c(stars, scale, speaker.p, degree))
+
+levels(current_scale$degree) = c("excellent", "good")
+qplot(x = stars, y = speaker.p, col = degree, ymax = .75,
+      geom = c("point", "smooth"), stat = "identity", 
+      position = "dodge", ylab="p(stars|scalar_term)",
+      data = current_scale,
+      main= "Literal listener semantics\nCorpus data")
 ```
 
 
@@ -207,6 +246,15 @@ qplot(x=stars, y=listener.p, col=degree, ymax=1,
       ylab="Compatibility", position="dodge", 
       data=listener, main="Pragmatic listener judgements") + 
   facet_wrap(~scale)
+
+# Individual scales ---------->
+current_scale = subset(listener, scale=="good_excellent",
+                    select=c(stars, scale, listener.p, degree, pred))
+levels(current_scale$degree) = c("excellent", "good")
+qplot(stars, listener.p, col=degree, xmin=0,
+      geom = c("point", "smooth"), stat = "identity", 
+      data=current_scale, main="Pragmatic listener",
+      ylab="p(stars|scalar_term)")
 ```
 
 
@@ -222,12 +270,14 @@ qplot(x = stars, y = pred, col = degree, ymax = 1, ylab="Posterior judgments",
 
 Priors
 ```{r}
-qplot(c(1:5), priors$prior.p,
+qplot(c(1:5), yelp.priors$prior.p,
       geom="bar", stat = "identity",
-      binwidth = 1, main="Priors over ratings")
+      binwidth = 1, xlab="stars", ylab="p(stars)",
+      main="Priors\nCorpus based")
 
-shapiro.test(priors$prior.p)
-ks.test(priors$prior.p, "pnorm", mean=mean(priors$prior.p), sd=sd(priors$prior.p))
+shapiro.test(emp.priors$prior.p)
+ks.test(emp.priors$prior.p, "pnorm",
+        mean=mean(emp.priors$prior.p), sd=sd(emp.priors$prior.p))
 ```
 
 ```{r}
