@@ -44,6 +44,8 @@ d <- d.raw %>%
          scale != "training2", 
          compliant == TRUE)
 d <- d.raw %>% filter(scale != "training1")
+
+nrow(compliant)
 ```
 
 Main Analysis

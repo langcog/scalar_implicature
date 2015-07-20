@@ -24,6 +24,9 @@ for (f in files) {
                    language = jd$answer$language)
   d.raw <- bind_rows(d.raw, id)
 }
+
+# Number of participants
+length(unique(d.raw$workerid))
 ```
 
 No exclusions 

@@ -26,6 +26,9 @@ for (f in files) {
                    language = jd$answer$language)
   d.raw <- bind_rows(d.raw, id)
 }
+
+# Number of participants
+length(unique(d.raw$workerid))
 ```
 
 Holding off on exclusions - everyone put English, and training 2 was confusing. 
@@ -64,12 +67,27 @@ ms <- d %>%
             p = (judgment - 1)/4)
 write.csv(ms, "models/e5.csv", row.names=FALSE)
 
-# Different take on speaker.p
+#### Different take on speaker.p ###
 ma <- d %>%
   mutate(stars = as.numeric(as.character(stars))/20) %>%
   group_by(scale, degree, stars) %>%
-  summarise(speaker.p = mean( ifelse( (judgment >= 4), 1, 0)))
+  summarise(speaker.p = sum( ifelse( (judgment >= 4), 1, 0)))
+  #summarise(speaker.p = sum( ifelse( (judgment == 5), stars, 0)))
 write.csv(ma, "models/e5a.csv", row.names=FALSE)
+
+table(ma$stars, ma$judgment, ma$degree) / sum(table(ma$stars, ma$judgment))
+mn <- filter(ma, scale == "good_excellent", degree=="hi")
+nt = table(mn$star, mn$judgment)
+nt = nt / sum(nt)
+
+mz <- filter(mz, scale == "good_excellent", degree=="low")
+nz = table(mz$star, mz$judgment)
+
+t = nz - nt
+
+t = matrix(table(d$judgment, d$degree), ncol=2, nrow = 5)
+p = t[,1] - t[,2]
+qplot(c(1, 2, 3, 4, 5), ma$speaker.p)
 
 #Original lexical semantics plot
 pdf("plots/e5.pdf", width=8, height = 5)
