@@ -53,7 +53,7 @@ function get_context (name, pro) {
 	return context[name][pro];
 }
 
-var base_sent = "<b>PERSON went out to a restaurant SETTING.</b> <br><br>Without knowing anything about the food GEN ate, \
+var base_sent = "<b>PERSON went out to a restaurant SETTING.</b> <br><br>Without knowing anything about the food GEN ate,<br>\
 how many stars do you think GEN gave the restaurant?";
 
 var context = {
