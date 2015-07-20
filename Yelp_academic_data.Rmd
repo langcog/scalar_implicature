@@ -20,6 +20,15 @@ scalars = c(" good ", " excellent ",
             " some ", " all ",
             " memorable ", " unforgettable ")
 
+
+# get priors
+table(stars,data=data)
+priors = table(data$stars)
+priors = priors / sum(priors)
+write.csv(priors, "models/yelp1_priors.csv", row.names=FALSE)
+
+
+
 # parse text fields for scalar
 d = c();
 for (w in scalars) {
@@ -32,6 +41,25 @@ for (w in scalars) {
 df = as.data.frame(d)
 names(df) = c("scalar", "stars")
 df = as.matrix(table(df))
+
+# p(r | w)
+dm = data.frame(df)
+dm <- dm %>%
+  spread(stars, Freq)
+# get total word frequencies
+dm <- dm %>% cbind(Total = rowSums(dm[,2:6]))
+d.priors = dm[,c("scalar", "Total")]
+d.priors$percentage = sapply(d.priors$Total, FUN = function(i){
+  return(i / sum(d.priors$Total))
+})
+
+
+
+for (i in 1:nrow(dm)) {
+  dm[i,] = dm[i,] / sum(dm[i,]) 
+}
+dx = data.frame(dm)
+plot(dx)
 
 for (r in 1:nrow(df)) {
   df[r,] = (df[r,] / sum(df[r,]))
