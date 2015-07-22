@@ -4,7 +4,9 @@ PSYCH 130 - EXPERIMENT 4 ANALYSIS
 Preliminaries.
 
 ```{r}
+
 rm(list=ls())
+#setwd("~/Desktop/Projects/scalar_implicature/")
 source("analysis/useful_dplyr.R")
 library("rjson")
 ```
@@ -134,4 +136,58 @@ qplot(stars, delta, facets = . ~ scale, geom = "line",
 dev.off()
 ```
 
+# Histograms of agreement bins
+```{r}
+raw.scales <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars)
 
+raw.scales = raw.scales[
+  order(raw.scales[,2], raw.scales[,3], raw.scales[,4]),]
+raw.scales %>% gather()
+
+barplot(raw.scales[which(
+  raw.scales[,"scale"] == "good_excellent"
+  & raw.scales[,"degree"] == "low"
+  & raw.scales[,"stars"] == 1), ]$judgment)
+
+
+?gather
+library(dplyr)
+# From http://stackoverflow.com/questions/1181060
+stocks <- data.frame(
+  time = as.Date('2009-01-01') + 0:9,
+  X = rnorm(10, 0, 1),
+  Y = rnorm(10, 0, 2),
+  Z = rnorm(10, 0, 4)
+)
+?spread
+gather(stocks, stock, price, -time)
+stocksm <- stocks %>% gather(stock, price, -time)
+stocksm %>% spread(stock, price)
+
+# for reference -------->
+ms <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            judgment = mean(judgment), 
+            p = (judgment - 1)/4)
+# for reference -------->
+```
+
+# Gaussian Analysis 7-21-15
+```{r}
+# Just having a look using hard coded mean and var from e5a data
+# Note: e5a data looks at counts of likert ratings over 4 on aggreableness
+all.x = seq(1, 5, length=100)
+all.y = dnorm(x, mean=4.537037037, sd=sqrt(0.285665295))  
+plot(all.x,all.y, type="l", lwd=1, ylim = c(0, 1), col="blue")
+
+some.x = seq(1, 5, length=100)
+some.y = dnorm(x, mean=4.020522388, sd=sqrt(0.786892264))
+plot(some.x,some.y, type="l", lwd=1)
+
+lines(some.x, some.y, col="red")
+```
