@@ -102,6 +102,8 @@ var experiment = {
 		language: [],
 		expt_aim: [],
 		expt_gen: [],
+		age: [],
+		gender:[]
     },
     
     //End the experiment
@@ -144,7 +146,7 @@ var experiment = {
     
     //Run every trial
     next: function() {
-    	//If no trials are left go to debreifing
+    	//If no trials are left go to debriefing
 		if (!trials.length) {
 			return experiment.debriefing();
 		}
@@ -200,16 +202,28 @@ var experiment = {
 		}
     },
 
-    //Show debrief
+    // Show debrief
     debriefing: function() {
-		showSlide("debriefing");
+    	showSlide("debriefing");
+		// Get age
+    	var select_age = '';
+    	for (i = 18; i <= 100; i++) {
+    		select_age += '<option val=' + i + '>' + i + '</option>';
+    	}
+    	$('#age').html(select_age);    	
     },
 
     //###:-------------Log debrief data-------------:###
     submit_comments: function() {
-		experiment.data.language.push(document.getElementById("homelang").value);
-		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
-		experiment.data.expt_gen.push(document.getElementById("expcomments").value);
+		experiment.data.language.push(document.getElementById("homelang").value);		// language
+		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);	// thoughts
+		experiment.data.expt_gen.push(document.getElementById("expcomments").value);	// comments
+		experiment.data.age.push(document.getElementById("age").value);					// age
+		if (document.getElementById("Male").checked) {
+    		experiment.data.gender.push(document.getElementById("Male").value);			// gender
+    	} else {
+    		experiment.data.gender.push(document.getElementById("Female").value);
+    	}
 		experiment.end();
     }
     //###:-------------Log debrief data-------------:###
