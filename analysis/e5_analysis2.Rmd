@@ -99,6 +99,8 @@ for (i in scalars) {
     scalar.agreements(i, j)
   }
 }
+scalar.agreements("liked_loved", "hi")
+
 ```
 
 Matching in data
