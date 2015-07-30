@@ -55,3 +55,19 @@ Experiment 6
 * get star ratings for adjectives ("listener")
 * run 4/23
 * 10 trials
+
+Experiment 7
+------------
+
+* prior elicitation 
+* ended up somewhat funky - distribution looked like it was deeply influenced by what we thought was an irrelevant variable
+* probably need to figure out how to redo this
+
+Experiment 8
+------------
+
+* literal listener redux 
+* binary DV
+* no other real changes from experiment 5
+* added some demographics questions at the end (age, gender)
+* launched 7/30/15
