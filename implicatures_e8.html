@@ -25,7 +25,7 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "When rating the food someone selected:" and then you'll see the ratings they gave. We'd like to know how much you agree with how particular descriptions fit those ratings. If you think the description fits exactly select "7 - Yes, definitely". If the description doesn't fit at all, select "1 - No, not at all." If you feel like it's somewhere in between these options, choose a number between 1 and 7.
+  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "When rating the food someone selected..." and then you'll see the rating they gave. Underneath the rating, you'll be asked whether or not you think a description fits the rating by answering "Yes" or "No.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
@@ -102,23 +102,35 @@
  <!-- The debriefing slide. -->
  <div class="slide" id="debriefing">
 	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
-   <form onsubmit="experiment.submitcomments()">
+  
+  <form onsubmit="experiment.submitcomments()">
+   
    <p>
-	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
+	   <input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
    </p>
    <p> What do you think this experiment was about? </p>
    <p>
-	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+	   <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
    </p>
    <p> Any general comments about the experiment? </p>
    <p>
-   <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+    <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
    </p>
+
+    <!-- Gender -->
+    <p>Are you? </p>
+    <form action="">
+      <input type="radio" id="Male" name="sex" value="male"> Male <br>
+      <input type="radio" id="Female" name="sex" value="female"> Female 
+    </form>
+    <!-- Age -->
+    <p> And what is your age?</p>
+    <select id="age"></select>
+    <div align="center">
+      <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+    </div>
+
 	</form>
-	
-	<div align="center">
-	  <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
-	</div>
 	</div>
 	
 <!-- The finish slide. -->
