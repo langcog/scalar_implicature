@@ -188,7 +188,7 @@ var experiment = {
 		    //Display Trials -------------------------->
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
-		    $("#sent_question").html("Is it reasonable to assume that the person "+
+		    $("#sent_question").html("Do you think the person "+
 					     sent_materials);
 		    //Display Trials -------------------------->
 
