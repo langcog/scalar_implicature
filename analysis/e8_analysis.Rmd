@@ -1,0 +1,133 @@
+---
+title: "e8_analysis"
+author: "BPeloquin"
+date: "August 6, 2015"
+output: html_document
+---
+
+
+Prelims
+-------
+```{r}
+rm(list=ls())
+setwd("~/Desktop/Projects/scalar_implicature/")
+source("analysis/useful_dplyr.R")
+library("rjson")
+```
+
+Read in data
+------------
+```{r}
+files <- dir("production-results/e8/", pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("production-results/e8/", f, sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId,
+                   scale = jd$answers$data$scale,
+                   degree = jd$answers$data$degree,
+                   stars = jd$answers$data$manipulation_level,
+                   judgment = as.numeric(jd$answers$data$judgment),
+                   language = jd$answers$data$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Initial data clean
+------------------
+```{r}
+d.raw = d.raw[c(-1, -2), ]       # remove first two rows
+d = d.raw %>% filter(scale != "training1")
+
+ms <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            cnt.judgment = sum(judgment),
+            speaker.p = mean(judgment)) 
+# write to csv for model
+write.csv(ms, "models/e8.csv", row.names=FALSE)
+```
+
+Literal Listener semantics plot - averages
+```{r}
+pdf("plots/e8_L0.pdf", width=8, height = 5)
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", main = "Average", data = ms) + 
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale)
+dev.off()
+```
+
+Literal Listener semantics plot - counts
+```{r}
+qplot(x = stars, y = cnt.judgment,
+      geom = "bar", fill = factor(degree), stat = "identity", 
+      position = "dodge", main = "counts", data = ms) +
+  facet_wrap(~scale)
+```
+
+
+Looking at mean and var
+```{r}
+
+weighted.avg = function(scalar, degree) {
+  return( sum(
+    ms[which(ms$scale == scalar & ms$degree == degree), ]$speaker.p *
+      ms[which(ms$scale == scalar & ms$degree == degree), ]$stars) / 5)   
+}
+weighted.avg("some_all", "low")
+
+normals = matrix(ncol = 4, nrow = 5)
+colnames(overall.cnts) = dgrs
+for (i in 1:length(scalars)) {
+  normals[i, 1] = 
+    mean(ms[which(ms$scale == scalars[i] & ms$degree == "low"),]$cnt.judgment)
+  normals[i, 2] = 
+    mean(ms[which(ms$scale == scalars[i] & ms$degree == "hi"),]$cnt.judgment)
+  normals[i, 3] = 
+    var(ms[which(ms$scale == scalars[i] & ms$degree == "low"),]$cnt.judgment)
+  normals[i, 4] = 
+    var(ms[which(ms$scale == scalars[i] & ms$degree == "hi"),]$cnt.judgment)
+}
+colnames(normals) = c("mean hi", )
+```
+
+Looking at counts
+```{r}
+scalars = c("some_all",
+            "liked_loved",
+            "palatable_delicious",
+            "good_excellent",
+            "memorable_unforgettable")
+dgrs = c("low", "hi")
+overall.cnts = matrix(ncol = 2, nrow = 5)
+colnames(overall.cnts) = dgrs
+for (i in 1:length(scalars)) {
+  overall.cnts[i, 1] = 
+    sum(ms[which(ms$scale == scalars[i] & ms$degree == "low"),]$cnt.judgment)
+  overall.cnts[i, 2] = 
+    sum(ms[which(ms$scale == scalars[i] & ms$degree == "hi"),]$cnt.judgment)
+}
+overall.cnts = data.frame(overall.cnts)
+overall.cnts$scalar = scalars
+
+# for plotting
+dc = overall.cnts %>%
+  gather(degree, cnt, -scalar)
+dc
+
+qplot(scalars, y=cnt,
+      geom="bar", stat="identity",
+      data=dc) +
+  facet_wrap(~degree)
+qplot(scalars, y=hi,
+      geom="bar", stat="identity", main="low", ylim=c(0, 150),
+      data=data.frame(overall.cnts))
+
+```
+

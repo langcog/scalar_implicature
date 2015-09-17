@@ -1,0 +1,156 @@
+---
+title: "RSA_model2"
+author: "BPeloquin"
+date: "August 6, 2015"
+output: html_document
+---
+
+Set-up
+------
+
+```{r}
+rm(list=ls())
+
+library(knitr)
+library(rjson)
+
+opts_chunk$set(cache=TRUE)
+
+source("analysis/useful_dplyr.R")
+```
+
+Data
+----
+```{r}
+speaker = read.csv("models/e8.csv")
+listener = read.csv("models/listener.csv")
+# priors
+# ------
+unif = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+empirical = read.csv("models/prior.csv")
+yelp = read.csv("models/yelp1_priors.csv")
+priors = unif
+# combine speaker / listener
+data <- left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+head(data)
+```
+
+Model
+-----
+```{r}
+# speaker informativity
+# ---------------------
+speaker.lhd = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost))
+}
+# speaker likelihood
+# ------------------
+speaker.prob = function(rating, degree, m, alpha) {
+  numerator = speaker.lhd(m[rating, degree], alpha)
+  norm = 0
+  for (i in 1:ncol(m)) {
+    norm = norm + speaker.lhd(m[rating, i], alpha)
+  }
+  return(numerator / norm)
+}
+# non-normalized posterior
+# -----------------------
+nn.post = function(rating, degree, m, alpha, useprior) {
+  prior <- priors[rating, "prior.p"]
+  speaker.prob(rating, degree, m, alpha) * prior
+}
+# normalized posterior
+# --------------------
+norm.post = function(rating, degree, m, alpha, useprior) {
+  nn = nn.post(rating, degree, m, alpha, useprior)
+  norm = 0
+  for (i in 1:5) {
+    # summation over all scale mates
+    norm = norm + nn.post(i, degree, m, alpha, useprior)
+  }
+  return(nn / norm)
+}  
+```
+
+Run Model
+----------
+```{r}
+# Run rsa model
+# --------------------
+run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
+
+  mat <- d %>%
+    select(stars, degree, speaker.p) %>%
+    spread(degree, speaker.p) %>%
+    mutate(hi = hi / sum(hi), 
+           low = low / sum(low)) %>%
+    select(hi, low)
+  
+  if (usenone) {
+    mat$none <- c(0.8, 0.2, 0, 0, 0)
+    #mat$bad <- c(.5, .9, .4, .1, 0)
+  } 
+  
+  d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
+} 
+```
+
+Run model
+---------
+```{r}
+md <- data %>%
+  do(run.rsa(., alpha = 5, useprior = T, usenone = T))
+```
+
+Visualize
+---------
+```{r}
+qplot(stars, listener.p, col=degree, 
+      data=md, main="Model vs Human judgments\nSemantics measured empirically",
+      ylab="Posteriors p( rating | word )") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+ggplot(md, aes(x=pred, y=listener.p)) +
+    geom_point(aes(colour = stars)) +
+    geom_smooth(method=lm) +
+  ggtitle("Model performance\nCorpus based") +
+  labs(x = "model prediction", y="human judgments")
+cor(md$pred, md$listener.p)
+
+# scalar level cor
+specific.cor = function(scalar) {
+  return (cor(md[which(md$scale==scalar), ]$pred,
+              md[which(md$scale==scalar), ]$listener.p))
+}
+qplot(unique(md$scale), y = sapply(unique(md$scale), specific.cor),
+    aes(group=1), geom="bar", stat="identity")
+```
+
+Tuning
+-------
+```{r}
+# alpha
+alphas = seq(from=1, to=10)
+fit = sapply(alphas, FUN=function(n) {
+  md <- data %>%
+    do(run.rsa(., alpha = n, useprior = F, usenone = T))
+  
+  return(mean((md$pred - md$listener.p)^2))
+  #return(cor(md$pred, md$listener.p))
+})
+qplot(alphas, fit, main="Cor for alpha values", ylab="MSE")
+best.alpha = which(fit == min(fit))
+best.alpha
+```
