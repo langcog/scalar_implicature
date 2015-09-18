@@ -48,7 +48,6 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-			//because training trial hi and low are the same
 		    hi:  "thought the food deserved a <b>high</b> rating.",
 		    low:  "thought the food deserved a <b>low</b> rating."
 		},
