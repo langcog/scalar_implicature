@@ -43,33 +43,43 @@ function shuffle (a) {
 
 
 
-
-
 var sents = {
     scale: {
 		training1: {
-		    hi:  "thought the food deserved a <b>high</b> rating.",
-		    low:  "thought the food deserved a <b>low</b> rating."
+		    hi:  "<b>high</b>",
+		    low:  "<b>low</b>",
+		    before: " thought the food deserved a ",
+		    after: " rating."
 		},
 		liked_loved: {		   
-		    hi:  "<b>loved</b> the food.",
-		    low:  "<b>liked</b> the food."
+		    hi:  "<b>loved</b>",
+		    low:  "<b>liked</b>",
+		    before: " ",
+		    after: " the food."
 		},
 		good_excellent: {
-			hi:  "thought the food was <b>excellent</b>.",
-		    low:  "thought the food was <b>good</b>."
+			hi:  "<b>excellent</b>",
+		    low:  "<b>good</b>",
+		    before: " thought the food was ",
+		    after: "."
 		},
 		palatable_delicious: {
-			hi:  "thought the food was <b>delicious</b>.",
-		    low:  "thought the food was <b>palatable</b>."
+			hi:  "<b>delicious</b>",
+		    low:  "<b>palatable</b>",
+		    before: " thought the food was ",
+		    after: "."
 		},
-	memorable_unforgettable: {
-			hi:  "thought the food was <b>unforgettable</b>.",
-		    low:  "thought the food was <b>memorable</b>."
+		memorable_unforgettable: {
+			hi:  "<b>unforgettable</b>",
+		    low:  "<b>memorable</b>",
+		    before: " thought the food was ",
+		    after: "."
 		},
 		some_all: {
-			hi: "enjoyed <b>all</b> of the food they ate.",
-			low: "enjoyed <b>some</b> of the food they ate."
+			hi: "<b>all</b>",
+			low: "<b>some</b>",
+			before: "enjoyed ",
+		    after: " of the food they ate."
 		}
     },
 };
@@ -101,7 +111,9 @@ var experiment = {
 		scale: [],
 		degree: [],
 		manipulation_level: [],
-		judgment: [],
+		alt1: [],
+		alt2: [],
+		alt3: [],
 		language: [],
 		expt_aim: [],
 		expt_gen: [],
@@ -117,28 +129,25 @@ var experiment = {
 		}, 1500);
     },
 
+    reset_form: function() {
+    	document.getElementById("alt1").value = "";
+		document.getElementById("alt2").value = "";
+		document.getElementById("alt3").value = "";	
+    },
+
     //Log response
     log_response: function() {
-		var response_logged = false;
-		//Array of radio buttons
-		var radio = document.getElementsByName("judgment");
-		
-		// Loop through radio buttons
-		for (i = 0; i < radio.length; i++) {
-		    if (radio[i].checked) {
-				experiment.data.judgment.push(radio[i].value);
-				response_logged = true;		    
-		    }
-		}
-		
+		var response_logged = true;
+		var alt1 = document.getElementById("alt1").value;
+		var alt2 = document.getElementById("alt2").value;
+		var alt3 = document.getElementById("alt3").value;	
+		experiment.data.alt1.push(alt1);
+		experiment.data.alt2.push(alt2);
+		experiment.data.alt3.push(alt3);
+
 		if (response_logged) {
-		    nextButton.blur();
-		    
-		    //Uncheck radio buttons
-		    for (i = 0; i < radio.length; i++) {
-				radio[i].checked = false
-		    }
-		    experiment.next(); //Move to next condition
+			nextButton.blur();
+			experiment.next();
 		} else {
 			//Else respondent didn't make a response
 		    $("#testMessage").html('<font color="red">' + 
@@ -149,7 +158,9 @@ var experiment = {
     
     //Run every trial
     next: function() {
-    	//If no trials are left go to debriefing
+    	experiment.reset_form();
+    	
+    	// If no trials are left go to debriefing
 		if (!trials.length) {
 			return experiment.debriefing();
 		}
@@ -166,7 +177,9 @@ var experiment = {
 		    current_scale = scales[current_trial];
 		    degree = scale_degrees[current_trial % 2];
 
-			sent_materials = sents.scale[current_scale][degree];
+			sent_materials = sents.scale[current_scale]["before"] + 
+							 sents.scale[current_scale][degree] +
+							 sents.scale[current_scale]["after"];
 		    //Trial params ---------------------------->
 		    // if(trials.length == 52) {
 		    // 	trials.shift();
@@ -199,6 +212,8 @@ var experiment = {
 			//				    manipulation_level + "%");
 		    $("#sent_question").html("In a recent restaurant review someone said "+
 					     sent_materials);
+		    $("#target_word").html("What alternative words could have been used instead of " +
+		    	sents.scale[current_scale][degree] + "?");
 		    //Display Trials -------------------------->
 
 		    //Log Data -------------------------------->
