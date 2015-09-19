@@ -66,26 +66,18 @@
   <!--star-ratings
   ###############################################################
   -->
- 	<p id = "sent_question">{{}} </p>
- 	<p><i>What are some alternative words they coud have use?</i></p>
+  	<p>Thinking about the sentence below, what are some alternative words that come to mind instead of the <b>bolded</b> word below?</p>
+  	<br>
+ 	<p id = "sent_question">{{}}</p>
+ 	<br>
+ 	<p id = "target_word"><i>What are some alternative words to</i>{{}}<i>that could could be used?</i></p>	
 </div>
 
-<form align="center">
-	Alternative 1: <input type="text" name="alt1"><br><br>
-	Alternative 2: <input type="text" name="alt2"><br><br>
-	Alternative 3: <input type="text" name="alt3"><br><br>
+<form id="get_alts" align="center">
+	Alternative 1: <input type="text" id="alt1" value="1"><br><br>
+	Alternative 2: <input type="text" id="alt2" value="2"><br><br>
+	Alternative 3: <input type="text" id="alt3" value="3"><br><br>
 </form>
-<!-- <table align = "center"><tr>
-<td align="center">
-  <tr>
-  	<td>No</td>
-    <td>Yes</td>    
-  </tr>
-  	<td><input type="radio" name="judgment" value = "0"></td>
-    <td><input type="radio" name="judgment" value = "1"></td>
-  </tr>
-</table> -->
-
   <br>
 <table align="center"><tr>
   <td align="center">
