@@ -84,21 +84,17 @@ var sents = {
     },
 };
 
-
 //Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 10;
+var TOTAL_TRIALS = 8;
+var TRAINING_ROUNDS = 2;
 var trials = [];
 for(var i = 0; i < TOTAL_TRIALS; i++) {
 	trials.push(i);
 }
-trials = shuffle(trials); 								// randomize trials
-var scales = Object.keys(sents.scale);
+trials = shuffle(trials); 						// randomize trials
+var scales = Object.keys(sents.scale);			// array of target scales
+scales.shift(); 								// remove 'training1' trial from scales array
 var scale_degrees = ["hi", "low"];
-
-//var manipulation = ["20", "40", "60", "80", "100"];
-//var totalTrials = trials.length;
-//Trial condition params initializations ------------------->
-
 
 
 // Show the instructions slide -- this is what we want subjects to see first.
@@ -172,11 +168,21 @@ var experiment = {
 		    $("#prog").attr("style","width:" +
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
-		    
-		    current_trial = Math.floor(trials.shift() / 2);
-		    current_scale = scales[current_trial];
-		    degree = scale_degrees[current_trial % 2];
 
+		    if (TRAINING_ROUNDS == 2) {
+		     	current_scale = "training1";
+		     	degree = "hi";
+		     	TRAINING_ROUNDS--;
+		    } else if (TRAINING_ROUNDS == 1) {
+		    	current_scale = "training1";
+		     	degree = "low";
+		     	TRAINING_ROUNDS--;
+		    } else {
+
+			    current_trial = trials.shift();
+			    current_scale = scales[Math.floor(current_trial / 2)];
+			    degree = scale_degrees[current_trial % 2];	
+		    }
 			sent_materials = sents.scale[current_scale]["before"] + 
 							 sents.scale[current_scale][degree] +
 							 sents.scale[current_scale]["after"];
