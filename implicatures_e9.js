@@ -46,38 +46,38 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-		    hi:  "<b>high</b>",
-		    low:  "<b>low</b>",
+		    hi:  "<font color=\"blue\"><b>high</b></font>",
+		    low:  "<font color=\"blue\"><b>low</b></font>",
 		    before: " thought the food deserved a ",
 		    after: " rating."
 		},
 		liked_loved: {		   
-		    hi:  "<b>loved</b>",
-		    low:  "<b>liked</b>",
+		    hi:  "<font color=\"blue\"><b>loved</b></font>",
+		    low:  "<font color=\"blue\"><b>liked</b></font>",
 		    before: " ",
 		    after: " the food."
 		},
 		good_excellent: {
-			hi:  "<b>excellent</b>",
-		    low:  "<b>good</b>",
+			hi:  "<font color=\"blue\"><b>excellent</b></font>",
+		    low:  "<font color=\"blue\"><b>good</b></font>",
 		    before: " thought the food was ",
 		    after: "."
 		},
 		palatable_delicious: {
-			hi:  "<b>delicious</b>",
-		    low:  "<b>palatable</b>",
+			hi:  "<font color=\"blue\"><b>delicious</b></font>",
+		    low:  "<font color=\"blue\"><b>palatable</b></font>",
 		    before: " thought the food was ",
 		    after: "."
 		},
 		memorable_unforgettable: {
-			hi:  "<b>unforgettable</b>",
-		    low:  "<b>memorable</b>",
+			hi:  "<font color=\"blue\"><b>unforgettable</b></font>",
+		    low:  "<font color=\"blue\"><b>memorable</b></font>",
 		    before: " thought the food was ",
 		    after: "."
 		},
 		some_all: {
-			hi: "<b>all</b>",
-			low: "<b>some</b>",
+			hi: "<font color=\"blue\"><b>all</b></font>",
+			low: "<font color=\"blue\"><b>some</b></font>",
 			before: "enjoyed ",
 		    after: " of the food they ate."
 		}
@@ -216,10 +216,11 @@ var experiment = {
 		    //Display Trials -------------------------->
 			//$(".rating-stars").attr("style","width: " +
 			//				    manipulation_level + "%");
-		    $("#sent_question").html("In a recent restaurant review someone said "+
-					     sent_materials);
+		    $("#sent_question").html("\"In a recent restaurant review someone said they "+
+					     sent_materials + "\"");
 		    $("#target_word").html("What alternative words could have been used instead of " +
 		    	sents.scale[current_scale][degree] + "?");
+		    $("#before").html(sents.scale[current_scale]["before"]);
 		    //Display Trials -------------------------->
 
 		    //Log Data -------------------------------->
