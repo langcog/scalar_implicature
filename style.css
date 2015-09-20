@@ -14,12 +14,17 @@ body {
 /* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
 .slide {
 	width: 95%;
-	height: 95%;
+	height: 90%;
 	display: none;
 	position: absolute;
 	margin: 0;
-	margin-left: 0.5%;
+	margin-top: 2%;
+	margin-left: 2%;
 	padding: 1% 2% 1% 2%;
+	border-radius: 25px;
+    border: 2px solid #ADD8E6;
+    padding: 20px; 
+    /*background-color: #fafafa;*/
 }
 
 .center {
@@ -60,9 +65,6 @@ button[disabled] {
 	border-left: 1px solid #e0e0e0;
 	cursor: not-allowed;
 }
-
-
-
 
 /* ## Experiment-specific styles */
 /* This stuff will vary by experiment. */
@@ -111,4 +113,10 @@ td {
 
 #sent_question {
 	font-size: 16px;
+}
+
+input[type=text] {
+	border: 1px dotted #999;
+	border-radius: 0;
+	-webkit-appearance: none;
 }
