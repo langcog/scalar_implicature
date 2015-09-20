@@ -25,7 +25,8 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "When rating the food someone selected..." and then you'll see the rating they gave. Underneath the rating, you'll be asked whether or not you think a description fits the rating by answering "Yes" or "No.
+  <p class="block-text">
+  In the following task you will see several sentences. In every sentence, one word will be highilghted in <font color="blue"><b>blue</b></font>. We want you to give us some other words that could have occurred instead of the highlighted word… Please just list the first three alternatives that come to mind - we’re interested in your spontaneous response.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
@@ -39,7 +40,7 @@
 </div>
 
 <!-- The stage slide. -->
-<div class="slide" id="stage">
+<div class="slide" id="stage" align="center">
   
 <!-- Progress bar -->
 <div class="progress">  
@@ -66,11 +67,11 @@
   <!--star-ratings
   ###############################################################
   -->
-  	<p>Thinking about the sentence below, what are some alternative words that come to mind instead of the <b>bolded</b> word below?</p>
-  	<br>
- 	<p id = "sent_question">{{}}</p>
+  <p>Please consider the sentence below...</p>
+  <br>
+ 	<p id = "sent_question" style="font-size:16px">{{}}</p>
  	<br>
- 	<p id = "target_word"><i>What are some alternative words to</i>{{}}<i>that could could be used?</i></p>	
+ 	<p id = "target_word">{{}}</p>
 </div>
 
 <form id="get_alts" align="center">
