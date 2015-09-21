@@ -61,7 +61,7 @@ speaker.prob = function(rating, degree, m, alpha) {
 # non-normalized posterior
 # -----------------------
 nn.post = function(rating, degree, m, alpha, useprior) {
-  prior <- priors[rating, "prior.p"]
+  prior = priors[rating, "prior.p"]
   speaker.prob(rating, degree, m, alpha) * prior
 }
 # normalized posterior
@@ -110,7 +110,7 @@ Run model
 ---------
 ```{r}
 md <- data %>%
-  do(run.rsa(., alpha = 5, useprior = T, usenone = T))
+  do(run.rsa(., alpha = 1, useprior = T, usenone = T))
 ```
 
 Visualize
