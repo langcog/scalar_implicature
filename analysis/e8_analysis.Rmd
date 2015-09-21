@@ -128,6 +128,58 @@ qplot(scalars, y=cnt,
 qplot(scalars, y=hi,
       geom="bar", stat="identity", main="low", ylim=c(0, 150),
       data=data.frame(overall.cnts))
+```
 
+
+```{r}
+# working with vector
+normed.counts = NA
+s = scalars[1]
+d = dgrs[2]
+
+
+for (s in scalars) {
+  cnts = data.frame()
+  for (d in dgrs) {
+    cnts$scale = rep(s, 5)
+    cnts$dgrs = rep(d, 5)
+    cnts = ms[ms$scale == s & ms$degree == d, "cnt.judgment"] + 1       # Laplace smooth
+    cnts = cnts / sum(cnts)
+  }
+  new.sems = c(new.sems, cnts)
+}
+as.vector(unlist(new.sems))
+ms
+
+# init.df
+# ------
+# initialze a new nrows * ncols data.frame()
+init.df = function(ncols, nrows, names = NA) {
+  new.df = data.frame(matrix(ncol = ncols, nrow = nrows))
+  colnames(new.df) = names
+  return(new.df)
+}
+
+# working wit df()
+new.sems = data.frame(scale=character(),
+                      degree=character(),
+                      stars=numeric(),
+                      cnt.judgment=numeric())
+for (s in scalars) {
+  cnts = init.df(4, 5, names=c("scale", "degree", "stars", "cnt.judgment"))
+  for (d in dgrs) {
+    cnts$scale = rep(s, 5)
+    cnts$degree = rep(d, 5)
+    cnts$stars = seq(1, 5)
+    cnts$cnt.judgment = ms[ms$scale == s & ms$degree == d, ]$cnt.judgment + 1 # Laplace smooth
+    cnts$cnt.judgment = cnts$cnt.judgment / sum(cnts$cnt.judgment)
+    new.sems = rbind(new.sems, cnts)
+  }
+}
+# for merging with ms df()
+new.sems = rbind(new.sems, data.frame(scale=rep("training1", 5),
+                           degree=c(rep("hi",5), rep("low",5)),
+                           cnt.judgment=rep(NA,10)))
+ma = merge(ms, new.sems, by=c("scale", "degree", "stars"))
 ```
 
