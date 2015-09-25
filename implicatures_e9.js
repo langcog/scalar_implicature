@@ -131,25 +131,33 @@ var experiment = {
 		document.getElementById("alt3").value = "";	
     },
 
+ 	// returns True if entry in form
+    check_response: function() {
+    	var box_1 = document.getElementById("alt1");
+    	var box_2 = document.getElementById("alt2");
+    	var box_3 = document.getElementById("alt3");
+		return(box_1.value != "" && box_2.value != "" && box_3.value != "");
+    },
+
     //Log response
     log_response: function() {
-		var response_logged = true;
-		var alt1 = document.getElementById("alt1").value;
-		var alt2 = document.getElementById("alt2").value;
-		var alt3 = document.getElementById("alt3").value;	
-		experiment.data.alt1.push(alt1);
-		experiment.data.alt2.push(alt2);
-		experiment.data.alt3.push(alt3);
+		var response_logged = experiment.check_response();
+		if (!experiment.check_response()) {
+			$("#testMessage").html('<br><font color="red">' + 
+					   'Please make all three responses!' + 
+					   '</font>');
+		} else {
+			var alt1 = document.getElementById("alt1").value;
+			var alt2 = document.getElementById("alt2").value;
+			var alt3 = document.getElementById("alt3").value;			
+			experiment.data.alt1.push(alt1);
+			experiment.data.alt2.push(alt2);
+			experiment.data.alt3.push(alt3);
 
-		if (response_logged) {
 			nextButton.blur();
 			experiment.next();
-		} else {
-			//Else respondent didn't make a response
-		    $("#testMessage").html('<font color="red">' + 
-					   'Please make a response!' + 
-					   '</font>');
 		}
+		return;
 	},
     
     //Run every trial
@@ -178,56 +186,26 @@ var experiment = {
 		     	degree = "low";
 		     	TRAINING_ROUNDS--;
 		    } else {
-
 			    current_trial = trials.shift();
 			    current_scale = scales[Math.floor(current_trial / 2)];
 			    degree = scale_degrees[current_trial % 2];	
 		    }
+
+		    // compile sentence material
 			sent_materials = sents.scale[current_scale]["before"] + 
 							 sents.scale[current_scale][degree] +
 							 sents.scale[current_scale]["after"];
-		    //Trial params ---------------------------->
-		    // if(trials.length == 52) {
-		    // 	trials.shift();
-		    // 	current_scale = scales[0];
-		    // 	degree = "hi";
-		    // 	manipulation_level = "100";
-		    // } else if (trials.length == 51) {
-		    // 	trials.shift();
-		    // 	current_scale = scales[0];
-		    // 	degree = "low";
-		    // 	manipulation_level = "80";
-		    // } else if (trials.length == 50) {
-		    // 	trials = shuffle(trials); 
-		    // 	current_trial = trials.shift();
-		    // 	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    // 	degree = scale_degrees[current_trial % 2];
-		    // 	manipulation_level = manipulation[current_trial % 5];
-		    // } else {
-		    // 	current_trial = trials.shift();
-		    // 	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    // 	degree = scale_degrees[current_trial % 2];
-		    // 	manipulation_level = manipulation[current_trial % 5];
-		    // }
-			
-		    //Trial params ---------------------------->
-
-
-		    //Display Trials -------------------------->
-			//$(".rating-stars").attr("style","width: " +
-			//				    manipulation_level + "%");
+		    
+		    // Display trial information
 		    $("#sent_question").html("\"In a recent restaurant review someone said they "+
 					     sent_materials + "\"");
-		    $("#target_word").html("What alternative words could have been used instead of " +
+		    $("#target_word").html("If they had <i>felt different</i> about the restaurant, what other words might they have used instead of " +
 		    	sents.scale[current_scale][degree] + "?");
 		    $("#before").html(sents.scale[current_scale]["before"]);
-		    //Display Trials -------------------------->
 
-		    //Log Data -------------------------------->
+		    // Log Data
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
-		    //experiment.data.manipulation_level.push(manipulation_level);
-		    //Log Data -------------------------------->
 		    
 		    showSlide("stage");
 		}
