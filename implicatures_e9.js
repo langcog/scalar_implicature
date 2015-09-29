@@ -85,7 +85,7 @@ var sents = {
 };
 
 //Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 8;
+var TOTAL_TRIALS = 10;
 var TRAINING_ROUNDS = 2;
 var trials = [];
 for(var i = 0; i < TOTAL_TRIALS; i++) {
@@ -130,21 +130,48 @@ var experiment = {
 		document.getElementById("alt2").value = "";
 		document.getElementById("alt3").value = "";	
     },
-
  	// returns True if entry in form
-    check_response: function() {
+    check_all_filled: function() {
     	var box_1 = document.getElementById("alt1");
     	var box_2 = document.getElementById("alt2");
     	var box_3 = document.getElementById("alt3");
 		return(box_1.value != "" && box_2.value != "" && box_3.value != "");
     },
+    // checks that users have input only a single word
+    check_correct_input: function() {
+    	var box_1 = document.getElementById("alt1");
+    	var box_2 = document.getElementById("alt2");
+    	var box_3 = document.getElementById("alt3");
 
+		return(experiment.single_word_response(box_1.value) &&
+				experiment.single_word_response(box_2.value) &&
+				experiment.single_word_response(box_3.value));
+    },
+    // Checks if array of strings contains more than one 
+    // string. If so checks for mistaken white spaces
+    single_word_response: function(str) {
+    	console.log(str);
+    	var num_words = 0;								// track number of word elements
+    	var splt_str = str.split(" ");
+    	str_len = splt_str.length
+    	if (str_len > 1) {
+    		for (var i = 0; i < str_len; i++) {
+    			if (splt_str[i] != "") num_words += 1;	// track non empty string words
+    		}
+    	} else return true;
+    	return (num_words == 1) ? true : false;
+    },
     //Log response
     log_response: function() {
-		var response_logged = experiment.check_response();
-		if (!experiment.check_response()) {
+		var all_filled = experiment.check_all_filled();
+		var correct_input = experiment.check_correct_input();
+		if (!all_filled) {
 			$("#testMessage").html('<br><font color="red">' + 
 					   'Please make all three responses!' + 
+					   '</font>');
+		} else if (!correct_input) {
+			$("#testMessage").html('<br><font color="red">' + 
+					   'Please include only one word responses!' + 
 					   '</font>');
 		} else {
 			var alt1 = document.getElementById("alt1").value;
