@@ -226,7 +226,7 @@ var experiment = {
 		    // Display trial information
 		    $("#sent_question").html("\"In a recent restaurant review someone said they "+
 					     sent_materials + "\"");
-		    $("#target_word").html("If they had <i>felt different</i> about the restaurant, what other words might they have used instead of " +
+		    $("#target_word").html("If they'd <i>felt differently</i> about the food, what other words could they have used instead of " +
 		    	sents.scale[current_scale][degree] + "?");
 		    $("#before").html(sents.scale[current_scale]["before"]);
 
