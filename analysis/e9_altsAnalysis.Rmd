@@ -6,46 +6,37 @@ output: html_document
 ---
 
 ```{r}
-#library(rjson)
 rm(list = ls())
+#library(rjson)
 library(jsonlite)
+fp = "~/Desktop/Projects/scalar_implicature/analysis/"
 setwd("~/Desktop/Projects/scalar_implicature/")
 ```
 
+**Analysis of alternative gathering experiment**
 
+Data cleaning in alts_analysis.py
 
+Explore
+--------
 ```{r}
-d0 = fromJSON(file="alts.json")
-names(d0)
-scalar_data = c()
-for (scalar in names(d0)) {
-  for(word in d[[scalar]]) {
-    scalar = c(scalar, word)
-    print(scalar)
-  }
-  scalar_data = rbind(scalar_data, scalar)
-}
-scalar_data
-```
-
-```{r}
-d1 = fromJSON("alts.json", simplifyDataFrame=T)
+d1 = fromJSON("analysis/edited_alts.json", simplifyDataFrame=T)
 d1 = as.data.frame(d1)
-# conver to lower case
-sapply(seq(1, ncol(d1)), FUN=function(i) {
-  d1[,i] = tolower(d1[,i])
-})
 
-sort(table(d1$all))
-sort(table(d1$some))
-sort(table(d1$unforgettable))
-sort(table(d1$memorable))
-sort(table(d1$excellent))
-sort(table(d1$good))
-sort(table(d1$loved))
-sort(table(d1$liked))
-sort(table(d1$delicious))
-sort(table(d1$palatable))
+length(sort(table(d1$all)))
+length(sort(table(d1$some)))
+
+length(sort(table(d1$unforgettable)))
+length(sort(table(d1$memorable)))
+
+length(sort(table(d1$excellent)))
+length(sort(table(d1$good)))
+
+length(sort(table(d1$loved)))
+length(sort(table(d1$liked)))
+
+length(sort(table(d1$delicious)))
+length(sort(table(d1$palatable)))
 
 
 ```
