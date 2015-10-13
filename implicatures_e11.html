@@ -95,23 +95,33 @@
  <div class="slide" id="debriefing">
 	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
    <form onsubmit="experiment.submitcomments()">
+   
    <p>
-	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
+     <input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
    </p>
    <p> What do you think this experiment was about? </p>
    <p>
-	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+     <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
    </p>
    <p> Any general comments about the experiment? </p>
    <p>
-   <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+    <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
    </p>
-	</form>
-	
-	<div align="center">
-	  <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
-	</div>
-	</div>
+
+    <!-- Gender -->
+    <p>Are you? </p>
+    <form action="">
+      <input type="radio" id="Male" name="sex" value="male"> Male <br>
+      <input type="radio" id="Female" name="sex" value="female"> Female 
+    </form>
+    <!-- Age -->
+    <p> And what is your age?</p>
+    <select id="age"></select>
+    <div align="center">
+      <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+    </div>
+
+  </form>
 	
 <!-- The finish slide. -->
 <div class="slide" id="finished">
