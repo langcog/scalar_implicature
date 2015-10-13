@@ -192,8 +192,6 @@ var experiment = {
 		    	manipulation_level = manipulation[current_trial % 5];
 		    }
 			sent_materials = sents.scale[current_scale][degree];
-			console.log("current_scale", current_scale)
-			console.log("degree", degree)
 		    //Trial params ---------------------------->
 
 
