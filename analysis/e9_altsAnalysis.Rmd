@@ -15,7 +15,7 @@ setwd("~/Desktop/Projects/scalar_implicature/")
 
 **Analysis of alternative gathering experiment**
 
-Data cleaning in alts_analysis.py
+Note: Data cleaning in alts_analysis.py
 
 Explore
 --------
@@ -40,52 +40,16 @@ d <- d1 %>%
                                       ifelse(base == "good" | base == "excellent", 
                                              "good_excellent", "memorable_unforgettable"))))) %>%
   group_by(scale, alt) %>%
-  summarise(n = n()) %>%
+  summarise(n = n())
+
+d.topTen = d %>%
   filter(n >= 10)
 ```
 
+**Output to text file for reference:**
 ```{r}
-sort(table(d1$all))
-sort(table(d1$some))
-length(sort(table(d1$all)))
-length(sort(table(d1$some)))
-
-
-
-mem_un <- sort(table(c(as.character(d1$unforgettable), 
-             as.character(d1$memorable))))
-mem_un[mem_un > 4]
-
-some_all <- sort(table(c(as.character(d1$some), 
-             as.character(d1$all))))
-some_all[some_all > 4]
-
-ex_good <- sort(table(c(as.character(d1$excellent), 
-             as.character(d1$good))))
-ex_good[ex_good > 4]
-
-
-sort(table(d1$unforgettable))
-sort(table(d1$memorable))
-length(sort(table(d1$unforgettable)))
-length(sort(table(d1$memorable)))
-
-sort(table(d1$excellent))
-sort(table(d1$good))
-length(sort(table(d1$excellent)))
-length(sort(table(d1$good)))
-
-sort(table(d1$loved))
-sort(table(d1$liked))
-length(sort(table(d1$loved)))
-length(sort(table(d1$liked)))
-
-sort(table(d1$delicious))
-sort(table(d1$palatable))
-length(sort(table(d1$delicious)))
-length(sort(table(d1$palatable)))
-
-
+d.topTen =  d.topTen[order(d.topTen$scale, -d.topTen$n),]
+write.table(d.topTen, "analysis/top_alts_output.txt")
 ```
 
 
