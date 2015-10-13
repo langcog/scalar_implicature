@@ -42,46 +42,52 @@ function shuffle (a) {
 var sents = {
     scale: {
 		training1: {
-			//because training trial hi and low are the same
-		    hi:  "thought the food deserved a <b>high</b> rating?",
-		    low:  "thought the food deserved a <b>low</b> rating?"
+		    //hi1:  "thought the food deserved a <b>very high</b> rating?",
+		    hi2:  "thought the food deserved a <b>high</b> rating?",
+		    low1:  "thought the food deserved a <b>low</b> rating?",
+		    //low2:  "thought the food deserved a <b>very low</b> rating?"
 		},
 		liked_loved: {		   
-		    hi:  "<b>loved</b> the food?",
-		    low:  "<b>liked</b> the food?"
+		    hi1:  "<b>loved</b> the food?",
+		    hi2:  "<b>liked</b> the food?",
+		    low1:  "<b>disliked</b> the food?",
+		    low2:  "<b>hated</b> the food?",
 		},
 		good_excellent: {
-			hi:  "thought the food was <b>excellent</b>?",
-		    low:  "thought the food was <b>good</b>?"
+			hi1:  "thought the food was <b>excellent</b>?",
+		    hi2:  "thought the food was <b>good</b>?",
+		    low1:  "thought the food was <b>bad</b>?",
+		    low2:  "thought the food was <b>terrible</b>?"
 		},
 		palatable_delicious: {
-			hi:  "thought the food was <b>delicious</b>?",
-		    low:  "thought the food was <b>palatable</b>?"
+			hi1:  "thought the food was <b>delicious</b>?",
+		    hi2:  "thought the food was <b>palatable</b>?",
+		    low1:  "thought the food was <b>gross</b>?",
+		    low2:  "thought the food was <b>disgusting</b>?"
 		},
 	memorable_unforgettable: {
-			hi:  "thought the food was <b>unforgettable</b>?",
-		    low:  "thought the food was <b>memorable</b>?"
+			hi1:  "thought the food was <b>unforgettable</b>?",
+		    hi2:  "thought the food was <b>memorable</b>?",
+		    low1:  "thought the food was <b>bland</b>?",
+		    low2:  "thought the food was <b>forgettable</b>?"
 		},
 		some_all: {
-			hi: "enjoyed <b>all</b> of the food they ate?",
-			low: "enjoyed <b>some</b> of the food they ate?"
+			hi1: "enjoyed <b>all</b> of the food they ate?",
+			hi2: "enjoyed <b>most</b> of the food they ate?",
+			low1: "enjoyed <b>some</b> of the food they ate?",
+			low2: "enjoyed <b>none</b> of the food they ate?"
 		}
     },
 };
-//###:::------Negative scalars to consider------:::###
-//dislike_horrible
-//adequate_good
-//loathed_dislike
-//###:::------Negative scalars to consider------:::###
 
 //Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 52;
+var TOTAL_TRIALS = 102;
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
 }
 var scales = Object.keys(sents.scale);
-var scale_degrees = ["hi", "low"];
+var scale_degrees = ["hi1", "hi2", "low1", "low2"];
 var manipulation = ["20", "40", "60", "80", "100"];
 //var totalTrials = trials.length;
 //Trial condition params initializations ------------------->
@@ -159,29 +165,35 @@ var experiment = {
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
 		    //Trial params ---------------------------->
-		    if(trials.length == 52) {
-		    	trials.shift();
-		    	current_scale = scales[0];
-		    	degree = "hi";
-		    	manipulation_level = "100";
-		    } else if (trials.length == 51) {
-		    	trials.shift();
-		    	current_scale = scales[0];
-		    	degree = "low";
-		    	manipulation_level = "80";
-		    } else if (trials.length == 50) {
+		    if(trials.length > 100) {
+		    	// training #1: 'hi2' == "high" with 5 stars
+		    	if (trials.length == 102) {
+			    	trials.shift();
+			    	current_scale = scales[0];
+			    	degree = "hi2";
+			    	manipulation_level = "100";
+			    } // training #2: 'low1' == "low" with 1 star
+			    else {
+			    	trials.shift();
+			    	current_scale = scales[0];
+			    	degree = "low1";
+			    	manipulation_level = "20";
+		    	} 
+		    } else if (trials.length == 100) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 2];
+		    	degree = scale_degrees[current_trial % 4];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    } else {
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 2];
+		    	degree = scale_degrees[current_trial % 4];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    }
 			sent_materials = sents.scale[current_scale][degree];
+			console.log("current_scale", current_scale)
+			console.log("degree", degree)
 		    //Trial params ---------------------------->
 
 
