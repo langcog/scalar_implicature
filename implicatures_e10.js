@@ -44,7 +44,7 @@ var sents = {
 		training1: {
 		    //hi1:  "thought the food deserved a <b>very high</b> rating?",
 		    hi2:  "thought the food deserved a <b>high</b> rating?",
-		    low1:  "thought the food deserved a <b>low</b> rating?",
+		    low1:  "thought the food deserved a <b>low</b> rating?"
 		    //low2:  "thought the food deserved a <b>very low</b> rating?"
 		},
 		liked_loved: {		   
