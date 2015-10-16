@@ -1,0 +1,182 @@
+---
+output: pdf_document
+---
+PSYCH 130 - EXPERIMENT 4 ANALYSIS
+=================================
+
+Workspace
+---------
+```{r}
+
+rm(list=ls())
+setwd("~/Desktop/Projects/scalar_implicature/")
+source("analysis/useful_dplyr.R")
+library(tidyr)
+library(dplyr)
+library("rjson")
+```
+
+Data prep
+---------
+```{r}
+files <- dir("production-results/e10/", pattern = "*.json")
+#files <- dir("sandbox-results/", pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("production-results/e10/",f,sep="")
+  #jf <- paste("sandbox-results/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answers$data$scale,
+                   degree = jd$answers$data$degree,
+                   stars = jd$answers$data$manipulation_level,
+                   judgment = as.numeric(jd$answers$data$judgment),
+                   language = jd$answers$data$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+
+# Number of participants
+length(unique(d.raw$workerid))
+```
+
+Holding off on exclusions (but exclusion code here)
+---------------------------------------------------
+```{r}
+d <- d.raw %>% filter(scale != "training1")
+# compliant <- d.raw %>% 
+#   filter(grepl("training", scale)) %>%
+#   group_by(workerid) %>%
+#   summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
+#               judgment[scale == "training1" & degree == "low"] < 3)
+#   
+# d <- d.raw %>% 
+#   left_join(compliant) %>%
+#   filter(grepl(pattern = "english", 
+#                language, ignore.case = TRUE), 
+#          domain != "training1", 
+#          domain != "training2", 
+#          compliant == TRUE)
+```
+
+Main analysis below
+-------------------
+```{r}
+d.raw = d.raw[c(-1, -2), ]       # remove first two rows
+d = d.raw %>% filter(scale != "training1")
+
+ms <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            cnt.judgment = sum(judgment),
+            speaker.p = mean(judgment)) 
+# write to csv for model
+#write.csv(ms, "models/e10.csv", row.names=FALSE)
+```
+
+
+Histogram Plots for our scalars
+-------------------------------
+```{r}
+scalar.agreements = function(scalar_pair, degree) {
+  pair = dt[which(dt$scale == scalar_pair), ]
+  scalar = pair[which(pair$degree == degree), ]
+  scalar = spread(scalar, stars, judgment)
+  # plots
+  par(mfrow = c(2,3))
+  wrd = unlist(strsplit(scalar_pair, "_"))
+  wrd = ifelse(degree == "low", wrd[1], wrd[2])
+  likert.plots(scalar, wrd)
+}
+likert.plots = function(scalar, wrd) {
+  barplot( table(scalar$"1"), main = paste(wrd, ": *"),
+           xlab="Agree", ylab="Counts")
+  barplot( table(scalar$"2"), main = paste(wrd, ": **"),
+           xlab="Agree", ylab="Counts")
+  barplot( table(scalar$"3"), main = paste(wrd, ": ***"),
+           xlab="Agree", ylab="Counts")
+  barplot( table(scalar$"4"), main = paste(wrd, ": ****"),
+           xlab="Agree", ylab="Counts")
+  barplot( table(scalar$"5"), main = paste(wrd, ": *****"),
+           xlab="Agree", ylab="Counts")
+}
+
+# plotting all scalars --> for pdf print out, not working
+for (i in scalars) {
+  for (j in dgrs) {
+    scalar.agreements(i, j)
+  }
+}
+
+# call to plot single scalar
+scalar.agreements("palatable_delicious", "hi")
+
+lm.overall = lm(judgment~stars + degree + scale, data=dt)
+summary(lm.fit)
+cor(dt$judgment, dt$stars)
+
+# Overall matching
+par(mfrow=c(1,1))
+plot(jitter(dt$stars), jitter(dt$judgment),
+     main = "Matching between stars and judgments", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt), col="green")
+
+# Low and High matching
+low.obs = which(dt$degree == "low")
+hi.obs = -low.obs
+par(mfrow=c(1,2))
+plot(jitter(dt[low.obs, ]$stars), jitter(dt[low.obs, ]$judgment),
+     main = "Low Degree", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt[low.obs,]), col="red")
+
+plot(jitter(dt[hi.obs, ]$stars), jitter(dt[hi.obs, ]$judgment),
+     main = "High Degree", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt[hi.obs,]), col="blue")
+```
+
+Matching in data
+----------------
+```{r}
+match = dt$stars == dt$judgment
+par(mfrow=c(1,1))
+barplot(c("T" = mean(match), "F" = (1 - mean(match))), main = "Percent matches (judgements and stars")
+dm = data.frame(dt, match)
+
+# Matches by stars
+table(select(dm, stars, match))
+
+# Matches by stars & degrees
+table(select(dm, stars, match, degree))
+table(select(dm, stars, match, degree))
+```
+
+# Rolling [1,2] [4,5]
+---------------------
+```{r}
+ds = d[, -6] %>%
+  group_by(scale, degree, stars) %>%
+  summarise(speaker.hi = sum( ifelse( (judgment > 3), 1, 0)),
+            speaker.mid = sum( ifelse( (judgment == 3), 1, 0)),
+            speaker.lo = sum( ifelse( (judgment < 3), 1, 0)))
+
+compatibility = function(scalar_pair, degree) {
+  dr = ds[which(ds$scale == scalar_pair & ds$degree == degree),] %>%
+    select(stars, speaker.hi)
+  return(dr$speaker.hi / sum(dr$speaker.hi))
+}
+plot.pairs = function(scalar_pair) {
+  plot(compatibility(scalar_pair, "hi"), type="b", col="red",
+       main=toString(scalar_pair), ylab="% Agree Norm", xlab="Stars",
+       xlim = c(1,5), ylim = c(0,1))
+  lines(compatibility(scalar_pair, "low"), type="b", col="blue")  
+}
+compatibility("good_excellent", "hi")
+par(mfrow=c(1,1))
+plot.pairs("good_excellent")
+par(mfrow=c(2,3))
+for (i in 1:length(scalars)) {
+  plot.pairs(scalars[i])  
+}
+```
