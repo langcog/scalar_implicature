@@ -1,4 +1,4 @@
-PSYCH 130 - EXPERIMENT 4 ANALYSIS
+PSYCH 130 - EXPERIMENT 6 ANALYSIS
 =================================
 
 Preliminaries.
@@ -26,6 +26,12 @@ for (f in files) {
   d.raw <- bind_rows(d.raw, id)
 }
 ```
+
+sample size is:
+```{r}
+n = length(unique(d.raw$workerid))
+```
+
 
 Holding off on exclusions - everyone put English, and training 2 was confusing. 
 
@@ -62,11 +68,11 @@ density <- d %>%
 
 write.csv(density, "models/e6.csv", row.names=FALSE)
 
-# pdf("plots/e6.pdf", width = 8, height = 4)
+pdf("plots/e6.pdf", width = 8, height = 4)
 qplot(stars, prop, facets = degree ~ scale, 
       geom="bar", stat = "identity",
       binwidth = 1, data=density)
-# dev.off()
+dev.off()
 ```
 
 Order effects
@@ -87,6 +93,5 @@ qplot(scale, m,
       facets = . ~ degree, 
       geom="bar", stat = "identity",
       binwidth = 1, data=ms)                      
-
 ```
 
