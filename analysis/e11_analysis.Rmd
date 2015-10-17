@@ -12,7 +12,6 @@ source("analysis/useful_dplyr.R")
 library(tidyr)
 library(dplyr)
 library("rjson")
-
 # commentary on weird RMarkdown bug
 # https://github.com/hadley/xml2/issues/34
 ```
@@ -22,7 +21,7 @@ Data prep
 ```{r}
 
 # make sure to set directory path to 'production-results/e11/'
-results_path = "sandbox-results/e11/"
+results_path = "production-results/e11/"
 files <- dir(results_path, pattern = "*.json")
 d.raw <- data.frame()
 
@@ -30,11 +29,12 @@ for (f in files) {
   jf <- paste(results_path,f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
-                   scale = jd$answers$data$scale,
-                   degree = jd$answers$data$degree,
-                   stars = jd$answers$data$manipulation_level,
-                   judgment = as.numeric(jd$answers$data$judgment),
-                   language = jd$answers$data$language)
+                   scale = jd$answer$data$scale,
+                   degree = jd$answer$data$degree,
+                   stars = as.numeric(jd$answer$data$judgment),
+                   language = jd$answer$data$language,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age)
   d.raw <- bind_rows(d.raw, id)
 }
 
@@ -66,43 +66,26 @@ Main analysis below
 
 Let's remove training runs
 ```{r}
-d.raw = d.raw[c(-1, -2), ]       # remove first two rows
-d = d.raw %>% filter(scale != "training1")
+#d.raw = d.raw[c(-1, -2), ]       # remove first two rows
+#d = d.raw %>% filter(scale != "training1")
 ```
 
 Populate a new df
 ```{r}
-ms <- d %>%
-  mutate(stars = as.numeric(as.character(stars))/20) %>%
-  group_by(scale, degree, stars) %>%
-  summarise(cil = ci.low(judgment), 
-            cih = ci.high(judgment), 
-            cnt.judgment = sum(judgment),
-            speaker.p = mean(judgment)) 
+density <- d %>%
+  group_by(degree, scale) %>%
+  mutate(n = n()) %>%
+  group_by(degree, scale, stars) %>%
+  summarise(prop = n() / n[1])
 ```
 
-Plot our literal listener semantic (counts data)
+Plot our pragmatic listener judgments
 ```{r}
-pdf("plots/e10_L0Counts.pdf", width=8, height = 5)
-qplot(x = stars, y = cnt.judgment, col = degree,
-      geom = "line", stat = "identity", 
-      position = "dodge", 
-      data = ms) + 
-  geom_linerange(aes(ymin = cnt.judgment - cil, 
-                     ymax = cnt.judgment + cih)) + 
-  facet_wrap(~scale) +
-  ggtitle("Literal listener counts")
-dev.off()
-
-pdf("plots/e10_L0Percent.pdf", width=8, height = 5)
-qplot(x = stars, y = speaker.p, col = degree,
-      geom = "line", stat = "identity", 
-      position = "dodge", 
-      data = ms) + 
-  geom_linerange(aes(ymin = speaker.p - cil, 
-                     ymax = speaker.p + cih)) + 
-  facet_wrap(~scale) +
-  ggtitle("Literal listener percent 'yes'")
+write.csv(density, "models/e11.csv", row.names=FALSE)
+pdf("plots/e11.pdf", width = 8, height = 4)
+qplot(stars, prop, facets = degree ~ scale, 
+      geom="bar", stat = "identity",
+      binwidth = 1, data=density)
 dev.off()
 ```
 
