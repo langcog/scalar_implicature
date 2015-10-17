@@ -1,11 +1,7 @@
 ---
 output: pdf_document
 ---
-PSYCH 130 - EXPERIMENT 4 ANALYSIS
-=================================
 
-Workspace
----------
 ```{r}
 
 rm(list=ls())
@@ -14,18 +10,19 @@ source("analysis/useful_dplyr.R")
 library(tidyr)
 library(dplyr)
 library("rjson")
+
+# commentary on weird RMarkdown bug
+# https://github.com/hadley/xml2/issues/34
 ```
 
 Data prep
 ---------
 ```{r}
 files <- dir("production-results/e10/", pattern = "*.json")
-#files <- dir("sandbox-results/", pattern = "*.json")
 d.raw <- data.frame()
 
 for (f in files) {
   jf <- paste("production-results/e10/",f,sep="")
-  #jf <- paste("sandbox-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    scale = jd$answers$data$scale,
@@ -61,10 +58,15 @@ d <- d.raw %>% filter(scale != "training1")
 
 Main analysis below
 -------------------
+
+Let's remove training runs
 ```{r}
 d.raw = d.raw[c(-1, -2), ]       # remove first two rows
 d = d.raw %>% filter(scale != "training1")
+```
 
+Populate a new df
+```{r}
 ms <- d %>%
   mutate(stars = as.numeric(as.character(stars))/20) %>%
   group_by(scale, degree, stars) %>%
@@ -72,111 +74,51 @@ ms <- d %>%
             cih = ci.high(judgment), 
             cnt.judgment = sum(judgment),
             speaker.p = mean(judgment)) 
-# write to csv for model
-#write.csv(ms, "models/e10.csv", row.names=FALSE)
+```
+
+Plot our literal listener semantic (counts data)
+```{r}
+pdf("plots/e10_L0Counts.pdf", width=8, height = 5)
+qplot(x = stars, y = cnt.judgment, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = cnt.judgment - cil, 
+                     ymax = cnt.judgment + cih)) + 
+  facet_wrap(~scale) +
+  ggtitle("Literal listener counts")
+dev.off()
+
+pdf("plots/e10_L0Percent.pdf", width=8, height = 5)
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale) +
+  ggtitle("Literal listener percent 'yes'")
+dev.off()
 ```
 
 
-Histogram Plots for our scalars
--------------------------------
 ```{r}
-scalar.agreements = function(scalar_pair, degree) {
-  pair = dt[which(dt$scale == scalar_pair), ]
-  scalar = pair[which(pair$degree == degree), ]
-  scalar = spread(scalar, stars, judgment)
-  # plots
-  par(mfrow = c(2,3))
-  wrd = unlist(strsplit(scalar_pair, "_"))
-  wrd = ifelse(degree == "low", wrd[1], wrd[2])
-  likert.plots(scalar, wrd)
-}
-likert.plots = function(scalar, wrd) {
-  barplot( table(scalar$"1"), main = paste(wrd, ": *"),
-           xlab="Agree", ylab="Counts")
-  barplot( table(scalar$"2"), main = paste(wrd, ": **"),
-           xlab="Agree", ylab="Counts")
-  barplot( table(scalar$"3"), main = paste(wrd, ": ***"),
-           xlab="Agree", ylab="Counts")
-  barplot( table(scalar$"4"), main = paste(wrd, ": ****"),
-           xlab="Agree", ylab="Counts")
-  barplot( table(scalar$"5"), main = paste(wrd, ": *****"),
-           xlab="Agree", ylab="Counts")
-}
+# prop.calc = function(scalar, degree, stars, df) {
+#   total = sum(df[(df$scale == scalar) & (df$degree == degree), "cnt.judgment"])
+#   prop = df[(df$scale == scalar) & (df$degree == degree) & (df$stars = stars), "cnt.judgment"]
+#   return(prop / total)
+# }
+# scales = rep("some_all", 5)
+# stars = seq(1:5)
+# degree = rep("hi1", 5)
+# cnt.judgment = c(0, 0, 0, 2, 28)
+# 
+# df = data.frame(scales, stars, degree, cnt.judgment)
+# prop.calc("some_all", "hi1", 1, df)
+# 
+# ms$judgment.prop = ms$judgment
+# # write to csv for model
+# #write.csv(ms, "models/e10.csv", row.names=FALSE)
 
-# plotting all scalars --> for pdf print out, not working
-for (i in scalars) {
-  for (j in dgrs) {
-    scalar.agreements(i, j)
-  }
-}
 
-# call to plot single scalar
-scalar.agreements("palatable_delicious", "hi")
-
-lm.overall = lm(judgment~stars + degree + scale, data=dt)
-summary(lm.fit)
-cor(dt$judgment, dt$stars)
-
-# Overall matching
-par(mfrow=c(1,1))
-plot(jitter(dt$stars), jitter(dt$judgment),
-     main = "Matching between stars and judgments", xlab = "Judgment", ylab = "Stars")
-abline(lm(judgment~stars, data=dt), col="green")
-
-# Low and High matching
-low.obs = which(dt$degree == "low")
-hi.obs = -low.obs
-par(mfrow=c(1,2))
-plot(jitter(dt[low.obs, ]$stars), jitter(dt[low.obs, ]$judgment),
-     main = "Low Degree", xlab = "Judgment", ylab = "Stars")
-abline(lm(judgment~stars, data=dt[low.obs,]), col="red")
-
-plot(jitter(dt[hi.obs, ]$stars), jitter(dt[hi.obs, ]$judgment),
-     main = "High Degree", xlab = "Judgment", ylab = "Stars")
-abline(lm(judgment~stars, data=dt[hi.obs,]), col="blue")
-```
-
-Matching in data
-----------------
-```{r}
-match = dt$stars == dt$judgment
-par(mfrow=c(1,1))
-barplot(c("T" = mean(match), "F" = (1 - mean(match))), main = "Percent matches (judgements and stars")
-dm = data.frame(dt, match)
-
-# Matches by stars
-table(select(dm, stars, match))
-
-# Matches by stars & degrees
-table(select(dm, stars, match, degree))
-table(select(dm, stars, match, degree))
-```
-
-# Rolling [1,2] [4,5]
----------------------
-```{r}
-ds = d[, -6] %>%
-  group_by(scale, degree, stars) %>%
-  summarise(speaker.hi = sum( ifelse( (judgment > 3), 1, 0)),
-            speaker.mid = sum( ifelse( (judgment == 3), 1, 0)),
-            speaker.lo = sum( ifelse( (judgment < 3), 1, 0)))
-
-compatibility = function(scalar_pair, degree) {
-  dr = ds[which(ds$scale == scalar_pair & ds$degree == degree),] %>%
-    select(stars, speaker.hi)
-  return(dr$speaker.hi / sum(dr$speaker.hi))
-}
-plot.pairs = function(scalar_pair) {
-  plot(compatibility(scalar_pair, "hi"), type="b", col="red",
-       main=toString(scalar_pair), ylab="% Agree Norm", xlab="Stars",
-       xlim = c(1,5), ylim = c(0,1))
-  lines(compatibility(scalar_pair, "low"), type="b", col="blue")  
-}
-compatibility("good_excellent", "hi")
-par(mfrow=c(1,1))
-plot.pairs("good_excellent")
-par(mfrow=c(2,3))
-for (i in 1:length(scalars)) {
-  plot.pairs(scalars[i])  
-}
 ```
