@@ -1,0 +1,129 @@
+---
+output: pdf_document
+---
+
+
+Experiment e11 - Pragmatic Listener experiment with alternatives
+```{r}
+
+rm(list=ls())
+setwd("~/Desktop/Projects/scalar_implicature/")
+source("analysis/useful_dplyr.R")
+library(tidyr)
+library(dplyr)
+library("rjson")
+
+# commentary on weird RMarkdown bug
+# https://github.com/hadley/xml2/issues/34
+```
+
+Data prep
+---------
+```{r}
+
+# make sure to set directory path to 'production-results/e11/'
+results_path = "sandbox-results/e11/"
+files <- dir(results_path, pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste(results_path,f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answers$data$scale,
+                   degree = jd$answers$data$degree,
+                   stars = jd$answers$data$manipulation_level,
+                   judgment = as.numeric(jd$answers$data$judgment),
+                   language = jd$answers$data$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+
+# Number of participants
+length(unique(d.raw$workerid))
+```
+
+Holding off on exclusions (but exclusion code here)
+---------------------------------------------------
+```{r}
+d <- d.raw %>% filter(scale != "training1")
+# compliant <- d.raw %>% 
+#   filter(grepl("training", scale)) %>%
+#   group_by(workerid) %>%
+#   summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
+#               judgment[scale == "training1" & degree == "low"] < 3)
+#   
+# d <- d.raw %>% 
+#   left_join(compliant) %>%
+#   filter(grepl(pattern = "english", 
+#                language, ignore.case = TRUE), 
+#          domain != "training1", 
+#          domain != "training2", 
+#          compliant == TRUE)
+```
+
+Main analysis below
+-------------------
+
+Let's remove training runs
+```{r}
+d.raw = d.raw[c(-1, -2), ]       # remove first two rows
+d = d.raw %>% filter(scale != "training1")
+```
+
+Populate a new df
+```{r}
+ms <- d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            cnt.judgment = sum(judgment),
+            speaker.p = mean(judgment)) 
+```
+
+Plot our literal listener semantic (counts data)
+```{r}
+pdf("plots/e10_L0Counts.pdf", width=8, height = 5)
+qplot(x = stars, y = cnt.judgment, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = cnt.judgment - cil, 
+                     ymax = cnt.judgment + cih)) + 
+  facet_wrap(~scale) +
+  ggtitle("Literal listener counts")
+dev.off()
+
+pdf("plots/e10_L0Percent.pdf", width=8, height = 5)
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", 
+      position = "dodge", 
+      data = ms) + 
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale) +
+  ggtitle("Literal listener percent 'yes'")
+dev.off()
+```
+
+
+```{r}
+# prop.calc = function(scalar, degree, stars, df) {
+#   total = sum(df[(df$scale == scalar) & (df$degree == degree), "cnt.judgment"])
+#   prop = df[(df$scale == scalar) & (df$degree == degree) & (df$stars = stars), "cnt.judgment"]
+#   return(prop / total)
+# }
+# scales = rep("some_all", 5)
+# stars = seq(1:5)
+# degree = rep("hi1", 5)
+# cnt.judgment = c(0, 0, 0, 2, 28)
+# 
+# df = data.frame(scales, stars, degree, cnt.judgment)
+# prop.calc("some_all", "hi1", 1, df)
+# 
+# ms$judgment.prop = ms$judgment
+# # write to csv for model
+# #write.csv(ms, "models/e10.csv", row.names=FALSE)
+
+
+```
