@@ -7,7 +7,7 @@ from nltk import metrics
 path = "production-results/e9/"
 
 # fill this in with functionality we want to run
-toDo = "read_data edit_data output_editedData"
+toDo = "read_data edit_data"
 
 #################################################################################
 #################################################################################
@@ -166,7 +166,7 @@ if "output_editedData" in toDo:
 	print "edited data output..."
 
 	with open('analysis/edited_alts.json', 'w') as fp:
-		json.dump(scalar_data, fp)
+		json.dump(data_edited, fp)
 
 #################################################################################
 #################################################################################
