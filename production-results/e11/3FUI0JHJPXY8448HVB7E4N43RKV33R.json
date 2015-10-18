@@ -1,0 +1,102 @@
+{
+    "ApprovalTime": "2015-10-17T22:11:55Z",
+    "AutoApprovalTime": "2015-10-17T22:08:03Z",
+    "AssignmentId": "3FUI0JHJPXY8448HVB7E4N43RKV33R",
+    "WorkerId": "AEF94JKX6FG92",
+    "answers": {
+        "data": {
+            "scale": [
+                "training1",
+                "training1",
+                "some_all",
+                "palatable_delicious",
+                "memorable_unforgettable",
+                "liked_loved",
+                "liked_loved",
+                "some_all",
+                "good_excellent",
+                "palatable_delicious",
+                "liked_loved",
+                "liked_loved",
+                "palatable_delicious",
+                "some_all",
+                "good_excellent",
+                "memorable_unforgettable",
+                "good_excellent",
+                "memorable_unforgettable",
+                "good_excellent",
+                "memorable_unforgettable",
+                "some_all",
+                "palatable_delicious"
+            ],
+            "degree": [
+                "hi2",
+                "low1",
+                "low1",
+                "hi2",
+                "hi2",
+                "low1",
+                "hi1",
+                "hi1",
+                "low1",
+                "hi1",
+                "hi2",
+                "low2",
+                "low1",
+                "low2",
+                "low2",
+                "hi1",
+                "hi2",
+                "low1",
+                "hi1",
+                "low2",
+                "hi2",
+                "low2"
+            ],
+            "language": [
+                "French"
+            ],
+            "gender": [
+                "female"
+            ],
+            "age": [
+                "46"
+            ],
+            "expt_aim": [
+                "To see how people interpret words and how they can tranfer that knowledge into stars."
+            ],
+            "expt_gen": [
+                "interesting concept and I liked the interface. Thanks for the experience."
+            ],
+            "judgment": [
+                5,
+                1,
+                3,
+                3,
+                5,
+                1,
+                4,
+                5,
+                1,
+                5,
+                4,
+                1,
+                1,
+                1,
+                1,
+                5,
+                4,
+                2,
+                5,
+                1,
+                4,
+                1
+            ]
+        }
+    },
+    "AcceptTime": "2015-10-17T22:00:07Z",
+    "HITId": "3YGYP13641944QOZYINN6FA20QPNRM",
+    "Assignment": "",
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-10-17T22:03:03Z"
+}

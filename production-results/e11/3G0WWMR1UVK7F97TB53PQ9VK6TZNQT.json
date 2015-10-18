@@ -1,0 +1,102 @@
+{
+    "ApprovalTime": "2015-10-17T22:11:56Z",
+    "AutoApprovalTime": "2015-10-17T22:09:13Z",
+    "AssignmentId": "3G0WWMR1UVK7F97TB53PQ9VK6TZNQT",
+    "WorkerId": "A31UXXZVI3U4E2",
+    "answers": {
+        "data": {
+            "scale": [
+                "training1",
+                "training1",
+                "liked_loved",
+                "memorable_unforgettable",
+                "palatable_delicious",
+                "good_excellent",
+                "good_excellent",
+                "memorable_unforgettable",
+                "some_all",
+                "palatable_delicious",
+                "palatable_delicious",
+                "liked_loved",
+                "good_excellent",
+                "some_all",
+                "good_excellent",
+                "memorable_unforgettable",
+                "liked_loved",
+                "palatable_delicious",
+                "liked_loved",
+                "memorable_unforgettable",
+                "some_all",
+                "some_all"
+            ],
+            "degree": [
+                "hi2",
+                "low1",
+                "low1",
+                "hi1",
+                "hi1",
+                "hi2",
+                "hi1",
+                "hi2",
+                "low2",
+                "hi2",
+                "low2",
+                "hi1",
+                "low1",
+                "low1",
+                "low2",
+                "low1",
+                "low2",
+                "low1",
+                "hi2",
+                "low2",
+                "hi2",
+                "hi1"
+            ],
+            "language": [
+                "english"
+            ],
+            "gender": [
+                "male"
+            ],
+            "age": [
+                "26"
+            ],
+            "expt_aim": [
+                "what we think the rating is based off of review of a resturaunt"
+            ],
+            "expt_gen": [
+                "nope"
+            ],
+            "judgment": [
+                4,
+                2,
+                2,
+                4,
+                5,
+                3,
+                4,
+                5,
+                1,
+                2,
+                1,
+                4,
+                2,
+                3,
+                1,
+                2,
+                1,
+                1,
+                3,
+                2,
+                3,
+                5
+            ]
+        }
+    },
+    "AcceptTime": "2015-10-17T22:01:57Z",
+    "HITId": "3YGYP13641944QOZYINN6FA20QPNRM",
+    "Assignment": "",
+    "AssignmentStatus": "Approved",
+    "SubmitTime": "2015-10-17T22:04:13Z"
+}
