@@ -107,15 +107,17 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
 Run model
 ---------
 ```{r}
+alpha = 3
 md <- data %>%
-  do(run.rsa(., alpha = 3, useprior = T, usenone = F))
+  do(run.rsa(., alpha = alpha, useprior = T, usenone = F))
 ```
 
 Visualize
 ---------
 ```{r}
 qplot(stars, listener.p, col=degree, 
-      data=md, main="Model vs Human judgments\nSemantics measured empirically",
+      data=md,
+      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",alpha),
       ylab="Posteriors p( rating | word )") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
