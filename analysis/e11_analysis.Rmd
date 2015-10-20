@@ -5,13 +5,13 @@ output: pdf_document
 
 Experiment e11 - Pragmatic Listener experiment with alternatives
 ```{r}
-
 rm(list=ls())
 setwd("~/Desktop/Projects/scalar_implicature/")
 source("analysis/useful_dplyr.R")
 library(tidyr)
 library(dplyr)
 library("rjson")
+library(ggplot2)
 # commentary on weird RMarkdown bug
 # https://github.com/hadley/xml2/issues/34
 ```
@@ -45,30 +45,28 @@ length(unique(d.raw$workerid))
 Holding off on exclusions (but exclusion code here)
 ---------------------------------------------------
 ```{r}
+# Make sure people answered training trials correctly
+compliant <- d.raw %>% 
+   filter(grepl("training", scale)) %>%
+   group_by(workerid) %>%
+   summarise(compliant = stars[scale == "training1" & degree == "hi2"] > 3 & 
+               stars[scale == "training1" & degree == "low1"] < 3)
+
+d <- d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         scale != "training1", 
+         scale != "training2", 
+         compliant == TRUE)
+
+# remove training runs
 d <- d.raw %>% filter(scale != "training1")
-# compliant <- d.raw %>% 
-#   filter(grepl("training", scale)) %>%
-#   group_by(workerid) %>%
-#   summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
-#               judgment[scale == "training1" & degree == "low"] < 3)
-#   
-# d <- d.raw %>% 
-#   left_join(compliant) %>%
-#   filter(grepl(pattern = "english", 
-#                language, ignore.case = TRUE), 
-#          domain != "training1", 
-#          domain != "training2", 
-#          compliant == TRUE)
+head(d)
 ```
 
 Main analysis below
 -------------------
-
-Let's remove training runs
-```{r}
-#d.raw = d.raw[c(-1, -2), ]       # remove first two rows
-#d = d.raw %>% filter(scale != "training1")
-```
 
 Populate a new df
 ```{r}
@@ -76,37 +74,18 @@ density <- d %>%
   group_by(degree, scale) %>%
   mutate(n = n()) %>%
   group_by(degree, scale, stars) %>%
-  summarise(prop = n() / n[1])
+  summarise(listener.p = n() / n[1])
 ```
 
 Plot our pragmatic listener judgments
 ```{r}
 write.csv(density, "models/e11.csv", row.names=FALSE)
+```
+
+```{r}
 pdf("plots/e11.pdf", width = 8, height = 4)
-qplot(stars, prop, facets = degree ~ scale, 
+qplot(stars, listener.p, facets = degree ~ scale, 
       geom="bar", stat = "identity",
       binwidth = 1, data=density)
 dev.off()
-```
-
-
-```{r}
-# prop.calc = function(scalar, degree, stars, df) {
-#   total = sum(df[(df$scale == scalar) & (df$degree == degree), "cnt.judgment"])
-#   prop = df[(df$scale == scalar) & (df$degree == degree) & (df$stars = stars), "cnt.judgment"]
-#   return(prop / total)
-# }
-# scales = rep("some_all", 5)
-# stars = seq(1:5)
-# degree = rep("hi1", 5)
-# cnt.judgment = c(0, 0, 0, 2, 28)
-# 
-# df = data.frame(scales, stars, degree, cnt.judgment)
-# prop.calc("some_all", "hi1", 1, df)
-# 
-# ms$judgment.prop = ms$judgment
-# # write to csv for model
-# #write.csv(ms, "models/e10.csv", row.names=FALSE)
-
-
 ```
