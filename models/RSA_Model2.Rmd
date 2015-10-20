@@ -13,9 +13,11 @@ rm(list=ls())
 
 library(knitr)
 library(rjson)
+library(dplyr)
+library(tidyr)
 
 opts_chunk$set(cache=TRUE)
-
+setwd("~/Desktop/Projects/scalar_implicature/")
 source("analysis/useful_dplyr.R")
 ```
 
@@ -92,7 +94,8 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
     select(hi, low)
   
   if (usenone) {
-    mat$none <- c(0.8, 0.2, 0, 0, 0)
+    mat$none <- c(1, 0, 0, 0, 0)
+    #mat$meh <- c(0.0, 0.2, 0.6, 0.2, 0)
     #mat$bad <- c(.5, .9, .4, .1, 0)
   } 
   
@@ -109,15 +112,18 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
 Run model
 ---------
 ```{r}
+alpha = 1
 md <- data %>%
-  do(run.rsa(., alpha = 1, useprior = T, usenone = T))
+  do(run.rsa(., alpha = alpha, useprior = T, usenone = T))
 ```
 
 Visualize
 ---------
 ```{r}
 qplot(stars, listener.p, col=degree, 
-      data=md, main="Model vs Human judgments\nSemantics measured empirically",
+      data=md,
+      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",
+                 alpha),
       ylab="Posteriors p( rating | word )") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
