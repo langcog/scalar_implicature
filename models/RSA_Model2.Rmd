@@ -112,7 +112,7 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
 Run model
 ---------
 ```{r}
-alpha = 1
+alpha = 4
 md <- data %>%
   do(run.rsa(., alpha = alpha, useprior = T, usenone = T))
 ```
@@ -124,17 +124,17 @@ qplot(stars, listener.p, col=degree,
       data=md,
       main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",
                  alpha),
-      ylab="Posteriors p( rating | word )") + 
+      ylab="Posterior p(rating | word)") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
 ggplot(md, aes(x=pred, y=listener.p)) +
     geom_point(aes(colour = stars)) +
     geom_smooth(method=lm) +
-  ggtitle("Model performance\nCorpus based") +
+  ggtitle("Model performance: Baseline") +
   labs(x = "model prediction", y="human judgments")
-cor(md$pred, md$listener.p)
-
+cor(md$pred, md$listener.p)^2
+cor.test(md$pred, md$listener.p)
 # scalar level cor
 specific.cor = function(scalar) {
   return (cor(md[which(md$scale==scalar), ]$pred,
@@ -160,3 +160,15 @@ qplot(alphas, fit, main="Cor for alpha values", ylab="MSE")
 best.alpha = which(fit == min(fit))
 best.alpha
 ```
+
+
+For Presentation to Symsys290 10.26.15
+```{r}
+qplot(stars, listener.p, col=degree, 
+      data=md[md$scale=="some_all",],
+      main=paste("Model vs Human judgments\nalpha=",
+                 alpha),
+      ylab="Posterior p(m | u)") +
+  geom_line(aes(y = pred), lty = 4)
+```
+

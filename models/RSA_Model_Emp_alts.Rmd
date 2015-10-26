@@ -6,8 +6,7 @@ output: html_document
 ---
 
 Set-up
-------
-
+-----
 ```{r}
 rm(list=ls())
 
@@ -32,7 +31,7 @@ listener = read.csv("models/e11.csv")
 unif = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 empirical = read.csv("models/prior.csv")
 yelp = read.csv("models/yelp1_priors.csv")
-priors = unif
+priors = unif     # < --- set prior here
 # combine speaker / listener
 data <- left_join(speaker, listener) %>%
   left_join(priors) %>%
@@ -117,7 +116,8 @@ Visualize
 ```{r}
 qplot(stars, listener.p, col=degree, 
       data=md,
-      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",alpha),
+      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha="
+                 ,alpha),
       ylab="Posteriors p( rating | word )") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
@@ -125,17 +125,14 @@ qplot(stars, listener.p, col=degree,
 ggplot(md, aes(x=pred, y=listener.p)) +
     geom_point(aes(colour = stars)) +
     geom_smooth(method=lm) +
-  ggtitle("Model performance\nCorpus based") +
+  ggtitle("Model performance") +
   labs(x = "model prediction", y="human judgments")
 cor(md$pred, md$listener.p)
+```
 
-# scalar level cor
-specific.cor = function(scalar) {
-  return (cor(md[which(md$scale==scalar), ]$pred,
-              md[which(md$scale==scalar), ]$listener.p))
-}
-qplot(unique(md$scale), y = sapply(unique(md$scale), specific.cor),
-    aes(group=1), geom="bar", stat="identity")
+```{r}
+
+
 ```
 
 Tuning
@@ -147,10 +144,37 @@ fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
     do(run.rsa(., alpha = n, useprior = F, usenone = T))
   
-  return(mean((md$pred - md$listener.p)^2))
-  #return(cor(md$pred, md$listener.p))
+  #return(mean((md$pred - md$listener.p)^2))
+  return(cor(md$pred, md$listener.p))
 })
 qplot(alphas, fit, main="Cor for alpha values", ylab="MSE")
-best.alpha = which(fit == min(fit))
+best.alpha = which(fit == max(fit))
 best.alpha
 ```
+
+For Symsys290 preso 10.26.15
+```{r}
+# get original scalar pairs
+# -------------------------
+original.scalars =
+  ( ((md$degree == "hi1" | md$degree == "hi2") & 
+     (md$scale == "good_excellent" |
+        md$scale == "liked_loved" |
+        md$scale == "memorable_unforgettable" |
+        md$scale == "palatable_delicious")) | 
+     (md$scale == "some_all" &
+        (md$degree == "hi1" | md$degree == "low1") ))
+# new data frame
+mc = md[original.scalars,]
+# correlation
+cor(mc$speaker.p, mc$pred)
+# plots
+qplot(stars, listener.p, col=degree, 
+      data=mc,
+      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha="
+                 ,alpha),
+      ylab="Posteriors p( rating | word )") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+```
+
