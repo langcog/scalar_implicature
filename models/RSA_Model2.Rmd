@@ -112,9 +112,9 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
 Run model
 ---------
 ```{r}
-alpha = 4
+alpha = 5
 md <- data %>%
-  do(run.rsa(., alpha = alpha, useprior = T, usenone = T))
+  do(run.rsa(., alpha = alpha, useprior = T, usenone = F))
 ```
 
 Visualize
@@ -151,7 +151,7 @@ Tuning
 alphas = seq(from=1, to=10)
 fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
-    do(run.rsa(., alpha = n, useprior = F, usenone = T))
+    do(run.rsa(., alpha = n, useprior = F, usenone = F))
   
   return(mean((md$pred - md$listener.p)^2))
   #return(cor(md$pred, md$listener.p))

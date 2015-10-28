@@ -167,8 +167,10 @@ original.scalars =
 # new data frame
 mc = md[original.scalars,]
 # correlation
-cor(mc$speaker.p, mc$pred)
-# plots
+cor(mc$listener.p, mc$pred)
+
+# plots - Model vs Human
+# ----------------------
 qplot(stars, listener.p, col=degree, 
       data=mc,
       main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha="
@@ -176,5 +178,14 @@ qplot(stars, listener.p, col=degree,
       ylab="Posteriors p( rating | word )") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+
+# Correlation with linear
+# -----------------------
+ggplot(mc, aes(x=pred, y=listener.p)) +
+    geom_point(aes(colour = stars)) +
+    geom_smooth(method=lm) +
+  ggtitle("Model performance") +
+  labs(x = "model prediction", y="human judgments")
+cor(mc$pred, mc$listener.p)^2
 ```
 
