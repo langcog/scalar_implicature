@@ -3,7 +3,6 @@ output: pdf_document
 ---
 
 ```{r}
-
 rm(list=ls())
 setwd("~/Desktop/Projects/scalar_implicature/")
 source("analysis/useful_dplyr.R")
@@ -37,23 +36,29 @@ for (f in files) {
 length(unique(d.raw$workerid))
 ```
 
-Holding off on exclusions (but exclusion code here)
+Exclusions (but exclusion code here)
 ---------------------------------------------------
 ```{r}
+compliant <- d.raw %>% 
+  filter(grepl("training", scale)) %>%
+  group_by(workerid) %>%
+  summarise(compliant = (judgment[scale == "training1" & degree == "hi2"] == 1) && 
+              (judgment[scale == "training1" & degree == "low1"] == 1))
+
+num_uncompliant = sum(compliant$compliant == FALSE)
+num_uncompliant
+
+d <- d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         scale != "training1",  
+         compliant == TRUE)
 d <- d.raw %>% filter(scale != "training1")
-# compliant <- d.raw %>% 
-#   filter(grepl("training", scale)) %>%
-#   group_by(workerid) %>%
-#   summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
-#               judgment[scale == "training1" & degree == "low"] < 3)
-#   
-# d <- d.raw %>% 
-#   left_join(compliant) %>%
-#   filter(grepl(pattern = "english", 
-#                language, ignore.case = TRUE), 
-#          domain != "training1", 
-#          domain != "training2", 
-#          compliant == TRUE)
+
+# new sample after filtering compliant and English
+length(unique(d$workerid))
+head(d)
 ```
 
 Main analysis below
@@ -61,8 +66,8 @@ Main analysis below
 
 Let's remove training runs
 ```{r}
-d.raw = d.raw[c(-1, -2), ]       # remove first two rows
-d = d.raw %>% filter(scale != "training1")
+#d.raw = d.raw[c(-1, -2), ]       # remove first two rows
+#d = d.raw %>% filter(scale != "training1")
 ```
 
 Populate a new df
@@ -74,6 +79,11 @@ ms <- d %>%
             cih = ci.high(judgment), 
             cnt.judgment = sum(judgment),
             speaker.p = mean(judgment)) 
+```
+
+Write to csv
+```{r}
+write.csv(ms, "models/e10.csv", row.names=FALSE)
 ```
 
 Plot our literal listener semantic (counts data)

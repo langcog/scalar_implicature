@@ -5,6 +5,7 @@ date: "August 6, 2015"
 output: html_document
 ---
 
+**Analysis of literal listener semantics with binary DV**
 
 Prelims
 -------

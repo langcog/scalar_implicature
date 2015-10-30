@@ -11,26 +11,26 @@ Set-up
 ```{r}
 rm(list=ls())
 
+library(ggplot2)
 library(knitr)
 library(rjson)
 library(dplyr)
 library(tidyr)
 
-opts_chunk$set(cache=TRUE)
-setwd("~/Desktop/Projects/scalar_implicature/")
-source("analysis/useful_dplyr.R")
+#setwd("~/Desktop/Projects/scalar_implicature/")
+#source("analysis/useful_dplyr.R")
 ```
 
 Data
 ----
 ```{r}
-speaker = read.csv("models/e8.csv")
-listener = read.csv("models/listener.csv")
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/e8.csv")
+listener = read.csv("~/Desktop/Projects/scalar_implicature/models/listener.csv")
 # priors
 # ------
 unif = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
-empirical = read.csv("models/prior.csv")
-yelp = read.csv("models/yelp1_priors.csv")
+empirical = read.csv("~/Desktop/Projects/scalar_implicature//models/prior.csv")
+yelp = read.csv("~/Desktop/Projects/scalar_implicature//models/yelp1_priors.csv")
 priors = unif
 # combine speaker / listener
 data <- left_join(speaker, listener) %>%

@@ -46,7 +46,7 @@ d.topTen = d %>%
   filter(n >= 10)
 ```
 
-**Output to text file for reference:**
+**Output top ten to text file for reference:**
 ```{r}
 d.topTen =  d.topTen[order(d.topTen$scale, -d.topTen$n),]
 write.table(d.topTen, "analysis/top_alts_output.txt")

@@ -4,8 +4,8 @@ output: pdf_document
 PSYCH 130 - EXPERIMENT 4 ANALYSIS
 =================================
 
-Preliminaries.
-
+Workspace
+---------
 ```{r}
 
 rm(list=ls())
@@ -16,8 +16,8 @@ library(dplyr)
 library("rjson")
 ```
 
-Read in files and consolidate to the same directory. 
-
+Data prep
+---------
 ```{r}
 files <- dir("production-results/e5/", pattern = "*.json")
 d.raw <- data.frame()
@@ -38,8 +38,10 @@ for (f in files) {
 length(unique(d.raw$workerid))
 ```
 
-Holding off on exclusions - everyone put English, and training 2 was confusing. 
+Holding off on exclusions (but exclusion code here)
+---------------------------------------------------
 ```{r}
+d <- d.raw %>% filter(scale != "training1")
 # compliant <- d.raw %>% 
 #   filter(grepl("training", scale)) %>%
 #   group_by(workerid) %>%
@@ -53,11 +55,10 @@ Holding off on exclusions - everyone put English, and training 2 was confusing.
 #          domain != "training1", 
 #          domain != "training2", 
 #          compliant == TRUE)
-d <- d.raw %>% filter(scale != "training1")
 ```
 
-Main Analysis
--------------
+Main analysis below
+-------------------
 ```{r}
 names(d)
 dim(d)
@@ -71,6 +72,7 @@ dgrs = c("low", "hi")
 
 
 Histogram Plots for our scalars
+-------------------------------
 ```{r}
 scalar.agreements = function(scalar_pair, degree) {
   pair = dt[which(dt$scale == scalar_pair), ]
@@ -94,16 +96,42 @@ likert.plots = function(scalar, wrd) {
   barplot( table(scalar$"5"), main = paste(wrd, ": *****"),
            xlab="Agree", ylab="Counts")
 }
+
+# plotting all scalars --> for pdf print out, not working
 for (i in scalars) {
   for (j in dgrs) {
     scalar.agreements(i, j)
   }
 }
-scalar.agreements("liked_loved", "hi")
 
+# call to plot single scalar
+scalar.agreements("palatable_delicious", "hi")
+
+lm.overall = lm(judgment~stars + degree + scale, data=dt)
+summary(lm.fit)
+cor(dt$judgment, dt$stars)
+
+# Overall matching
+par(mfrow=c(1,1))
+plot(jitter(dt$stars), jitter(dt$judgment),
+     main = "Matching between stars and judgments", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt), col="green")
+
+# Low and High matching
+low.obs = which(dt$degree == "low")
+hi.obs = -low.obs
+par(mfrow=c(1,2))
+plot(jitter(dt[low.obs, ]$stars), jitter(dt[low.obs, ]$judgment),
+     main = "Low Degree", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt[low.obs,]), col="red")
+
+plot(jitter(dt[hi.obs, ]$stars), jitter(dt[hi.obs, ]$judgment),
+     main = "High Degree", xlab = "Judgment", ylab = "Stars")
+abline(lm(judgment~stars, data=dt[hi.obs,]), col="blue")
 ```
 
 Matching in data
+----------------
 ```{r}
 match = dt$stars == dt$judgment
 par(mfrow=c(1,1))
@@ -118,7 +146,8 @@ table(select(dm, stars, match, degree))
 table(select(dm, stars, match, degree))
 ```
 
-Rolling 1,2 4,5
+# Rolling [1,2] [4,5]
+---------------------
 ```{r}
 ds = d[, -6] %>%
   group_by(scale, degree, stars) %>%

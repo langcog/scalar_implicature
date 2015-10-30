@@ -33,16 +33,16 @@ Read Data ---->
 # Priors ---------------->
 emp.priors = read.csv("models/prior.csv")
 yelp.priors = read.csv("models/yelp1_priors.csv")
-priors = yelp.priors
+priors = data.frame(stars=seq(1,5), prior.p=rep(0.2,5))
 # Possible transformations --->
 #priors$prior.p = sqrt(priors$prior.p)/(sum(sqrt(priors$prior.p)))
 #priors$prior.p = (1/(-log(priors$prior.p))) / sum((1/(-log(priors$prior.p))))
 #priors$prior.p = (log(priors$prior.p + 1)) / sum((log(priors$prior.p + 1)))
 
 # Speaker informativity ------------------------->
-speaker = read.csv("models/speaker.csv")
-speaker = read.csv("models/speaker_normed.csv") # for printing out semantic distr's
-speaker = read.csv("models/yelp1.csv")
+speaker = read.csv("models/e8.csv")
+#speaker = read.csv("models/speaker_normed.csv") # for printing out semantic distr's
+#speaker = read.csv("models/yelp1.csv")
 #speaker = read.csv("models/e5a.csv")
 
 # Listener judgments ---------------------------->
@@ -84,7 +84,6 @@ speaker.prob = function(rating, degree, m, alpha) {
 # non-normalized posterior 
 # ------------------------
 nn.post = function(rating, degree, m, alpha, useprior) {
-  
   if (useprior) {
     prior <- priors[rating, "prior.p"]
   } else { #unif prior
@@ -149,6 +148,7 @@ data <- left_join(speaker, listener) %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
   group_by(scale)
+tail(data)
 ```
 
 ## RUN MODEL 
@@ -161,7 +161,7 @@ data <- left_join(speaker, listener) %>%
 alphas = seq(from=1, to=20)
 fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
-    do(run.rsa(., alpha = n, useprior = T, usenone = TRUE))
+    do.call(run.rsa(., alpha = n, useprior = T, usenone = TRUE))
   
   #return(mean((md$pred - md$listener.p)^2))
   return(cor(md$pred, md$listener.p))
@@ -173,7 +173,7 @@ best.alpha
 # RUN MODEL
 # ---------
 md <- data %>%
-  do(run.rsa(., alpha = best.alpha, useprior = T, usenone = TRUE))
+  do(run.rsa(., alpha = 1, useprior = T, usenone = F))
 ```
 
 ## DATA / PLOTS ------------>
