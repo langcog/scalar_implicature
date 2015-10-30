@@ -1,0 +1,142 @@
+
+<!-- ## Code -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Language Understanding Experiment</title>
+<script src="jquery-1.11.2.min.js"></script>
+<script src="mmturkey-0.6.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css" />
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!--Star-ratings-->
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link href="star-rating.css" media="all" rel="stylesheet" type="text/css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="star-rating.js" type="text/javascript"></script>
+<!--Star-ratings-->
+
+</head>
+<body>
+
+<!-- The instructions slide. -->
+<div class="slide" id="instructions">
+  <br>
+  <img src="images/stanford.png" alt="Stanford University">
+  <p id='logo-text'>Stanford Language and Cognition Lab</p>
+  <p class="block-text">In this task, you're going to help us understand what people really mean by their star ratings. We've anonymized all the ratings so you'll see a sentence like "When rating the food someone selected:" and then you'll see the ratings they gave. We'd like to know how much you agree with how particular descriptions fit those ratings. If you think the description fits exactly select "7 - Yes, definitely". If the description doesn't fit at all, select "1 - No, not at all." If you feel like it's somewhere in between these options, choose a number between 1 and 7.
+  </p>
+  <button type="button" onclick="this.blur(); experiment.next()">Start</button>
+  
+  <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
+  
+  <p class="block-text" id="legal">By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at langcoglab@stanford.edu <mailto:langcoglab@stanford.edu>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
+ 
+  We have recently been made aware that your public Amazon.com profile can be accessed via your worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available here:
+  <a href="http://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.
+  </p>
+</div>
+
+<!-- The stage slide. -->
+<div class="slide" id="stage">
+  
+<!-- Progress bar -->
+<div class="progress">  
+<!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
+    <div id="prog" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+    </div>
+
+</div>
+<br>
+  
+  <!-- I have commented out elements like sent_context and speaker in case future iterations of this study change speakers or contexts.-->
+<div align="center">
+
+  <p> <b> We need help understanding what people mean when they give star ratings... </b> <p>
+    <p> When rating the food someone selected: </p>
+
+  <!--
+  ###############################################################
+  Star-ratings
+  http://www.jqueryscript.net/other/Simple-jQuery-Star-Rating-System-For-Bootstrap-3.html
+  -->
+  <div align="center" class="star-rating rating-sm rating-active">
+    <div class="rating-container rating-gly-star" data-content="">
+      <div class="rating-stars" data-content="">
+      </div>
+    </div>
+  </div>
+  <!--star-ratings
+  ###############################################################
+  -->
+
+ 	<p id = "sent_question">{{}} </p>
+</div>
+<br>
+
+<table align = "center"><tr>
+<td align="center">
+  <tr>
+    <td>Completely <b>disagree</b><br>1</td>
+    <td><br>2</td>
+    <td><br>3</td>
+    <td><br>4</td>
+    <td>Completely <b>agree</b><br>5</td>
+    <!-- <td><br>6</td>
+    <td>Very natural<br>7</td> -->
+  </tr>
+    <td><input type="radio" name="judgment" value = "1"></td>
+    <td><input type="radio" name="judgment" value = "2"></td>
+    <td><input type="radio" name="judgment" value = "3"></td>
+    <td><input type="radio" name="judgment" value = "4"></td>
+    <td><input type="radio" name="judgment" value = "5"></td>
+    <!-- <td><input type="radio" name="judgment" value = "6"></td>
+    <td><input type="radio" name="judgment" value = "7"></td> -->
+  </tr>
+</table>
+
+  <br>
+<table align="center"><tr>
+  <td align="center">
+  	<button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
+  </td> 
+  <tr>
+    <td align="center">
+      <div id="testMessage"></div>
+    </td>
+  </tr>
+ </table>
+ </div>
+
+ <!-- The debriefing slide. -->
+ <div class="slide" id="debriefing">
+	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
+   <form onsubmit="experiment.submitcomments()">
+   <p>
+	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
+   </p>
+   <p> What do you think this experiment was about? </p>
+   <p>
+	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+   </p>
+   <p> Any general comments about the experiment? </p>
+   <p>
+   <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+   </p>
+	</form>
+	
+	<div align="center">
+	  <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+	</div>
+	</div>
+	
+<!-- The finish slide. -->
+<div class="slide" id="finished">
+	You're finished - thanks for participating! Submitting to Mechanical Turk...
+</div>
+
+<script src="implicatures_e5.js"></script>
+
+</body>
+</html>
