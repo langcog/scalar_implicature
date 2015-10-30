@@ -1,0 +1,53 @@
+---
+title: "RSA + Scalar implicature / TBD"
+author: "BPeloquin/MFrank"
+date: "October 29, 2015"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_depth: 2
+---
+
+# Pragmatics / Implicature intro
+
+## Rational Speech-act theory
+
+## Extending RSA to scalar implicature
+
+# Experimental investigations / Star-rating paradigm
+
+## Literal listener studies
+
+### Description
+
+### Results
+
+## Pragmatic listener studies
+
+### Description
+
+### Results
+
+# Formalizing Grice / RSA / Bayesian model
+
+## Current model description
+
+## Implementation
+
+# Connecting experiments and model
+
+## Baseline performance
+
+## Miniumum alternatives incorporation
+
+## Eliciting alternatives Exp
+
+### Description
+
+### Results
+
+## Full model (alternatives) performance
+
+#Conclusions
