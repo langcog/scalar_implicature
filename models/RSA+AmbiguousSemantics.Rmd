@@ -10,13 +10,13 @@ output:
     toc_depth: 2
 ---
 
-# Pragmatics / Implicature intro
+# Pragmatics / implicature introduction
 
 ## Rational Speech-act theory
 
 ## Extending RSA to scalar implicature
 
-# Experimental investigations / Star-rating paradigm
+# Experimental investigations / star rating paradigm
 
 ## Literal listener studies
 
@@ -38,11 +38,11 @@ output:
 
 # Connecting experiments and model
 
-## Baseline performance
+## Baseline model performance
 
-## Miniumum alternatives incorporation
+## Miniumum alternatives model
 
-## Eliciting alternatives Exp
+## Eliciting alternatives experiment
 
 ### Description
 
