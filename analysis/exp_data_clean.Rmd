@@ -2,15 +2,19 @@
 title: "data_cleaning"
 author: "BPeloquin"
 date: "November 1, 2015"
-output: html_document
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
 ---
 
 
 Data cleaning code for Literal listener and Pragmatic listener experiments
-```{r}
+```{r load_data, results="hide", message=FALSE, warning=FALSE}
 rm(list = ls())
-setwd("~/Desktop/Projects/scalar_implicature/")
-source("analysis/useful_dplyr.R")
+setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/analysis")
+source("useful_dplyr.R")
 library(rjson)
 ```
 
@@ -18,14 +22,15 @@ library(rjson)
 # Literal Listener study e8 output
 
 ## Read in data
-```{r}
+```{r read_data, message=FALSE, warning=FALSE}
 # Grab raw data from .json
 # ------------------------
-files = dir("production-results/e8/", pattern = "*.json")
+results_path = "../production-results/e8/"
+files = dir(results_path, pattern = "*.json")
 d.raw = data.frame()
 
 for (f in files) {
-  jf = paste("production-results/e8/", f, sep="")
+  jf = paste(results_path, f, sep="")
   jd = fromJSON(paste(readLines(jf), collapse=""))
   id = data.frame(workerid = jd$WorkerId,
                    scale = jd$answers$data$scale,
@@ -35,6 +40,9 @@ for (f in files) {
                    language = jd$answers$data$language)
   d.raw = bind_rows(d.raw, id)
 }
+
+str(d.raw)
+head(d.raw)
 ```
 
 ## Compliance checks
@@ -57,6 +65,7 @@ compliant <- d.raw %>%
 # Sample size post compliance check
 n.post.compliance = sum(compliant$compliant)
 
+# If set to TRUE then enroce compliance for e8 (n reduced to 16)
 if (FALSE) { # Enforce compliance check for training 1
   d <- d.raw %>% 
   left_join(compliant) %>%
@@ -88,23 +97,25 @@ ms = d %>%
             cnt.judgment = sum(judgment),
             speaker.p = mean(judgment)) 
 
+str(ms)
+head(ms)
 # Output to CSV
 # --------------
-# write.csv(ms, "models/L0_e8.csv", row.names=FALSE)
+# write.csv(ms, "../models/L0_e8.csv", row.names=FALSE)
 ```
 
-
-
-
 # Literal Listener study e10 output
-```{r}
-files <- dir("production-results/e10/", pattern = "*.json")
+
+## Read in data
+```{r read_data2, message=FALSE, warning=FALSE}
+results_path = "../production-results/e10/"
+files <- dir(results_path, pattern = "*.json")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("production-results/e10/",f,sep="")
-  jd <- fromJSON(paste(readLines(jf), collapse=""))
-  id <- data.frame(workerid = jd$WorkerId, 
+  jf = paste(results_path,f,sep="")
+  jd = fromJSON(paste(readLines(jf), collapse=""))
+  id = data.frame(workerid = jd$WorkerId, 
                    scale = jd$answers$data$scale,
                    degree = jd$answers$data$degree,
                    stars = jd$answers$data$manipulation_level,
@@ -112,13 +123,18 @@ for (f in files) {
                    language = jd$answers$data$language)
   d.raw = bind_rows(d.raw, id)
 }
+
+str(d.raw)
+head(d.raw)
 ```
 
-## Compliance checks - Enforce compliance in e10. This check seemed more reasonable: 
+## Compliance checks
 
-1. training1:high  -> presented 5 stars asked if the person thought the food deserved a `high` rating
+Enforce compliance in e10. This check seemed more reasonable: 
 
-2. training:low    -> presented 1 star, asked if the person thought the food deserved a `low` rating
+1. training1:high2  -> presented 5 stars asked if the person thought the food deserved a `high(est)` rating
+
+2. training:low1    -> presented 1 star, asked if the person thought the food deserved a `low(est)` rating
 ```{r}
 # Sample size pre compliance check
 n.pre.compliance = length(unique(d.raw$workerid)); n.pre.compliance
@@ -153,9 +169,138 @@ ms = d %>%
             cih = ci.high(judgment), 
             cnt.judgment = sum(judgment),
             speaker.p = mean(judgment)) 
+str(ms)
+head(ms)
+# Output to CSV
+# --------------
+# write.csv(ms, "../models/L0_e10.csv", row.names=FALSE)
+```
+
+
+# Pragmatic Listener study e6 output
+
+## Read in data
+```{r read_data3, message=FALSE, warning=FALSE}
+results_path = "../production-results/e6/"
+files = dir(results_path, pattern = "*.json")
+d.raw = data.frame()
+
+for (f in files) {
+  jf = paste(results_path,f,sep="")
+  jd = fromJSON(paste(readLines(jf), collapse=""))
+  id = data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answer$scale,
+                   degree = jd$answer$degree,
+                   judgment = as.numeric(jd$answer$judgment),
+                   language = jd$answer$language)
+  d.raw = bind_rows(d.raw, id)
+}
+```
+
+## Compliance checks
+
+Enforce compliance in e6.
+
+1. training1:high  -> 
+
+2. training:low    -> 
+```{r}
+# Sample size pre compliance check
+n.pre.compliance = length(unique(d.raw$workerid)); n.pre.compliance
+
+compliant = d.raw %>% 
+  filter(grepl("training", scale)) %>%
+  group_by(workerid) %>%
+  summarise(compliant = judgment[scale == "training1" & degree == "hi"] > 3 & 
+              judgment[scale == "training1" & degree == "low"] < 3)
+  
+d = d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         scale != "training1", 
+         compliant == TRUE)
+
+# Sample size post compliance check
+n.post.compliance = length(unique(d$workerid)); n.post.compliance
+```
+
+## Cleaning / formatting - output
+```{r}
+# Preliminary data cleaning
+# -------------------------
+ms <- d %>%
+  group_by(degree, scale) %>%
+  mutate(n = n()) %>%
+  group_by(degree, scale, judgment) %>%
+  summarise(prop = n() / n[1])
+str(ms)
+head(ms)
 
 # Output to CSV
 # --------------
-# write.csv(ms, "models/L0_e10.csv", row.names=FALSE)
+# write.csv(ms, "../models/L1_e6.csv", row.names=FALSE)
+```
+
+# Pragmatic Listener study e11 output
+
+## Read in data
+```{r read_data4, message=FALSE, warning=FALSE}
+results_path = "../production-results/e11/"
+files = dir(results_path, pattern = "*.json")
+d.raw = data.frame()
+
+for (f in files) {
+  jf = paste(results_path,f,sep="")
+  jd = fromJSON(paste(readLines(jf), collapse=""))
+  id = data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answer$data$scale,
+                   degree = jd$answer$data$degree,
+                   judgment = as.numeric(jd$answer$data$judgment),
+                   language = jd$answer$data$language)
+  d.raw = bind_rows(d.raw, id)
+}
+```
+
+## Compliance checks
+
+Enforce compliance in e11.
+
+1. training1:high  -> present "Someone said the food derved a `high` rating". Respondent must choose > 3 stars
+
+2. training:low    -> present "Someone said the food deserved a `low` rating". Respondnet must choose < 3 stars
+```{r}
+# Sample size pre compliance check
+n.pre.compliance = length(unique(d.raw$workerid)); n.pre.compliance
+
+compliant <- d.raw %>% 
+   filter(grepl("training", scale)) %>%
+   group_by(workerid) %>%
+   summarise(compliant = judgment[scale == "training1" & degree == "hi2"] > 3 & 
+               judgment[scale == "training1" & degree == "low1"] < 3)
+
+d <- d.raw %>% 
+  left_join(compliant) %>%
+  filter(grepl(pattern = "english", 
+               language, ignore.case = TRUE), 
+         scale != "training1", 
+         compliant == TRUE)
+
+# Sample size post compliance check
+n.post.compliance = length(unique(d$workerid)); n.post.compliance
+```
+
+## Cleaning / formatting - output
+```{r}
+# Preliminary data cleaning
+# -------------------------
+ms <- d %>%
+  group_by(degree, scale) %>%
+  mutate(n = n()) %>%
+  group_by(degree, scale, judgment) %>%
+  summarise(prop = n() / n[1])
+# Output to CSV
+# --------------
+# write.csv(ms, "../models/L1_e11.csv", row.names=FALSE)
 ```
 
