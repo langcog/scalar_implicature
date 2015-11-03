@@ -9,6 +9,13 @@ output:
     toc: yes
     toc_depth: 2
 ---
+```{r load_data, results="hide", message=FALSE, warning=FALSE}
+rm(list = ls())
+setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/models")
+source("../analysis/useful_dplyr.R")
+library(rjson)
+library(ggplot2)
+```
 
 # Pragmatics / implicature introduction
 
@@ -19,6 +26,82 @@ output:
 # Experimental investigations / star rating paradigm
 
 ## Literal listener studies
+
+## Can we elicit literal listener semantics for scalar items?
+
+Using the paradigm described in the `star rating paridigm` setting we attempted to elicit literal listener semantics.
+```{r}
+l0.listener = read.csv("model_data/L0_e8.csv")
+str(l0.listener)
+head(l0.listener)
+```
+Data from each literal listener study:
+
+`scale`: The scale we're currently investigating (i.e. `good_excellent`).
+
+`degree`: Valence of the current scalar item (i.e. in the scale `good_excellent` the scalar item `good` has degree `low` and `excellent` has degree `hi`).
+
+`stars`: Number of stars the subject was presented
+
+`cih` and `cil`: lower and upper 95% confidence intervals on the probability average number of positive judgments
+
+`cnt.judgment`: Count of positive responses (`yes`) signalling compatibility between a scalar item and a star rating.
+
+`speaker.p`: Estimated probability of a speaker believing a given scalar items is compatible with a presented star rating.
+
+### Literal Listener study - two scalar items
+
+We can approximate the idea of `literal listener` semantics as a distribution over star ratings.
+```{r}
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", position = "dodge",
+      main = "Scalar compatibility with star ratings \n Experiment L0_e8",
+      ylab = "P(Word | Rating)",
+      data = l0.listener) +
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale)
+```
+
+### Literal Listener study - Full scale from empirically derived alternatives
+```{r}
+l0.listener2 = read.csv("model_data/L0_e10.csv")
+str(l0.listener2)
+head(l0.listener2)
+```
+
+`literal listener` semantics with full distribution over ratings.
+```{r}
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", position = "dodge", 
+      main = "Scalar compatibility with star ratings \n Experiment L0_e10",
+      ylab = "P(Word | Rating)",
+      data = l0.listener2) + 
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale)
+```
+
+Have the distributions changed between studies (for the shared items)?
+```{r}
+subset.l2 = which((l0.listener2[, "scale"] != "some_all" &
+        (l0.listener2[, "degree"] == "hi2" | l0.listener2[, "degree"] == "hi1")) |
+       (l0.listener2[, "scale"] == "some_all" &
+          (l0.listener2[, "degree"] == "hi2" | l0.listener2[, "degree"] == "low1")))
+      
+l0.listener2.match = l0.listener2[subset.l2,]
+l0.listener2.match$degree = ifelse(l0.listener2.match$degree == "hi2", "hi", "low")
+
+qplot(x = stars, y = speaker.p, col = degree,
+      geom = "line", stat = "identity", position = "dodge", 
+      main = "Scalar compatibility with star ratings \n Experiment L0_e10",
+      ylab = "P(Word | Rating)",
+      data = l0.listener2.match) + 
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih)) + 
+  facet_wrap(~scale)
+```
+
 
 ### Description
 
