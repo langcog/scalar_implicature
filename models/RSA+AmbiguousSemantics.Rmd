@@ -16,6 +16,8 @@ source("../analysis/useful_dplyr.R")
 library(rjson)
 library(ggplot2)
 library(MASS)
+library(jsonlite)
+library(tidyr)
 ```
 
 # Pragmatics / implicature introduction
@@ -130,6 +132,90 @@ Let's return to the scalar items `some` and `all`. Levinson (1983) proposes (htt
 Building off a framework used by van Tiel (2014) we presented participants with a target scalar item and asked a free-response question (limited to one word): "If the person had felt differently what is another word they could have used?".
 
 which implicature arises (in this framework). If a listener assumes a speaker is cooperative and obeying the maxims 
+```{r multiplot(), results="hide", message=FALSE, warning=FALSE}
+multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+```{r, fig.width=16, fig.height=30}
+# Code from e9_altsAnalysis.Rmd
+d1 = fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T)
+d1 = as.data.frame(d1, stringsAsFactors = FALSE)
+
+d <- d1 %>% 
+  gather(base, alt, 
+         palatable, liked, good, loved, some, all, 
+         delicious, excellent, memorable, unforgettable) %>%
+  mutate(base = as.character(base)) %>%
+  rowwise %>%
+  mutate(scale = ifelse(base == "some" | base == "all", "some_all", 
+                        ifelse(base == "palatable" | base == "delicious", "palatable_delicious",
+                               ifelse(base == "liked" | base == "loved", "liked_loved",
+                                      ifelse(base == "good" | base == "excellent", 
+                                             "good_excellent", "memorable_unforgettable"))))) %>%
+  group_by(scale, alt) %>%
+  summarise(n = n())
+
+# Plot findings of salient alternatives for each scale
+# -------------------------------------------------------
+scales = unique(d$scale)
+p1 = ggplot(data=d[d$scale==scales[1],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 50) +
+  ggtitle(paste("Salient alternatives for ", scales[1])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p2 = ggplot(data=d[d$scale==scales[2],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") +
+  ggtitle(paste("Salient alternatives for ", scales[2])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p3 = ggplot(data=d[d$scale==scales[3],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") +
+  ggtitle(paste("Salient alternatives for ", scales[3])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p4 = ggplot(data=d[d$scale==scales[4],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") +
+  ggtitle(paste("Salient alternatives for ", scales[4])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p5 = ggplot(data=d[d$scale==scales[5],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") +
+  ggtitle(paste("Salient alternatives for ", scales[5])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(p1, p2, p3, p4, p5, cols=1)
+```
+
 
 ## Description
 
