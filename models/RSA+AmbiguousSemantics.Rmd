@@ -54,7 +54,7 @@ Data from each literal listener study:
 
 ### Literal Listener study - two scalar items
 
-We can approximate the idea of `literal listener` semantics as a distribution over star ratings.
+We can approximate `literal listener` semantics as a distribution over star ratings.
 ```{r message=FALSE, warning=FALSE}
 qplot(x = stars, y = speaker.p, col = degree,
       geom = "line", stat = "identity", position = "dodge",
@@ -132,7 +132,7 @@ Let's return to the scalar items `some` and `all`. Levinson (1983) proposes (htt
 Building off a framework used by van Tiel (2014) we presented participants with a target scalar item and asked a free-response question (limited to one word): "If the person had felt differently what is another word they could have used?".
 
 which implicature arises (in this framework). If a listener assumes a speaker is cooperative and obeying the maxims 
-```{r multiplot(), results="hide", message=FALSE, warning=FALSE}
+```{r multiplot(), echo=FALSE}
 multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
 
@@ -170,7 +170,7 @@ multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 ```
 
-```{r, fig.width=16, fig.height=30}
+```{r, fig.width=16, fig.height=30, warning=FALSE}
 # Code from e9_altsAnalysis.Rmd
 d1 = fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T)
 d1 = as.data.frame(d1, stringsAsFactors = FALSE)
@@ -193,34 +193,57 @@ d <- d1 %>%
 # -------------------------------------------------------
 scales = unique(d$scale)
 p1 = ggplot(data=d[d$scale==scales[1],], aes(x=reorder(alt, -n), y=n)) +
-  geom_bar(stat="identity") + ylim(0, 50) +
+  geom_bar(stat="identity") + ylim(0, 50) + labs(x = "alternative", y = "counts") +
   ggtitle(paste("Salient alternatives for ", scales[1])) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 p2 = ggplot(data=d[d$scale==scales[2],], aes(x=reorder(alt, -n), y=n)) +
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + ylim(0, 50) + labs(x = "alternative", y = "counts") +
   ggtitle(paste("Salient alternatives for ", scales[2])) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 p3 = ggplot(data=d[d$scale==scales[3],], aes(x=reorder(alt, -n), y=n)) +
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + ylim(0, 50) + labs(x = "alternative", y = "counts") +
   ggtitle(paste("Salient alternatives for ", scales[3])) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 p4 = ggplot(data=d[d$scale==scales[4],], aes(x=reorder(alt, -n), y=n)) +
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + ylim(0, 50) + labs(x = "alternative", y = "counts") +
   ggtitle(paste("Salient alternatives for ", scales[4])) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 p5 = ggplot(data=d[d$scale==scales[5],], aes(x=reorder(alt, -n), y=n)) +
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + ylim(0, 50) + labs(x = "alternative", y = "counts") +
   ggtitle(paste("Salient alternatives for ", scales[5])) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(p1, p2, p3, p4, p5, cols=1)
 ```
+Clearly some interesting differences between scalar sets. In particular, responses for scales such as `some_all` and `liked_loved` appear to have more clearly defined set of alternatives with high responses for alternatives such as `none` (XX responses) or `most`. Conversely, scales such as `memorable_unforgettable` and `palatable_delicious` have a much longer tail of possible alternatives, with less cleary defined top competitors.
 
+Explanation / Investigation of these differences?
 
 ## Description
 
 
 ## Pragmatic listener studies
+
+Our `Literal Listener` experimental design involves presenting participants with a star rating and asking for a judgment on the compatibility of a target scalar term with that rating using a binary (yes/no) dependent variable.  While these distributions differ from what we might have proposed from a purely logical interpretation of literal listener semantics (i.e. `some` entails "at least one" and is uniformily compatible across all star ratings >= 1) we do capture the intuition that `some` has some compatibility across all ratings >= 1, but that this compatibility is graded across star ratings, not uniform.
+
+Can we also capture pragmatic enrichment in this current paradigm? Rational Speech-act theory frames language understanding as a special case of social cognition (Goodman & Stuhmuller, 2013) in which a listener must reason about a speaker who must reason about a listener (with an eventual grounding out of the recursion). In order to capture this iterated reasoning process we'll need to extend our paradigm so that participants must consider *what someone else might have meant by an utterance*. This is equivalent to capturing the posterior quantity we're interesed in:
+
+$$p(meaning | utterance)$$
+
+With a slight modification to our current paradigm, we can get estimates of this posterior distribution. Instead of presenting participants with a star rating and target scalar item and ask for a compatbility judgment, we ask participants to reason about the possible meaning of a given scalar term given a speaker utterance. Meaning is again quantified through star ratings.
+
+<center>
+<img src="RSA+AmbiguousSemantics_Images/e11_example.png" alt="Pragmatic Listener example" style="width: 500px;" align="middle" border="2"/>
+</center>
+```{r}
+#![alt text](RSA+AmbiguousSemantics_Images/e11_example.png)
+```
+
+
+
+
+
+
 
 ### Description
 
