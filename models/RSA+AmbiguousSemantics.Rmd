@@ -15,6 +15,7 @@ setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/models")
 source("../analysis/useful_dplyr.R")
 library(rjson)
 library(ggplot2)
+library(MASS)
 ```
 
 # Pragmatics / implicature introduction
@@ -29,7 +30,7 @@ library(ggplot2)
 
 ## Can we elicit literal listener semantics for scalar items?
 
-Using the paradigm described in the `star rating paridigm` setting we attempted to elicit literal listener semantics.
+Using the paradigm described in the `star rating paridigm` setting we attempted to elicit literal listener semantics. Let's read in the data and get acquanted.
 ```{r}
 l0.listener = read.csv("model_data/L0_e8.csv")
 str(l0.listener)
@@ -52,7 +53,7 @@ Data from each literal listener study:
 ### Literal Listener study - two scalar items
 
 We can approximate the idea of `literal listener` semantics as a distribution over star ratings.
-```{r}
+```{r message=FALSE, warning=FALSE}
 qplot(x = stars, y = speaker.p, col = degree,
       geom = "line", stat = "identity", position = "dodge",
       main = "Scalar compatibility with star ratings \n Experiment L0_e8",
@@ -71,9 +72,9 @@ head(l0.listener2)
 ```
 
 `literal listener` semantics with full distribution over ratings.
-```{r}
+```{r message=FALSE, warning=FALSE}
 qplot(x = stars, y = speaker.p, col = degree,
-      geom = "line", stat = "identity", position = "dodge", 
+      geom = "line", stat = "identity", position = "dodge",
       main = "Scalar compatibility with star ratings \n Experiment L0_e10",
       ylab = "P(Word | Rating)",
       data = l0.listener2) + 
@@ -82,30 +83,56 @@ qplot(x = stars, y = speaker.p, col = degree,
   facet_wrap(~scale)
 ```
 
-Have the distributions changed between studies (for the shared items)?
-```{r}
+We might be concerned that `literal listener` semantic distributions between experiments one (partial scale) and two (full scale) are different. Given our experimental design in which respondents are exposed to all scalar items (target scalars  and alternatives) the presence of alternatives might influence responses. If this is the case we'd expect to see significant differences in our estimates of the literal listener semantic distributions between experiments.
+
+Let's plot the scalar semantics for matched items between the two studies.
+```{r message=FALSE, warning=FALSE}
+# subset of full (alts exp) that match first literal listener exp
 subset.l2 = which((l0.listener2[, "scale"] != "some_all" &
         (l0.listener2[, "degree"] == "hi2" | l0.listener2[, "degree"] == "hi1")) |
        (l0.listener2[, "scale"] == "some_all" &
-          (l0.listener2[, "degree"] == "hi2" | l0.listener2[, "degree"] == "low1")))
+          (l0.listener2[, "degree"] == "hi1" | l0.listener2[, "degree"] == "low1")))
       
 l0.listener2.match = l0.listener2[subset.l2,]
-l0.listener2.match$degree = ifelse(l0.listener2.match$degree == "hi2", "hi", "low")
+l0.listener2.match$degree = ifelse(l0.listener2.match$degree == "hi1", "hi", "low")
+l0.listener2.match$exp = "full"
+l0.listener$exp = "partial"
+match.scalars = rbind(l0.listener2.match, l0.listener)
 
-qplot(x = stars, y = speaker.p, col = degree,
+qplot(x = stars, y = speaker.p, colour = exp,
       geom = "line", stat = "identity", position = "dodge", 
-      main = "Scalar compatibility with star ratings \n Experiment L0_e10",
+      main = "Literal listener semantics estimates \nfor matched items",
       ylab = "P(Word | Rating)",
-      data = l0.listener2.match) + 
+      data = match.scalars) + 
   geom_linerange(aes(ymin = speaker.p - cil, 
                      ymax = speaker.p + cih)) + 
-  facet_wrap(~scale)
+  facet_wrap(~scale+degree)
 ```
 
+Formal test of distributional differences:
+```{r}
+match.scalars$n.exp = ifelse(match.scalars$exp == "partial", 0, 1)
+summary(glm(n.exp ~ scale + degree + stars + speaker.p, data=match.scalars))
+head(match.scalars)
+
+```
 
 ### Description
 
 ### Results
+
+## How to find alternatives?
+
+Under the Gricean framework, scalar implicature occurs because of the presence of salient alternatives. That is, we would not enrich `some` to `some, but not all` if `all` was not somehow also present. This goes back to the suggested mechanism of inference - if a listener assumes a speaker is being cooperative... FILL THIS IN.
+
+Let's return to the scalar items `some` and `all`. Levinson (1983) proposes (http://web.stanford.edu/class/linguist236/implicature/materials/ling236-handout-04-23-scalars.pdf)...
+
+Building off a framework used by van Tiel (2014) we presented participants with a target scalar item and asked a free-response question (limited to one word): "If the person had felt differently what is another word they could have used?".
+
+which implicature arises (in this framework). If a listener assumes a speaker is cooperative and obeying the maxims 
+
+## Description
+
 
 ## Pragmatic listener studies
 
