@@ -29,6 +29,10 @@ library(tidyr)
 # Experimental investigations / star rating paradigm
 
 ## Literal listener studies
+<center>
+<img src="RSA+AmbiguousSemantics_Images/literal_listener_example.png" alt="Pragmatic Listener example" style="width: 500px;" align="middle" border="2"/>
+</center>
+
 
 ## Can we elicit literal listener semantics for scalar items?
 
@@ -40,7 +44,7 @@ head(l0.listener)
 ```
 Data from each literal listener study:
 
-`scale`: The scale we're currently investigating (i.e. `good_excellent`).
+`scale`: The scale we're currently investigating (i.e. "good_excellent").
 
 `degree`: Valence of the current scalar item (i.e. in the scale `good_excellent` the scalar item `good` has degree `low` and `excellent` has degree `hi`).
 
@@ -232,15 +236,10 @@ $$p(meaning | utterance)$$
 
 With a slight modification to our current paradigm, we can get estimates of this posterior distribution. Instead of presenting participants with a star rating and target scalar item and ask for a compatbility judgment, we ask participants to reason about the possible meaning of a given scalar term given a speaker utterance. Meaning is again quantified through star ratings.
 
+
 <center>
-<img src="RSA+AmbiguousSemantics_Images/e11_example.png" alt="Pragmatic Listener example" style="width: 500px;" align="middle" border="2"/>
+<img src="RSA+AmbiguousSemantics_Images/prag_listener_example.png" alt="Pragmatic Listener example" style="width: 500px;" align="middle" border="2"/>
 </center>
-```{r}
-#![alt text](RSA+AmbiguousSemantics_Images/e11_example.png)
-```
-
-
-
 
 
 
