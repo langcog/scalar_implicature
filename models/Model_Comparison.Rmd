@@ -115,7 +115,7 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
 Run model
 ---------
 ```{r}
-alpha = 0
+alpha = 1
 md <- data %>%
   do(run.rsa(., alpha = alpha, useprior = T, usenone = F))
 ```
