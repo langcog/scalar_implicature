@@ -16,7 +16,6 @@ library(knitr)
 library(rjson)
 library(dplyr)
 library(tidyr)
-
 #setwd("~/Desktop/Projects/scalar_implicature/")
 #source("analysis/useful_dplyr.R")
 ```
@@ -149,57 +148,77 @@ listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_
 # Uniform priors
 priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 # Combine speaker / listener
-data = left_join(speaker, listener) %>%
+data.partial = left_join(speaker, listener) %>%
   left_join(priors) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
   group_by(scale)
-
 ```
 
 ## Data for full model
 ```{r}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
 listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
+data.full = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
 ```
 
 ## Run comparisons
 ```{r}
 # Model 1 - Entailment, no alpha tuning
 # -------------------------------------
-m1.noFit = data %>%
+m1.noFit = data.partial %>%
   do(run.partial(., alpha = 1, useprior = T, usenone = F))
 performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred)^2, 5))
 
 # Model 1 - Entailment, alpha tuning
 # ----------------------------------
-best.alpha = tune.alpha(data)
-m1.fit = data %>%
+best.alpha = tune.alpha(data.partial)
+m1.fit = data.partial %>%
   do(run.partial(., alpha = best.alpha))
 performance.output[2, ] = c("M1_Fit", round(cor(m1.fit$listener.p, m1.fit$pred)^2, 5))
 
 # Model 2 - Entailment, generic "None", no alpha tuning
 # -----------------------------------------------------
-m2.noFit = data %>%
+m2.noFit = data.partial %>%
   do(run.partial(., alpha = 1, usenone = T))
 performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred)^2, 5))
 
 # Model 2 - Entailment, generic "None", alpha tuning
 # ----------------------------------
-best.alpha = tune.alpha(data, usenone = T)
-m2.fit = data %>%
+best.alpha = tune.alpha(data.partial, usenone = T)
+m2.fit = data.partial %>%
   do(run.partial(., alpha = best.alpha, usenone = T))
 performance.output[4, ] = c("M2_Fit", round(cor(m2.fit$listener.p, m2.fit$pred)^2, 5))
+
+# Scalar matches between Full and partial
+
+
+# Model 3 - Full, no alpha tuning
+# ----------------------------------
+m3.noFit = data.full %>%
+  do(run.full(., alpha = 1))
+performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit$listener.p, m3.noFit$pred)^2, 5))
+
+# Model 3 - Full, alpha tuning
+# ----------------------------------
+best.alpha = tune.alpha(data.full, type = "full")
+m3.fit = data.full %>%
+  do(run.full(., alpha = best.alpha))
+performance.output[6, ] = c("M3_Fit", round(cor(m3.fit$listener.p, m3.fit$pred)^2, 5))
 ```
-
-
 
 Visualize
 ---------
 ```{r}
+alpha = best.alpha
 qplot(stars, listener.p, col=degree, 
-      data=md,
+      data=m3.fit,
       main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",
                  alpha),
       ylab="Posterior p(rating | word)") + 
