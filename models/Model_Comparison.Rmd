@@ -21,32 +21,9 @@ library(tidyr)
 #source("analysis/useful_dplyr.R")
 ```
 
-Data
-----
-```{r}
-speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
-listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
-# priors
-# ------
-unif = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
-priors = unif
-```
+# RSA functionality
 
-
-Combine data
-```{r}
-# Combine speaker / listener
-data <- left_join(speaker, listener) %>%
-  left_join(priors) %>%
-  rowwise %>%
-  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
-  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
-  group_by(scale)
-head(data)
-```
-
-Model
------
+Generic posterior computation
 ```{r}
 # speaker informativity
 # ---------------------
@@ -82,13 +59,12 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 }  
 ```
 
-Run Model
-----------
+# Run functionality
 ```{r}
-# Run rsa model
-# --------------------
-run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
-  #d$row = seq(1, nrow(d))
+# run.partial()
+# ------------
+# Run RSA with model1 (entailment) and model2 (entailment + generic)
+run.partial <- function(d, alpha = 1, useprior = F, usenone = F) {
   mat <- d %>%
     select(stars, degree, speaker.p) %>%
     spread(degree, speaker.p) %>%
@@ -98,8 +74,6 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
   
   if (usenone) {
     mat$none <- c(1, 0, 0, 0, 0)
-    #mat$meh <- c(0.0, 0.2, 0.6, 0.2, 0)
-    #mat$bad <- c(.5, .9, .4, .1, 0)
   } 
   
   d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
@@ -110,15 +84,116 @@ run.rsa <- function(d, alpha = 1, useprior = F, usenone = F) {
   
   return(d)
 } 
+
+# run.full()
+# ------------
+# Run RSA with model3 (full) with alternatives
+run.full <- function(d, alpha = 1, useprior = F, usenone = F) {
+  mat <- d %>%
+    select(stars, degree, speaker.p) %>%
+    spread(degree, speaker.p) %>%
+    mutate(hi1 = hi1 / sum(hi1),
+           hi2 = hi2 / sum(hi2),
+           low1 = low1 / sum(low1),
+           low2 = low2 / sum(low2)) %>%
+    select(hi1, hi2, low1, low2)
+  
+  if (usenone) {
+    mat$none <- c(1, 0, 0, 0, 0)
+  } 
+  
+  d$pred <- round(as.numeric(mapply(norm.post, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
+} 
+
+# tune.alhpa()
+# ------------
+# d        --> data
+# alphas   --> range of alphas to test
+# type     --> full or partial model
+# useprior --> use uniform prior
+# usenone  --> use gener None
+tune.alpha = function(d, alphas = seq(from=1, to=10), type="partial", useprior = T, usenone=F) {
+  # Tune best alphas
+  fit = sapply(alphas, FUN=function(n) {
+    if (type == "partial") {
+      md <- d %>%
+        do(run.partial(., alpha = n, useprior = useprior, usenone = usenone))
+    } else {
+      md <- d %>%
+        do(run.full(., alpha = n, useprior = F, usenone = F))
+    }
+    # MSE
+    return(mean((md$pred - md$listener.p)^2))
+  })  
+  # get lowest MSE
+  best.alpha = which(fit == min(fit))
+  return(best.alpha)
+}
 ```
 
-Run model
----------
+# Model Comparisons
+
+## Data for Entailment models
 ```{r}
-alpha = 1
-md <- data %>%
-  do(run.rsa(., alpha = alpha, useprior = T, usenone = F))
+# Save performance output
+performance.output = data.frame(model=rep(NA, 6), cor=rep(NA, 6))
+
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
+listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
+# Uniform priors
+priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+# Combine speaker / listener
+data = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+
 ```
+
+## Data for full model
+```{r}
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
+listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
+```
+
+## Run comparisons
+```{r}
+# Model 1 - Entailment, no alpha tuning
+# -------------------------------------
+m1.noFit = data %>%
+  do(run.partial(., alpha = 1, useprior = T, usenone = F))
+performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred)^2, 5))
+
+# Model 1 - Entailment, alpha tuning
+# ----------------------------------
+best.alpha = tune.alpha(data)
+m1.fit = data %>%
+  do(run.partial(., alpha = best.alpha))
+performance.output[2, ] = c("M1_Fit", round(cor(m1.fit$listener.p, m1.fit$pred)^2, 5))
+
+# Model 2 - Entailment, generic "None", no alpha tuning
+# -----------------------------------------------------
+m2.noFit = data %>%
+  do(run.partial(., alpha = 1, usenone = T))
+performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred)^2, 5))
+
+# Model 2 - Entailment, generic "None", alpha tuning
+# ----------------------------------
+best.alpha = tune.alpha(data, usenone = T)
+m2.fit = data %>%
+  do(run.partial(., alpha = best.alpha, usenone = T))
+performance.output[4, ] = c("M2_Fit", round(cor(m2.fit$listener.p, m2.fit$pred)^2, 5))
+```
+
+
 
 Visualize
 ---------
@@ -151,11 +226,24 @@ Tuning
 -------
 ```{r}
 # alpha
+tune.alpha = function(d, alphas = seq(from=1, to=10)) {
+  fit = sapply(alphas, FUN=function(n) {
+    md <- d %>%
+      do(run.rsa(., alpha = n, useprior = F, usenone = F))
+    return(mean((md$pred - md$listener.p)^2))
+    #return(cor(md$pred, md$listener.p))
+  })  
+  best.alpha = which(fit == min(fit))
+  return(best.alpha)
+}
+
+
+
+
 alphas = seq(from=1, to=10)
 fit = sapply(alphas, FUN=function(n) {
   md <- data %>%
     do(run.rsa(., alpha = n, useprior = F, usenone = F))
-  
   return(mean((md$pred - md$listener.p)^2))
   #return(cor(md$pred, md$listener.p))
 })
