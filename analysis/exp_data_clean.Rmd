@@ -68,7 +68,7 @@ compliant <- d.raw %>%
 # Sample size post compliance check
 n.post.compliance = sum(compliant$compliant)
 
-# If set to TRUE then enroce compliance for e8 (n reduced to 16)
+# If set to TRUE then enforce compliance for e8 (n reduced to 16)
 if (FALSE) { # Enforce compliance check for training 1
   d <- d.raw %>% 
   left_join(compliant) %>%
@@ -242,7 +242,7 @@ head(ms)
 
 # Output to CSV
 # --------------
-#write.csv(ms, "../models/L1_e6.csv", row.names=FALSE)
+# write.csv(ms, "../models/model_data/L1_e6.csv", row.names=FALSE)
 ```
 
 # Pragmatic Listener study e11 output
@@ -304,7 +304,7 @@ ms <- d %>%
   summarise(listener.p = n() / n[1])
 # Output to CSV
 # --------------
-#write.csv(ms, "../models/L1_e11.csv", row.names=FALSE)
+write.csv(ms, "../models/model_data/L1_e11.csv", row.names=FALSE)
 ```
 
 ```{r}
