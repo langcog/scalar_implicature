@@ -316,12 +316,20 @@ m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree,
   geom_line(aes(y = pred), lty = 4)
 m3.matched.fit.G
 
+# Full model fitted - color scale
 m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
   geom_point(aes(colour = scale)) +
   geom_smooth(method=lm) +
   ggtitle("Model performance: M3 fit") +
   labs(x = "human judgments", y="model prediction")
+m3.matched.fit.CorPlot
 
+# Full model fitted - color stars
+m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
+  geom_point(aes(colour = stars)) +
+  geom_smooth(method=lm) +
+  ggtitle("Model performance: M3 fit") +
+  labs(x = "human judgments", y="model prediction")
 m3.matched.fit.CorPlot
 ```
 
