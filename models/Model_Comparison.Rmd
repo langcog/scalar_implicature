@@ -117,16 +117,28 @@ run.full = function(d, alpha = 1, useprior = F, usenone = F) {
 # type     --> full or partial model
 # useprior --> use uniform prior
 # usenone  --> use gener None
-tune.alpha = function(d, alphas = seq(from=1, to=10), type="partial", useprior = T, usenone=F) {
+tune.alpha = function(d, alphas = seq(from=1, to=10), type="partial", useprior = T, usenone=F, compare.data=NULL) {
   # Tune best alphas
   fit = sapply(alphas, FUN=function(n) {
     if (type == "partial") {
-      md <- d %>%
+      md = d %>%
         do(run.partial(., alpha = n, useprior = useprior, usenone = usenone))
     } else {
-      md <- d %>%
+      md = d %>%
         do(run.full(., alpha = n, useprior = F, usenone = F))
     }
+    # Fit to e6 data
+    if (!is.null(compare.data)) {
+      matched.items = which((md[, "scale"] != "some_all" &
+                               (md[, "degree"] == "hi2" | md[, "degree"] == "hi1")) |
+                              (md[, "scale"] == "some_all" &
+                                 (md[, "degree"] == "hi1" | md[, "degree"] == "low1")))
+      md = md[matched.items, ]
+      md$degree = ifelse(md$degree == "hi1", "hi", "low")
+      stopifnot("listener.p" %in% colnames(compare.data))
+      md$listener.p = compare.data$listener.p
+    }
+    
     # MSE
     return(mean((md$pred - md$listener.p)^2))
   })  
@@ -223,7 +235,7 @@ performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$e6.listener.p
 
 # Model 3 - Full, alpha tuning
 # ----------------------------
-alphas[6] = tune.alpha(data.full, type = "full")
+alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial)
 m3.fit = data.full %>%
   do(run.full(., alpha = alphas[6]))
 m3.fit.matched = m3.fit[matched.items, ]
