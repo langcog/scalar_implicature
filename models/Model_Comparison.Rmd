@@ -1,8 +1,12 @@
 ---
-title: "RSA_model2"
+title: "Model Comparisons"
 author: "BPeloquin"
-date: "August 6, 2015"
-output: html_document
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_depth: 2
 ---
 
 Set-up
@@ -21,8 +25,6 @@ library(tidyr)
 ```
 
 # RSA functionality
-
-Generic posterior computation
 ```{r}
 # speaker informativity
 # ---------------------
@@ -58,7 +60,7 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 }  
 ```
 
-# Run functionality
+# Run model functionality
 ```{r}
 # run.partial()
 # ------------
@@ -110,6 +112,10 @@ run.full <- function(d, alpha = 1, useprior = F, usenone = F) {
   return(d)
 } 
 
+```
+
+## Tune hyperparams
+```{r}
 # tune.alhpa()
 # ------------
 # d        --> data
@@ -140,9 +146,6 @@ tune.alpha = function(d, alphas = seq(from=1, to=10), type="partial", useprior =
 
 ## Data for Entailment models
 ```{r}
-# Save performance output
-performance.output = data.frame(model=rep(NA, 6), cor=rep(NA, 6))
-
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
 listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
 # Uniform priors
@@ -168,8 +171,20 @@ data.full = left_join(speaker, listener) %>%
   group_by(scale)
 ```
 
+## Match items between studies (full and partial)
+```{r}
+matched.items = which((data.full[, "scale"] != "some_all" &
+        (data.full[, "degree"] == "hi2" | data.full[, "degree"] == "hi1")) |
+       (data.full[, "scale"] == "some_all" &
+          (data.full[, "degree"] == "hi1" | data.full[, "degree"] == "low1")))
+```
+
+
 ## Run comparisons
 ```{r}
+# Save performance output
+performance.output = data.frame(model=rep(NA, 6), r2=rep(NA, 6))
+
 # Model 1 - Entailment, no alpha tuning
 # -------------------------------------
 m1.noFit = data.partial %>%
@@ -181,7 +196,7 @@ performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$
 best.alpha = tune.alpha(data.partial)
 m1.fit = data.partial %>%
   do(run.partial(., alpha = best.alpha))
-performance.output[2, ] = c("M1_Fit", round(cor(m1.fit$listener.p, m1.fit$pred)^2, 5))
+performance.output[2, ] = c("M1_fit", round(cor(m1.fit$listener.p, m1.fit$pred)^2, 5))
 
 # Model 2 - Entailment, generic "None", no alpha tuning
 # -----------------------------------------------------
@@ -190,95 +205,89 @@ m2.noFit = data.partial %>%
 performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred)^2, 5))
 
 # Model 2 - Entailment, generic "None", alpha tuning
-# ----------------------------------
+# --------------------------------------------------
 best.alpha = tune.alpha(data.partial, usenone = T)
 m2.fit = data.partial %>%
   do(run.partial(., alpha = best.alpha, usenone = T))
-performance.output[4, ] = c("M2_Fit", round(cor(m2.fit$listener.p, m2.fit$pred)^2, 5))
-
-# Scalar matches between Full and partial
-
+performance.output[4, ] = c("M2_fit", round(cor(m2.fit$listener.p, m2.fit$pred)^2, 5))
 
 # Model 3 - Full, no alpha tuning
-# ----------------------------------
+# -------------------------------
 m3.noFit = data.full %>%
   do(run.full(., alpha = 1))
-performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit$listener.p, m3.noFit$pred)^2, 5))
+m3.noFit.matched = m3.noFit[matched.items, ]
+performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$listener.p, m3.noFit.matched$pred)^2, 5))
 
 # Model 3 - Full, alpha tuning
-# ----------------------------------
+# ----------------------------
 best.alpha = tune.alpha(data.full, type = "full")
 m3.fit = data.full %>%
   do(run.full(., alpha = best.alpha))
-performance.output[6, ] = c("M3_Fit", round(cor(m3.fit$listener.p, m3.fit$pred)^2, 5))
+m3.fit.matched = m3.fit[matched.items, ]
+performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$listener.p, m3.fit.matched$pred)^2, 5))
 ```
 
 Visualize
 ---------
 ```{r}
-alpha = best.alpha
-qplot(stars, listener.p, col=degree, 
-      data=m3.fit,
-      main=paste("Model vs Human judgments\nSemantics measured empirically\nalpha=",
-                 alpha),
+performance.output
+performance.output$model = factor(performance.output$model, levels=c(
+  "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit"
+))
+performance.output$r2 = as.numeric(performance.output$r2)
+qplot(data=performance.output, x=model, y=performance.output$r2,
+      geom="bar", stat="identity",
+      main = "Model performance", ylab="r^2", xlab="model") +
+  geom_text(aes(label = round(r2, 3), y = r2 + 0.02), size = 3) +
+  scale_y_continuous(limits=c(0, 1))
+
+
+m1.noFit.G = qplot(stars, listener.p, col=degree, 
+      data=m1.noFit,
+      main="M1, no fit",
       ylab="Posterior p(rating | word)") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+m1.noFit.G
 
-ggplot(md, aes(x=pred, y=listener.p)) +
-    geom_point(aes(colour = stars)) +
-    geom_smooth(method=lm) +
-  ggtitle("Model performance: Baseline") +
-  labs(x = "model prediction", y="human judgments")
-cor(md$pred, md$listener.p)^2
-cor.test(md$pred, md$listener.p)
-# scalar level cor
-specific.cor = function(scalar) {
-  return (cor(md[which(md$scale==scalar), ]$pred,
-              md[which(md$scale==scalar), ]$listener.p))
-}
-qplot(unique(md$scale), y = sapply(unique(md$scale), specific.cor),
-    aes(group=1), geom="bar", stat="identity")
-```
-
-Tuning
--------
-```{r}
-# alpha
-tune.alpha = function(d, alphas = seq(from=1, to=10)) {
-  fit = sapply(alphas, FUN=function(n) {
-    md <- d %>%
-      do(run.rsa(., alpha = n, useprior = F, usenone = F))
-    return(mean((md$pred - md$listener.p)^2))
-    #return(cor(md$pred, md$listener.p))
-  })  
-  best.alpha = which(fit == min(fit))
-  return(best.alpha)
-}
-
-
-
-
-alphas = seq(from=1, to=10)
-fit = sapply(alphas, FUN=function(n) {
-  md <- data %>%
-    do(run.rsa(., alpha = n, useprior = F, usenone = F))
-  return(mean((md$pred - md$listener.p)^2))
-  #return(cor(md$pred, md$listener.p))
-})
-qplot(alphas, fit, main="Cor for alpha values", ylab="MSE")
-best.alpha = which(fit == min(fit))
-best.alpha
-```
-
-
-For Presentation to Symsys290 10.26.15
-```{r}
-qplot(stars, listener.p, col=degree, 
-      data=md[md$scale=="some_all",],
-      main=paste("Model vs Human judgments\nalpha=",
-                 alpha),
-      ylab="Posterior p(m | u)") +
+m1.fit.G = qplot(stars, listener.p, col=degree, 
+      data=m1.fit,
+      main="M1, no fit",
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+m1.fit.G
+
+m2.noFit.G = qplot(stars, listener.p, col=degree, 
+      data=m2.noFit,
+      main="M2, no fit",
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m2.noFit.G
+
+m2.fit.G = qplot(stars, listener.p, col=degree, 
+      data=m2.fit,
+      main="M2, no fit",
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m2.fit.G
+
+m3.matched.noFit.G = qplot(stars, listener.p, col=degree, 
+      data=m3.noFit.matched,
+      main="M3, no fit",
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m3.matched.noFit.G
+
+m3.matched.fit.G = qplot(stars, listener.p, col=degree, 
+      data=m3.fit.matched,
+      main="M3, no fit",
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m3.matched.fit.G
 ```
 
