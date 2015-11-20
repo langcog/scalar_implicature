@@ -17,6 +17,7 @@ library(knitr)
 library(rjson)
 library(dplyr)
 library(tidyr)
+library(gridExtra)
 ```
 
 # RSA functionality
@@ -249,16 +250,17 @@ performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3
 
 # Plots
 
-Overall model performance: $r^2$
-
-Here we're plotting $r^2$ values for each model - comparing model predictions with e6 pragmatic listener judgments. Note we use literal listener values from e8 in M1 and M2 and literal listener values from e10 for M3. Also note that we've tuned the M3 model using e11 literal listener pragmatics (ideally we'd use e6). This requires an adjustment to the tune.alpha() (or run.full()) function.
-
+Overall model performance: $r^2$. M1 and M2 use literal listener values from exp8. M2 includes a generic "None" defined in terms of stars (1: 1.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0). M3 uses the full set of literal listener alternatives from exp10, however r^2 values and tuning reflects comparisons to exp6 pragmatic listener judgments (not exp11).
 ```{r overall_perf}
-performance.output
 performance.output$model = factor(performance.output$model, levels=c(
   "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit"
 ))
+# Populate extra model info
 performance.output$r2 = as.numeric(performance.output$r2)
+performance.output$alphas = alphas
+performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2))
+grid.table(performance.output)
+
 qplot(data=performance.output, x=model, y=performance.output$r2,
       geom="bar", stat="identity",
       main = "Model performance", ylab="r^2", xlab="model") +
