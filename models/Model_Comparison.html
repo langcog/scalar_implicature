@@ -309,6 +309,7 @@ performance.output[<span class="dv">6</span>, ] =<span class="st"> </span><span 
 <div id="plots" class="section level1">
 <h1>Plots</h1>
 <p>Overall model performance: <span class="math">\(r^2\)</span></p>
+<p>Here we’re plotting <span class="math">\(r^2\)</span> values for each model - comparing model predictions with e6 pragmatic listener judgments. Note we use literal listener values from e8 in M1 and M2 and literal listener values from e10 for M3. Also note that we’ve tuned the M3 model using e11 literal listener pragmatics (ideally we’d use e6). This requires an adjustment to the tune.alpha() (or run.full()) function.</p>
 <pre class="sourceCode r"><code class="sourceCode r">performance.output</code></pre>
 <pre><code>##      model      r2
 ## 1 M1_noFit 0.12355

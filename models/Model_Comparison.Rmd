@@ -238,6 +238,9 @@ performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3
 # Plots
 
 Overall model performance: $r^2$
+
+Here we're plotting $r^2$ values for each model - comparing model predictions with e6 pragmatic listener judgments. Note we use literal listener values from e8 in M1 and M2 and literal listener values from e10 for M3. Also note that we've tuned the M3 model using e11 literal listener pragmatics (ideally we'd use e6). This requires an adjustment to the tune.alpha() (or run.full()) function.
+
 ```{r overall_perf}
 performance.output
 performance.output$model = factor(performance.output$model, levels=c(
