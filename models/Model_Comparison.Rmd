@@ -24,36 +24,29 @@ library(gridExtra)
 ```{r}
 # speaker informativity
 # ---------------------
-speaker.lhd = function(d, alpha, cost = 0) {
+speaker.inf = function(d, alpha, cost = 0) {
   exp(alpha*(log(d) - cost))
 }
 # speaker likelihood
 # ------------------
-speaker.prob = function(rating, degree, m, alpha) {
-  numerator = speaker.lhd(m[rating, degree], alpha)
-  norm = 0
-  for (i in 1:ncol(m)) {
-    norm = norm + speaker.lhd(m[rating, i], alpha)
-  }
-  return(numerator / norm)
+speaker.lhd = function(rating, degree, m, alpha) {
+  numerator = speaker.inf(m[rating, degree], alpha)
+  normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
+  return(numerator / normalize)
 }
 # non-normalized posterior
 # -----------------------
 nn.post = function(rating, degree, m, alpha, useprior) {
   prior = priors[rating, "prior.p"]
-  speaker.prob(rating, degree, m, alpha) * prior
+  return(speaker.lhd(rating, degree, m, alpha) * prior)
 }
 # normalized posterior
 # --------------------
 norm.post = function(rating, degree, m, alpha, useprior) {
   nn = nn.post(rating, degree, m, alpha, useprior)
-  norm = 0
-  for (i in 1:5) {
-    # summation over all scale mates
-    norm = norm + nn.post(i, degree, m, alpha, useprior)
-  }
-  return(nn / norm)
-}  
+  normalize = sum(unlist(sapply(seq(1, 5), function(i){nn.post(i, degree, m, alpha, useprior)})))
+  return(nn / normalize)
+}
 ```
 
 # Run model functionality
@@ -65,8 +58,8 @@ run.partial = function(d, alpha = 1, useprior = F, usenone = F) {
   mat = d %>%
     select(stars, degree, speaker.p) %>%
     spread(degree, speaker.p) %>%
-    mutate(hi = hi / sum(hi), 
-           low = low / sum(low)) %>%
+#     mutate(hi = hi / sum(hi), 
+#            low = low / sum(low)) %>%
     select(hi, low)
   
   if (usenone) {
@@ -89,10 +82,10 @@ run.full = function(d, alpha = 1, useprior = F, usenone = F) {
   mat = d %>%
     select(stars, degree, speaker.p) %>%
     spread(degree, speaker.p) %>%
-    mutate(hi1 = hi1 / sum(hi1),
-           hi2 = hi2 / sum(hi2),
-           low1 = low1 / sum(low1),
-           low2 = low2 / sum(low2)) %>%
+#     mutate(hi1 = hi1 / sum(hi1),
+#            hi2 = hi2 / sum(hi2),
+#            low1 = low1 / sum(low1),
+#            low2 = low2 / sum(low2)) %>%
     select(hi1, hi2, low1, low2)
   
   if (usenone) {
@@ -190,7 +183,7 @@ matched.items = which((data.full[, "scale"] != "some_all" &
 ## Run comparisons
 ```{r run_comparisons, message=FALSE}
 # Save performance output
-performance.output = data.frame(model=rep(NA, 6), r2=rep(NA, 6))
+performance.output = data.frame(model=rep(NA, 6), cor=rep(NA, 6))
 alphas = rep(NA, 6)
 
 # Model 1 - Entailment, no alpha tuning
@@ -198,28 +191,28 @@ alphas = rep(NA, 6)
 alphas[1] = 1
 m1.noFit = data.partial %>%
   do(run.partial(., alpha = alphas[1], useprior = T, usenone = F))
-performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred)^2, 5))
+performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred), 5))
 
 # Model 1 - Entailment, alpha tuning
 # ----------------------------------
 alphas[2] = tune.alpha(data.partial)
 m1.fit = data.partial %>%
   do(run.partial(., alpha = alphas[2]))
-performance.output[2, ] = c("M1_fit", round(cor(m1.fit$listener.p, m1.fit$pred)^2, 5))
+performance.output[2, ] = c("M1_fit", round(cor(m1.fit$listener.p, m1.fit$pred), 5))
 
 # Model 2 - Entailment, generic "None", no alpha tuning
 # -----------------------------------------------------
 alphas[3] = 1
 m2.noFit = data.partial %>%
   do(run.partial(., alpha = alphas[3], usenone = T))
-performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred)^2, 5))
+performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred), 5))
 
 # Model 2 - Entailment, generic "None", alpha tuning
 # --------------------------------------------------
 alphas[4] = tune.alpha(data.partial, usenone = T)
 m2.fit = data.partial %>%
   do(run.partial(., alpha = alphas[4], usenone = T))
-performance.output[4, ] = c("M2_fit", round(cor(m2.fit$listener.p, m2.fit$pred)^2, 5))
+performance.output[4, ] = c("M2_fit", round(cor(m2.fit$listener.p, m2.fit$pred), 5))
 
 # Model 3 - Full, no alpha tuning
 # -------------------------------
@@ -232,7 +225,7 @@ m3.noFit.matched = cbind(m3.noFit.matched, data.partial$listener.p)
 # Check that everything lines up between partial and full
 all(m3.noFit.matched$scale == data.partial$scale & m3.noFit.matched$degree == data.partial$degree)
 colnames(m3.noFit.matched)[length(colnames(m3.noFit.matched))] = "e6.listener.p"
-performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred)^2, 5))
+performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred), 5))
 
 # Model 3 - Full, alpha tuning
 # ----------------------------
@@ -245,7 +238,7 @@ m3.fit.matched = cbind(m3.fit.matched, data.partial$listener.p)
 # Check that everything lines up between partial and full
 all(m3.fit.matched$scale == data.partial$scale & m3.fit.matched$degree == data.partial$degree)
 colnames(m3.fit.matched)[length(colnames(m3.fit.matched))] = "e6.listener.p"
-performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred)^2, 5))
+performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred), 5))
 ```
 
 # Plots
@@ -256,15 +249,15 @@ performance.output$model = factor(performance.output$model, levels=c(
   "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit"
 ))
 # Populate extra model info
-performance.output$r2 = as.numeric(performance.output$r2)
+performance.output$cor = as.numeric(performance.output$cor)
 performance.output$alphas = alphas
 performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2))
 grid.table(performance.output)
 
-qplot(data=performance.output, x=model, y=performance.output$r2,
+qplot(data=performance.output, x=model, y=performance.output$cor,
       geom="bar", stat="identity",
       main = "Model performance", ylab="r^2", xlab="model") +
-  geom_text(aes(label = round(r2, 3), y = r2 + 0.02), size = 3) +
+  geom_text(aes(label = round(cor, 3), y = cor + 0.02), size = 3) +
   scale_y_continuous(limits=c(0, 1))
 ```
 
