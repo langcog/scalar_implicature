@@ -301,10 +301,12 @@ ms <- d %>%
   group_by(degree, scale) %>%
   mutate(n = n()) %>%
   group_by(degree, scale, stars) %>%
-  summarise(listener.p = n() / n[1])
+  summarise(listener.p = n() / n[1],
+            total = sum(stars == stars))
+
 # Output to CSV
 # --------------
-write.csv(ms, "../models/model_data/L1_e11.csv", row.names=FALSE)
+#write.csv(ms, "../models/model_data/L1_e11.csv", row.names=FALSE)
 ```
 
 ```{r}
