@@ -54,13 +54,20 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 # run.partial()
 # ------------
 # Run RSA with model1 (entailment) and model2 (entailment + generic)
-run.partial = function(d, alpha = 1, useprior = F, usenone = F) {
-  mat = d %>%
-    select(stars, degree, speaker.p) %>%
-    spread(degree, speaker.p) %>%
-#     mutate(hi = hi / sum(hi), 
-#            low = low / sum(low)) %>%
-    select(hi, low)
+run.partial = function(d, alpha = 1, useprior = F, usenone = F, normalize=F) {
+  if (normalize) {
+    mat = d %>%
+      select(stars, degree, speaker.p) %>%
+      spread(degree, speaker.p) %>%
+      mutate(hi = hi / sum(hi),
+             low = low / sum(low)) %>%
+      select(hi, low)
+  } else {
+    mat = d %>%
+      select(stars, degree, speaker.p) %>%
+      spread(degree, speaker.p) %>%
+      select(hi, low)
+  }
   
   if (usenone) {
     mat$none = c(1, 0, 0, 0, 0)
@@ -78,15 +85,41 @@ run.partial = function(d, alpha = 1, useprior = F, usenone = F) {
 # run.full()
 # ------------
 # Run RSA with model3 (full) with alternatives
-run.full = function(d, alpha = 1, useprior = F, usenone = F) {
-  mat = d %>%
-    select(stars, degree, speaker.p) %>%
-    spread(degree, speaker.p) %>%
-#     mutate(hi1 = hi1 / sum(hi1),
-#            hi2 = hi2 / sum(hi2),
-#            low1 = low1 / sum(low1),
-#            low2 = low2 / sum(low2)) %>%
-    select(hi1, hi2, low1, low2)
+run.full = function(d, alpha=1, useprior=F, usenone=F, addMid=F, normalize=F) {
+  if (addMid) {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               mid = mid / sum(mid),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    }
+  } else {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, low1, low2)
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, low1, low2)
+    }
+  }
   
   if (usenone) {
     mat$none = c(1, 0, 0, 0, 0)
@@ -99,7 +132,7 @@ run.full = function(d, alpha = 1, useprior = F, usenone = F) {
                   digits=4)
   
   return(d)
-} 
+}
 ```
 
 ## Tune hyperparams
@@ -111,15 +144,17 @@ run.full = function(d, alpha = 1, useprior = F, usenone = F) {
 # type     --> full or partial model
 # useprior --> use uniform prior
 # usenone  --> use gener None
-tune.alpha = function(d, alphas = seq(from=1, to=10), type="partial", useprior = T, usenone=F, compare.data=NULL) {
+tune.alpha = function(d, alphas = seq(from=1, to=10),
+                      type="partial", useprior = T,
+                      usenone=F, compare.data=NULL, addMid = F, normalize=F) {
   # Tune best alphas
   fit = sapply(alphas, FUN=function(n) {
     if (type == "partial") {
       md = d %>%
-        do(run.partial(., alpha = n, useprior = useprior, usenone = usenone))
+        do(run.partial(., alpha = n, useprior = useprior, usenone = usenone, normalize=normalize))
     } else {
       md = d %>%
-        do(run.full(., alpha = n, useprior = F, usenone = F))
+        do(run.full(., alpha = n, useprior = useprior, usenone = usenone, addMid=addMid, normalize=normalize))
     }
     # Fit to e6 data
     if (!is.null(compare.data)) {
@@ -169,6 +204,14 @@ data.full = left_join(speaker, listener) %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
   group_by(scale)
+
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10a.csv")
+data.full.extras = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
 ```
 
 ## Match items between studies (full and partial)
@@ -177,14 +220,18 @@ matched.items = which((data.full[, "scale"] != "some_all" &
         (data.full[, "degree"] == "hi2" | data.full[, "degree"] == "hi1")) |
        (data.full[, "scale"] == "some_all" &
           (data.full[, "degree"] == "hi1" | data.full[, "degree"] == "low1")))
+matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
+        (data.full.extras[, "degree"] == "hi2" | data.full.extras[, "degree"] == "hi1")) |
+       (data.full.extras[, "scale"] == "some_all" &
+          (data.full.extras[, "degree"] == "hi1" | data.full.extras[, "degree"] == "low1")))
 ```
 
 
 ## Run comparisons
 ```{r run_comparisons, message=FALSE}
 # Save performance output
-performance.output = data.frame(model=rep(NA, 6), cor=rep(NA, 6))
-alphas = rep(NA, 6)
+performance.output = data.frame(model=rep(NA, 8), cor=rep(NA, 8))
+alphas = rep(NA, 8)
 
 # Model 1 - Entailment, no alpha tuning
 # -------------------------------------
@@ -218,7 +265,7 @@ performance.output[4, ] = c("M2_fit", round(cor(m2.fit$listener.p, m2.fit$pred),
 # -------------------------------
 alphas[5] = 1
 m3.noFit = data.full %>%
-  do(run.full(., alpha = alphas[5]))
+  do(run.full(., alpha = alphas[5], addMid=F, normalize=F))
 m3.noFit.matched = m3.noFit[matched.items, ]
 m3.noFit.matched$degree = ifelse(m3.noFit.matched$degree == "hi1", "hi", "low")
 m3.noFit.matched = cbind(m3.noFit.matched, data.partial$listener.p)
@@ -229,7 +276,7 @@ performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$e6.listener.p
 
 # Model 3 - Full, alpha tuning
 # ----------------------------
-alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial)
+alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
 m3.fit = data.full %>%
   do(run.full(., alpha = alphas[6]))
 m3.fit.matched = m3.fit[matched.items, ]
@@ -239,6 +286,35 @@ m3.fit.matched = cbind(m3.fit.matched, data.partial$listener.p)
 all(m3.fit.matched$scale == data.partial$scale & m3.fit.matched$degree == data.partial$degree)
 colnames(m3.fit.matched)[length(colnames(m3.fit.matched))] = "e6.listener.p"
 performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred), 5))
+
+# Model 4 - Full, no alpha tuning
+# -------------------------------
+alphas[7] = 1
+m4.noFit = data.full.extras %>%
+  do(run.full(., alpha = alphas[7], addMid=T))
+m4.noFit.matched = m4.noFit[matched.items.extras, ]
+# Need to fix this to dealt with 'mid'
+m4.noFit.matched$degree = ifelse(m4.noFit.matched$degree == "hi1", "hi", "low")
+m4.noFit.matched = cbind(m4.noFit.matched, data.partial$listener.p)
+# Check that everything lines up between partial and full
+all(m4.noFit.matched$scale == data.partial$scale & m4.noFit.matched$degree == data.partial$degree)
+colnames(m4.noFit.matched)[length(colnames(m4.noFit.matched))] = "e6.listener.p"
+# store corr
+performance.output[7, ] = c("M4_noFit", round(cor(m4.noFit.matched$e6.listener.p, m4.noFit.matched$pred), 5))
+
+# Model 4 - Full, alpha tuning, added 'mid'
+# ----------------------------
+alphas[8] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T)
+m4.fit = data.full.extras %>%
+  do(run.full(., alpha = alphas[8], addMid=T))
+m4.fit.matched = m4.fit[matched.items.extras, ]
+m4.fit.matched$degree = ifelse(m4.fit.matched$degree == "hi1", "hi", "low")
+m4.fit.matched = cbind(m4.fit.matched, data.partial$listener.p)
+# Check that everything lines up between partial and full
+all(m4.fit.matched$scale == data.partial$scale & m4.fit.matched$degree == data.partial$degree)
+colnames(m4.fit.matched)[length(colnames(m4.fit.matched))] = "e6.listener.p"
+# store corr
+performance.output[8, ] = c("M4_fit", round(cor(m4.fit.matched$e6.listener.p, m4.fit.matched$pred), 5))
 ```
 
 # Plots
@@ -246,12 +322,12 @@ performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3
 Overall model performance: $r^2$. M1 and M2 use literal listener values from exp8. M2 includes a generic "None" defined in terms of stars (1: 1.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0). M3 uses the full set of literal listener alternatives from exp10, however r^2 values and tuning reflects comparisons to exp6 pragmatic listener judgments (not exp11).
 ```{r overall_perf}
 performance.output$model = factor(performance.output$model, levels=c(
-  "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit"
+  "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit", "M4_noFit", "M4_fit"
 ))
 # Populate extra model info
 performance.output$cor = as.numeric(performance.output$cor)
 performance.output$alphas = alphas
-performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2))
+performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2), rep("full + extras", 2))
 grid.table(performance.output)
 
 qplot(data=performance.output, x=model, y=performance.output$cor,
@@ -302,6 +378,7 @@ m3.matched.noFit.G = qplot(stars, e6.listener.p, col=degree,
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 m3.matched.noFit.G
+cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred)
 
 m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
       data=m3.fit.matched,
@@ -310,6 +387,7 @@ m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree,
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 m3.matched.fit.G
+cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred)
 
 # Full model fitted - color scale
 m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
@@ -326,6 +404,22 @@ m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p
   ggtitle("Model performance: M3 fit") +
   labs(x = "human judgments", y="model prediction")
 m3.matched.fit.CorPlot
+
+m4.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.noFit.matched,
+      main=paste("M4, no fit\nalpha: ", alphas[7]),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m4.matched.noFit.G
+
+m4.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.fit.matched,
+      main=paste("M4, fit\nalpha: ", alphas[8]),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+m4.matched.fit.G
 ```
 
 # Other exploration
