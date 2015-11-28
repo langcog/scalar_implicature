@@ -54,7 +54,7 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 # run.partial()
 # ------------
 # Run RSA with model1 (entailment) and model2 (entailment + generic)
-run.partial = function(d, alpha = 1, useprior = F, usenone = F, normalize=F) {
+run.partial = function(d, alpha=1, useprior=F, usenone=F, normalize=F) {
   if (normalize) {
     mat = d %>%
       select(stars, degree, speaker.p) %>%
@@ -80,7 +80,7 @@ run.partial = function(d, alpha = 1, useprior = F, usenone = F, normalize=F) {
                   digits=4)
   
   return(d)
-} 
+}
 
 # run.full()
 # ------------
@@ -151,10 +151,10 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
   fit = sapply(alphas, FUN=function(n) {
     if (type == "partial") {
       md = d %>%
-        do(run.partial(., alpha = n, useprior = useprior, usenone = usenone, normalize=normalize))
+        do(run.partial(., alpha=n, useprior=useprior, usenone=usenone, normalize=normalize))
     } else {
       md = d %>%
-        do(run.full(., alpha = n, useprior = useprior, usenone = usenone, addMid=addMid, normalize=normalize))
+        do(run.full(., alpha=n, useprior=useprior, usenone=usenone, addMid=addMid, normalize=normalize))
     }
     # Fit to e6 data
     if (!is.null(compare.data)) {
@@ -179,7 +179,7 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
 
 # Model Comparisons
 
-## Data for entailment models
+### Data for entailment models
 ```{r entailment_models_data, message=FALSE, warning=FALSE}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
 listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
@@ -194,7 +194,7 @@ data.partial = left_join(speaker, listener) %>%
   group_by(scale)
 ```
 
-## Data for full model
+### Data for full model - no alternatives
 ```{r full_model_data, message=FALSE, warning=FALSE}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
 listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
@@ -204,7 +204,10 @@ data.full = left_join(speaker, listener) %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
   group_by(scale)
+```
 
+### Data for full model - alternatives
+```{r}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10a.csv")
 data.full.extras = left_join(speaker, listener) %>%
   left_join(priors) %>%
@@ -230,19 +233,30 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 ## Run comparisons
 ```{r run_comparisons, message=FALSE}
 # Save performance output
-performance.output = data.frame(model=rep(NA, 8), cor=rep(NA, 8))
+performance.output = data.frame(model=rep(NA, 8), norm.cor=rep(NA, 8))
 alphas = rep(NA, 8)
 
-# Model 1 - Entailment, no alpha tuning
-# -------------------------------------
+# Model 1 - Entailment only model
+# --------------------------------
+# a)
+# Normalized = T
+# alpha tune = F
 alphas[1] = 1
-m1.noFit = data.partial %>%
-  do(run.partial(., alpha = alphas[1], useprior = T, usenone = F))
+m1.a = data.partial %>%
+  do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=F))
 performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred), 5))
+# b)
+# Normalized = F
+# alpha tune = F
+alphas[1] = 1
+m1.b = data.partial %>%
+  do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=F))
+performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred), 5))
+
 
 # Model 1 - Entailment, alpha tuning
 # ----------------------------------
-alphas[2] = tune.alpha(data.partial)
+alphas[2] = tune.alpha(data.partial, normalize=F)
 m1.fit = data.partial %>%
   do(run.partial(., alpha = alphas[2]))
 performance.output[2, ] = c("M1_fit", round(cor(m1.fit$listener.p, m1.fit$pred), 5))
@@ -291,7 +305,7 @@ performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3
 # -------------------------------
 alphas[7] = 1
 m4.noFit = data.full.extras %>%
-  do(run.full(., alpha = alphas[7], addMid=T))
+  do(run.full(., alpha = alphas[7], addMid=T, normalize=T))
 m4.noFit.matched = m4.noFit[matched.items.extras, ]
 # Need to fix this to dealt with 'mid'
 m4.noFit.matched$degree = ifelse(m4.noFit.matched$degree == "hi1", "hi", "low")
