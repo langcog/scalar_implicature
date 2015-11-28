@@ -86,6 +86,7 @@ run.partial = function(d, alpha=1, useprior=F, usenone=F, normalize=F) {
 # ------------
 # Run RSA with model3 (full) with alternatives
 run.full = function(d, alpha=1, useprior=F, usenone=F, addMid=F, normalize=F) {
+  # alpha = scales.entropy[scales.entropy$scale==d$scale[1], ]$Entropy
   if (addMid) {
     if (normalize) {
       mat = d %>%
@@ -180,6 +181,8 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
 unif.priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 emp.priors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
 priors = unif.priors
+
+scales.entropy = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/scales_entropy.csv")
 ```
 
 # Model Comparisons
