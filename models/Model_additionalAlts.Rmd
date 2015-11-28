@@ -1,0 +1,324 @@
+---
+title: "Model_additionalAlts"
+author: "BPeloquin"
+date: "November 25, 2015"
+output: html_document
+---
+```{r include=FALSE}
+rm(list=ls())
+
+library(ggplot2)
+library(knitr)
+library(rjson)
+library(dplyr)
+library(tidyr)
+library(gridExtra)
+```
+
+# RSA functionality
+```{r}
+# speaker informativity
+# ---------------------
+speaker.inf = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost))
+}
+# speaker likelihood
+# ------------------
+speaker.lhd = function(rating, degree, m, alpha) {
+  numerator = speaker.inf(m[rating, degree], alpha)
+  normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
+  return(numerator / normalize)
+}
+# non-normalized posterior
+# -----------------------
+nn.post = function(rating, degree, m, alpha, useprior) {
+  prior = priors[rating, "prior.p"]
+  return(speaker.lhd(rating, degree, m, alpha) * prior)
+}
+# normalized posterior
+# --------------------
+norm.post = function(rating, degree, m, alpha, useprior) {
+  nn = nn.post(rating, degree, m, alpha, useprior)
+  normalize = sum(unlist(sapply(seq(1, 5), function(i){nn.post(i, degree, m, alpha, useprior)})))
+  return(nn / normalize)
+}
+```
+
+# Run model functionality
+```{r}
+# run.partial()
+# ------------
+# Run RSA with model1 (entailment) and model2 (entailment + generic)
+run.partial = function(d, alpha=1, useprior=F, usenone=F, normalize=F) {
+  if (normalize) {
+    mat = d %>%
+      select(stars, degree, speaker.p) %>%
+      spread(degree, speaker.p) %>%
+      mutate(hi = hi / sum(hi),
+             low = low / sum(low)) %>%
+      select(hi, low)
+  } else {
+    mat = d %>%
+      select(stars, degree, speaker.p) %>%
+      spread(degree, speaker.p) %>%
+      select(hi, low)
+  }
+  
+  if (usenone) {
+    mat$none = c(1, 0, 0, 0, 0)
+  } 
+  
+  d$pred = round(as.numeric(mapply(norm.post, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
+}
+
+# run.full()
+# ------------
+# Run RSA with model3 (full) with alternatives
+run.full = function(d, alpha=1, useprior=F, usenone=F, addMid=F, normalize=F) {
+  if (addMid) {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               mid = mid / sum(mid),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    }
+  } else {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, low1, low2)
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, low1, low2)
+    }
+  }
+  
+  if (usenone) {
+    mat$none = c(1, 0, 0, 0, 0)
+  } 
+  
+  d$pred = round(as.numeric(mapply(norm.post, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
+}
+```
+
+## Tune hyperparams
+```{r}
+# tune.alhpa()
+# ------------
+# d        --> data
+# alphas   --> range of alphas to test
+# type     --> full or partial model
+# useprior --> use uniform prior
+# usenone  --> use gener None
+tune.alpha = function(d, alphas = seq(from=1, to=10),
+                      type="partial", useprior = T,
+                      usenone=F, compare.data=NULL, addMid = F, normalize=F) {
+  # Tune best alphas
+  fit = sapply(alphas, FUN=function(n) {
+    if (type == "partial") {
+      md = d %>%
+        do(run.partial(., alpha=n, useprior=useprior, usenone=usenone, normalize=normalize))
+    } else {
+      md = d %>%
+        do(run.full(., alpha=n, useprior=useprior, usenone=usenone, addMid=addMid, normalize=normalize))
+    }
+    # Fit to e6 data
+    if (!is.null(compare.data)) {
+      matched.items = which((md[, "scale"] != "some_all" &
+                               (md[, "degree"] == "hi2" | md[, "degree"] == "hi1")) |
+                              (md[, "scale"] == "some_all" &
+                                 (md[, "degree"] == "hi1" | md[, "degree"] == "low1")))
+      md = md[matched.items, ]
+      md$degree = ifelse(md$degree == "hi1", "hi", "low")
+      stopifnot("listener.p" %in% colnames(compare.data))
+      md$listener.p = compare.data$listener.p
+    }
+    
+    # MSE
+    return(mean((md$pred - md$listener.p)^2))
+  })  
+  # get lowest MSE
+  best.alpha = which(fit == min(fit))
+  return(best.alpha)
+}
+
+# Uniform priors
+unif.priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+emp.priors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
+priors = unif.priors
+```
+
+# Model Comparisons
+
+### Data for entailment models
+```{r entailment_models_data, message=FALSE, warning=FALSE}
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
+listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
+# Combine speaker / listener
+data.partial = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+```
+
+### Data for full model - no alternatives
+```{r full_model_data, message=FALSE, warning=FALSE}
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
+listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
+data.full = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+```
+
+### Data for full model - alternatives
+```{r}
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10a.csv")
+data.full.extras = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+```
+
+## Match items between studies (full and partial)
+```{r}
+matched.items = which((data.full[, "scale"] != "some_all" &
+        (data.full[, "degree"] == "hi2" | data.full[, "degree"] == "hi1")) |
+       (data.full[, "scale"] == "some_all" &
+          (data.full[, "degree"] == "hi1" | data.full[, "degree"] == "low1")))
+matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
+        (data.full.extras[, "degree"] == "hi2" | data.full.extras[, "degree"] == "hi1")) |
+       (data.full.extras[, "scale"] == "some_all" &
+          (data.full.extras[, "degree"] == "hi1" | data.full.extras[, "degree"] == "low1")))
+```
+
+Focus on `good_excellent`:
+```{r}
+focus_alts = function(target, combos, normalize=F) {
+  if (is.null(combos)) {
+    combos = data.frame(c(0, 0, 1, 0, 0),
+                        c(0, 0.05, 0.9, 0.05, 0),
+                        c(0, 0.1, 0.8, 0.1, 0),
+                        c(0, 0.2, 0.6, 0.2, 0),
+                        c(0, 0.25, 0.5, 0.25, 0))  
+  }
+  colnames(combos) = LETTERS[1:length(colnames(combos))]
+  cors = c()
+  for (i in 1:ncol(combos)) {
+    ge.subset = data.full.extras[data.full.extras$scale == target, ]
+    ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
+    target.scalars = c("hi1", "hi2")
+    # Run model)
+    m1 = ge.subset %>%
+      do(run.full(., alpha = 8, addMid = T, normalize=normalize))
+    if (target == "some_all") {
+      target.scalars = c("hi1", "low1")
+      m1 = m1[m1$degree %in% target.scalars, ]  
+    } else {
+      m1 = m1[m1$degree %in% target.scalars, ]  
+    }
+    cors[i] = cor(m1$pred, m1$listener.p)  
+  }
+  cors 
+  
+  i = which(cors == max(cors))
+  # combos[i]
+  ge.subset = data.full.extras[data.full.extras$scale == target, ]
+    ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
+  m1 = ge.subset %>%
+    do(run.full(., alpha = 8, addMid = T))
+  
+  qplot(stars, listener.p, col=degree, 
+        data=m1,
+        ylab="Posterior p(rating | word)") + 
+    geom_line(aes(y = pred), lty = 4)
+  return(combos[i])
+}
+
+focus_alts("good_excellent", combos=NULL)
+focus_alts("liked_loved", combos=NULL)
+combos = data.frame(c(0, 1, 0, 0, 0),
+                    c(0.05, 0.9, 0.05, 0, 0),
+                    c(0.1, 0.8, 0.1, 0, 0),
+                    c(0.2, 0.6, 0.2, 0, 0),
+                    c(0.25, 0.5, 0.25, 0, 0))
+focus_alts("some_all", combos=combos)
+```
+
+
+Focus on `some_all`:
+```{r}
+ge.subset = data.full[data.full$scale == "some_all", ]
+ge.subset[ge.subset$degree == "mid", "speaker.p"] = c(0, 1, 0, 0, 0)
+head(ge.subset, n = 20)
+target.scalars = c("hi1", "low1")
+
+# Run model
+m1 = ge.subset %>%
+  do(run.full(., alpha = 8, addMid = T))
+cor(m1$pred, m1$listener.p)
+
+qplot(stars, listener.p, col=degree, 
+      data=m1,
+      ylab="Posterior p(rating | word)") + 
+  geom_line(aes(y = pred), lty = 4)
+
+m1 = m1[m1$degree %in% target.scalars, ]
+cor(m1$pred, m1$listener.p)
+
+combos = data.frame(c(0, 0, 1, 0, 0),
+                    c(0, 0.05, 0.9, 0.05, 0),
+                    c(0, 0.1, 0.8, 0.1, 0),
+                    c(0, 0.2, 0.6, 0.2, 0),
+                    c(0, 0.25, 0.5, 0.25, 0))
+colnames(combos) = LETTERS[1:length(colnames(combos))]
+cors = c()
+for (i in 1:ncol(combos)) {
+  print(i)
+  ge.subset = data.full[data.full$scale == "good_excellent", ]
+  ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
+  target.scalars = c("hi1", "hi2")
+  # Run model
+  m1 = ge.subset %>%
+    do(run.full(., alpha = 8, addMid = T))
+  m1 = m1[m1$degree %in% target.scalars, ]
+  cors[i] = cor(m1$pred, m1$listener.p)  
+}
+cors 
+```
+
