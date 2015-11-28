@@ -12,12 +12,14 @@ output:
 ```{r load_data, results="hide", message=FALSE, warning=FALSE}
 rm(list = ls())
 setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/models")
+library(tidyr)
 source("../analysis/useful_dplyr.R")
+library(dplyr)
 library(rjson)
 library(ggplot2)
 library(MASS)
 library(jsonlite)
-library(tidyr)
+
 ```
 
 # Pragmatics / implicature introduction
@@ -179,7 +181,7 @@ multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 d1 = fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T)
 d1 = as.data.frame(d1, stringsAsFactors = FALSE)
 
-d <- d1 %>% 
+d = d1 %>% 
   gather(base, alt, 
          palatable, liked, good, loved, some, all, 
          delicious, excellent, memorable, unforgettable) %>%
@@ -220,6 +222,29 @@ p5 = ggplot(data=d[d$scale==scales[5],], aes(x=reorder(alt, -n), y=n)) +
 multiplot(p1, p2, p3, p4, p5, cols=1)
 ```
 Clearly some interesting differences between scalar sets. In particular, responses for scales such as `some_all` and `liked_loved` appear to have more clearly defined set of alternatives with high responses for alternatives such as `none` (XX responses) or `most`. Conversely, scales such as `memorable_unforgettable` and `palatable_delicious` have a much longer tail of possible alternatives, with less cleary defined top competitors.
+
+
+```{r}
+
+pers = d[d$scale == "good_excellent", ]$n / sum(d[d$scale == "good_excellent", ]$n)
+H.ge = -sum(pers * log2(pers))
+pers = d[d$scale == "liked_loved", ]$n / sum(d[d$scale == "liked_loved", ]$n)
+H.ll = -sum(pers * log2(pers))
+pers = d[d$scale == "memorable_unforgettable", ]$n / sum(d[d$scale == "memorable_unforgettable", ]$n)
+H.mu = -sum(pers * log2(pers))
+pers = d[d$scale == "some_all", ]$n / sum(d[d$scale == "some_all", ]$n)
+H.sa = -sum(pers * log2(pers))
+pers = d[d$scale == "palatable_delicious", ]$n / sum(d[d$scale == "palatable_delicious", ]$n)
+H.pd = -sum(pers * log2(pers))
+
+H.ge
+H.ll
+H.mu
+H.sa
+H.pd
+
+```
+
 
 Explanation / Investigation of these differences?
 
