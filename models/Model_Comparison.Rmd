@@ -233,60 +233,345 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 ## Run comparisons
 ```{r run_comparisons, message=FALSE}
 # Save performance output
-performance.output = data.frame(model=rep(NA, 8), norm.cor=rep(NA, 8))
-alphas = rep(NA, 8)
+performance.output = data.frame(model=rep(NA, 16),
+                                cor=rep(NA, 16),
+                                normalized=rep(NA, 16))
+alphas = rep(NA, 16)
 
-# Model 1 - Entailment only model
+# Model 1 - Entailment only models
 # --------------------------------
-# a)
+# 1.a)
+# Entailment only
 # Normalized = T
-# alpha tune = F
+# alpha tuning = F
 alphas[1] = 1
 m1.a = data.partial %>%
-  do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=F))
-performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred), 5))
-# b)
+  do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=T))
+# Store output
+performance.output[1, ] = c("m1.a", round(cor(m1.a$listener.p, m1.a$pred), 5), T)
+# Store plot
+m1.a.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m1.a,
+      main=paste("m1.a\nalpha: ", alphas[1], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 1.b)
+# Entailment only
 # Normalized = F
 # alpha tune = F
-alphas[1] = 1
+alphas[2] = 1
 m1.b = data.partial %>%
   do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=F))
-performance.output[1, ] = c("M1_noFit", round(cor(m1.noFit$listener.p, m1.noFit$pred), 5))
+# Store output
+performance.output[2, ] = c("m1.b", round(cor(m1.b$listener.p, m1.b$pred), 5), F)
+# Store plot
+m1.b.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m1.b,
+      main=paste("m1.b\nalpha: ", alphas[2], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 
+# 1.c)
+# Entailment only
+# Normalized = T
+# alpha tune = T
+alphas[3] = tune.alpha(data.partial, normalize=T)
+m1.c = data.partial %>%
+  do(run.partial(., alpha = alphas[3], useprior=T, usenone=F, normalize=T))
+# Store output
+performance.output[3, ] = c("m1.c", round(cor(m1.c$listener.p, m1.c$pred), 5), normalized=T)
+# Store plot
+m1.c.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m1.c,
+      main=paste("m1.c\nalpha: ", alphas[3], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 
-# Model 1 - Entailment, alpha tuning
-# ----------------------------------
-alphas[2] = tune.alpha(data.partial, normalize=F)
-m1.fit = data.partial %>%
-  do(run.partial(., alpha = alphas[2]))
-performance.output[2, ] = c("M1_fit", round(cor(m1.fit$listener.p, m1.fit$pred), 5))
+# 1.d)
+# Entailment only
+# Normalized = F
+# alpha tune = T
+alphas[4] = tune.alpha(data.partial, normalize=F)
+m1.d = data.partial %>%
+  do(run.partial(., alpha = alphas[4], useprior=T, usenone=F, normalize=F))
+# Store output
+performance.output[4, ] = c("m1.d", round(cor(m1.d$listener.p, m1.d$pred), 5), normalized=F)
+# Store plot
+m1.d.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m1.d,
+      main=paste("m1.d\nalpha: ", alphas[4], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 
-# Model 2 - Entailment, generic "None", no alpha tuning
-# -----------------------------------------------------
-alphas[3] = 1
-m2.noFit = data.partial %>%
-  do(run.partial(., alpha = alphas[3], usenone = T))
-performance.output[3, ] = c("M2_noFit", round(cor(m2.noFit$listener.p, m2.noFit$pred), 5))
-
-# Model 2 - Entailment, generic "None", alpha tuning
-# --------------------------------------------------
-alphas[4] = tune.alpha(data.partial, usenone = T)
-m2.fit = data.partial %>%
-  do(run.partial(., alpha = alphas[4], usenone = T))
-performance.output[4, ] = c("M2_fit", round(cor(m2.fit$listener.p, m2.fit$pred), 5))
-
-# Model 3 - Full, no alpha tuning
-# -------------------------------
+# Model 2 - Entailment + generic none
+# --------------------------------
+# 2.a)
+# Entailment + generic None
+# Normalized = T
+# alpha tuning = F
 alphas[5] = 1
-m3.noFit = data.full %>%
-  do(run.full(., alpha = alphas[5], addMid=F, normalize=F))
-m3.noFit.matched = m3.noFit[matched.items, ]
-m3.noFit.matched$degree = ifelse(m3.noFit.matched$degree == "hi1", "hi", "low")
-m3.noFit.matched = cbind(m3.noFit.matched, data.partial$listener.p)
-# Check that everything lines up between partial and full
-all(m3.noFit.matched$scale == data.partial$scale & m3.noFit.matched$degree == data.partial$degree)
-colnames(m3.noFit.matched)[length(colnames(m3.noFit.matched))] = "e6.listener.p"
-performance.output[5, ] = c("M3_noFit", round(cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred), 5))
+m2.a = data.partial %>%
+  do(run.partial(., alpha = alphas[5], useprior=T, usenone=T, normalize=T))
+# Store output
+performance.output[5, ] = c("m2.a", round(cor(m2.a$listener.p, m2.a$pred), 5), T)
+# Store plot
+m2.a.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m2.a,
+      main=paste("m2.a\nalpha: ", alphas[5], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 2.b)
+# Entailment + generic None
+# Normalized = F
+# alpha tune = F
+alphas[6] = 1
+m2.b = data.partial %>%
+  do(run.partial(., alpha = alphas[1], useprior=T, usenone=T, normalize=F))
+# Store output
+performance.output[6, ] = c("m2.b", round(cor(m2.b$listener.p, m2.b$pred), 5), F)
+# Store plot
+m2.b.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m2.b,
+      main=paste("m2.b\nalpha: ", alphas[6], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 2.c)
+# Entailment + generic None
+# Normalized = T
+# alpha tune = T
+alphas[7] = tune.alpha(data.partial, normalize=T)
+m2.c = data.partial %>%
+  do(run.partial(., alpha = alphas[7], useprior=T, usenone=T, normalize=T))
+# Store output
+performance.output[7, ] = c("m2.c", round(cor(m2.c$listener.p, m2.c$pred), 5), normalized=T)
+# Store plot
+m2.c.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m2.c,
+      main=paste("m2.c\nalpha: ", alphas[3], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 2.d)
+# Entailment + generic None
+# Normalized = F
+# alpha tune = T
+alphas[8] = tune.alpha(data.partial, normalize=F)
+m2.d = data.partial %>%
+  do(run.partial(., alpha = alphas[8], useprior=T, usenone=T, normalize=F))
+# Store output
+performance.output[8, ] = c("m2.d", round(cor(m2.d$listener.p, m2.d$pred), 5), normalized=F)
+# Store plot
+m2.d.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m2.d,
+      main=paste("m2.d\nalpha: ", alphas[8], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# Model 3 - Empirical alternatives
+# --------------------------------
+# 3.a)
+# Emp alts
+# Normalized = T
+# alpha tuning = F
+alphas[9] = 1
+m3.a = data.full %>%
+  do(run.full(., alpha = alphas[9], addMid=F, normalize=T))
+# Match with e6 w/ checks
+m3.a.matched = m3.a[matched.items, ]
+m3.a.matched$degree = ifelse(m3.a.matched$degree == "hi1", "hi", "low")
+m3.a.matched = cbind(m3.a.matched, data.partial$listener.p)
+all(m3.a.matched$scale == data.partial$scale & m3.a.matched$degree == data.partial$degree)
+colnames(m3.a.matched)[length(colnames(m3.a.matched))] = "e6.listener.p"
+# Store output
+performance.output[9, ] = c("m3.a", round(cor(m3.a.matched$e6.listener.p, m3.a.matched$pred), 5), T)
+# Store plot
+m3.a.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m3.a.matched,
+      main=paste("m3.a\nalpha: ", alphas[9], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 3.b)
+# Emp alts
+# Entailment + generic None
+# Normalized = F
+# alpha tune = F
+alphas[10] = 1
+m3.b = data.full %>%
+  do(run.full(., alpha = alphas[10], addMid=F, normalize=F))
+# Match with e6 w/ checks
+m3.b.matched = m3.b[matched.items, ]
+m3.b.matched$degree = ifelse(m3.b.matched$degree == "hi1", "hi", "low")
+m3.b.matched = cbind(m3.b.matched, data.partial$listener.p)
+all(m3.b.matched$scale == data.partial$scale & m3.b.matched$degree == data.partial$degree)
+colnames(m3.b.matched)[length(colnames(m3.b.matched))] = "e6.listener.p"
+# Store output
+performance.output[10, ] = c("m3.b", round(cor(m3.b.matched$e6.listener.p, m3.b.matched$pred), 5), F)
+# Store plot
+m3.b.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m3.b.matched,
+      main=paste("m3.b\nalpha: ", alphas[10], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 3.c)
+# Emp alts
+# Normalized = T
+# alpha tune = T
+alphas[11] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=T)
+m3.c = data.full %>%
+  do(run.full(., alpha = alphas[11], addMid=F, normalize=T))
+# Match with e6 w/ checks
+m3.c.matched = m3.c[matched.items, ]
+m3.c.matched$degree = ifelse(m3.c.matched$degree == "hi1", "hi", "low")
+m3.c.matched = cbind(m3.c.matched, data.partial$listener.p)
+all(m3.c.matched$scale == data.partial$scale & m3.c.matched$degree == data.partial$degree)
+colnames(m3.c.matched)[length(colnames(m3.c.matched))] = "e6.listener.p"
+# Store output
+performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.matched$pred), 5), T)
+# Store plot
+m3.c.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m3.c.matched,
+      main=paste("m3.c\nalpha: ", alphas[11], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 3.d)
+# Emp alts
+# Normalized = F
+# alpha tune = T
+alphas[12] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
+m3.d = data.full %>%
+  do(run.full(., alpha = alphas[12], addMid=F, normalize=F))
+# Match with e6 w/ checks
+m3.d.matched = m3.d[matched.items, ]
+m3.d.matched$degree = ifelse(m3.d.matched$degree == "hi1", "hi", "low")
+m3.d.matched = cbind(m3.d.matched, data.partial$listener.p)
+all(m3.d.matched$scale == data.partial$scale & m3.d.matched$degree == data.partial$degree)
+colnames(m3.d.matched)[length(colnames(m3.d.matched))] = "e6.listener.p"
+# Store output
+performance.output[12, ] = c("m3.d", round(cor(m3.d.matched$e6.listener.p, m3.d.matched$pred), 5), F)
+# Store plot
+m3.d.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m3.d.matched,
+      main=paste("m3.d\nalpha: ", alphas[12], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+
+# Model 4 - Empirical alternatives + extras
+# -----------------------------------------
+# 4.a)
+# Emp alts + extras
+# Normalized = T
+# alpha tuning = F
+alphas[13] = 1
+m4.a = data.full.extras %>%
+  do(run.full(., alpha = alphas[13], addMid=T, normalize=T))
+# Match with e6 w/ checks
+m4.a.matched = m4.a[matched.items.extras, ]
+m4.a.matched$degree = ifelse(m4.a.matched$degree == "hi1", "hi", "low")
+m4.a.matched = cbind(m4.a.matched, data.partial$listener.p)
+all(m4.a.matched$scale == data.partial$scale & m4.a.matched$degree == data.partial$degree)
+colnames(m4.a.matched)[length(colnames(m4.a.matched))] = "e6.listener.p"
+# Store output
+performance.output[13, ] = c("m4.a", round(cor(m4.a.matched$e6.listener.p, m4.a.matched$pred), 5), T)
+# Store plot
+m4.a.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.a.matched,
+      main=paste("m4.a\nalpha: ", alphas[13], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 4.b)
+# Emp alts + extras
+# Normalized = F
+# alpha tune = F
+alphas[14] = 1
+m4.b = data.full.extras %>%
+  do(run.full(., alpha = alphas[14], addMid=T, normalize=F))
+# Match with e6 w/ checks
+m4.b.matched = m4.b[matched.items.extras, ]
+m4.b.matched$degree = ifelse(m4.b.matched$degree == "hi1", "hi", "low")
+m4.b.matched = cbind(m4.b.matched, data.partial$listener.p)
+all(m4.b.matched$scale == data.partial$scale & m4.b.matched$degree == data.partial$degree)
+colnames(m4.b.matched)[length(colnames(m4.b.matched))] = "e6.listener.p"
+# Store output
+performance.output[14, ] = c("m4.b", round(cor(m4.b.matched$e6.listener.p, m4.b.matched$pred), 5), F)
+# Store plot
+m4.b.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.b.matched,
+      main=paste("m4.b\nalpha: ", alphas[14], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 4.c)
+# Emp alts + extras
+# Normalized = T
+# alpha tune = T
+alphas[15] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=T)
+m4.c = data.full.extras %>%
+  do(run.full(., alpha = alphas[15], addMid=T, normalize=T))
+# Match with e6 w/ checks
+m4.c.matched = m4.c[matched.items.extras, ]
+m4.c.matched$degree = ifelse(m4.c.matched$degree == "hi1", "hi", "low")
+m4.c.matched = cbind(m4.c.matched, data.partial$listener.p)
+all(m4.c.matched$scale == data.partial$scale & m4.c.matched$degree == data.partial$degree)
+colnames(m4.c.matched)[length(colnames(m4.c.matched))] = "e6.listener.p"
+# Store output
+performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.matched$pred), 5), T)
+# Store plot
+m4.c.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.c.matched,
+      main=paste("m4.c\nalpha: ", alphas[15], "\nNormalized = ", T),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 4.d)
+# Emp alts + extras
+# Normalized = F
+# alpha tune = T
+alphas[16] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=F)
+m4.d = data.full.extras %>%
+  do(run.full(., alpha = alphas[16], addMid=T, normalize=F))
+# Match with e6 w/ checks
+m4.d.matched = m4.d[matched.items.extras, ]
+m4.d.matched$degree = ifelse(m4.d.matched$degree == "hi1", "hi", "low")
+m4.d.matched = cbind(m4.d.matched, data.partial$listener.p)
+all(m4.d.matched$scale == data.partial$scale & m4.d.matched$degree == data.partial$degree)
+colnames(m4.d.matched)[length(colnames(m4.d.matched))] = "e6.listener.p"
+# Store output
+performance.output[16, ] = c("m4.d", round(cor(m4.d.matched$e6.listener.p, m4.d.matched$pred), 5), F)
+# Store plot
+m4.d.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m4.d.matched,
+      main=paste("m4.d\nalpha: ", alphas[16], "\nNormalized = ", F),
+      ylab="Posterior p(rating | word)") + 
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
+# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
+# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
+# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
 
 # Model 3 - Full, alpha tuning
 # ----------------------------
