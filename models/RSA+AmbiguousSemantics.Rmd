@@ -237,12 +237,16 @@ H.sa = -sum(pers * log2(pers))
 pers = d[d$scale == "palatable_delicious", ]$n / sum(d[d$scale == "palatable_delicious", ]$n)
 H.pd = -sum(pers * log2(pers))
 
-H.ge
-H.ll
-H.mu
-H.sa
-H.pd
+scales.entropy = data.frame(c("good_excellent",
+                              "liked_loved",
+                              "memorable_unforgettable",
+                              "palatable_delicious",
+                              "some_all"),
+                            c(H.ge, H.ll, H.mu, H.pd, H.sa))
+colnames(scales.entropy) = c("scale", "Entropy")
 
+# Output to excel
+# write.csv(scales.entropy, "model_data/scales_entorpy.csv", row.names=FALSE)
 ```
 
 
