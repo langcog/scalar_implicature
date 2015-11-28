@@ -175,6 +175,11 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
   best.alpha = which(fit == min(fit))
   return(best.alpha)
 }
+
+# Uniform priors
+unif.priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+emp.priors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
+priors = unif.priors
 ```
 
 # Model Comparisons
@@ -183,8 +188,6 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
 ```{r entailment_models_data, message=FALSE, warning=FALSE}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
 listener = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
-# Uniform priors
-priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 # Combine speaker / listener
 data.partial = left_join(speaker, listener) %>%
   left_join(priors) %>%
@@ -250,7 +253,7 @@ m1.a = data.partial %>%
 # Store output
 performance.output[1, ] = c("m1.a", round(cor(m1.a$listener.p, m1.a$pred), 5), T)
 # Store plot
-m1.a.plot = qplot(stars, e6.listener.p, col=degree, 
+m1.a.plot = qplot(stars, listener.p, col=degree, 
       data=m1.a,
       main=paste("m1.a\nalpha: ", alphas[1], "\nNormalized = ", T),
       ylab="Posterior p(rating | word)") + 
@@ -267,7 +270,7 @@ m1.b = data.partial %>%
 # Store output
 performance.output[2, ] = c("m1.b", round(cor(m1.b$listener.p, m1.b$pred), 5), F)
 # Store plot
-m1.b.plot = qplot(stars, e6.listener.p, col=degree, 
+m1.b.plot = qplot(stars, listener.p, col=degree, 
       data=m1.b,
       main=paste("m1.b\nalpha: ", alphas[2], "\nNormalized = ", F),
       ylab="Posterior p(rating | word)") + 
@@ -284,7 +287,7 @@ m1.c = data.partial %>%
 # Store output
 performance.output[3, ] = c("m1.c", round(cor(m1.c$listener.p, m1.c$pred), 5), normalized=T)
 # Store plot
-m1.c.plot = qplot(stars, e6.listener.p, col=degree, 
+m1.c.plot = qplot(stars, listener.p, col=degree, 
       data=m1.c,
       main=paste("m1.c\nalpha: ", alphas[3], "\nNormalized = ", T),
       ylab="Posterior p(rating | word)") + 
@@ -301,7 +304,7 @@ m1.d = data.partial %>%
 # Store output
 performance.output[4, ] = c("m1.d", round(cor(m1.d$listener.p, m1.d$pred), 5), normalized=F)
 # Store plot
-m1.d.plot = qplot(stars, e6.listener.p, col=degree, 
+m1.d.plot = qplot(stars, listener.p, col=degree, 
       data=m1.d,
       main=paste("m1.d\nalpha: ", alphas[4], "\nNormalized = ", F),
       ylab="Posterior p(rating | word)") + 
@@ -320,7 +323,7 @@ m2.a = data.partial %>%
 # Store output
 performance.output[5, ] = c("m2.a", round(cor(m2.a$listener.p, m2.a$pred), 5), T)
 # Store plot
-m2.a.plot = qplot(stars, e6.listener.p, col=degree, 
+m2.a.plot = qplot(stars, listener.p, col=degree, 
       data=m2.a,
       main=paste("m2.a\nalpha: ", alphas[5], "\nNormalized = ", T),
       ylab="Posterior p(rating | word)") + 
@@ -333,11 +336,11 @@ m2.a.plot = qplot(stars, e6.listener.p, col=degree,
 # alpha tune = F
 alphas[6] = 1
 m2.b = data.partial %>%
-  do(run.partial(., alpha = alphas[1], useprior=T, usenone=T, normalize=F))
+  do(run.partial(., alpha = alphas[6], useprior=T, usenone=T, normalize=F))
 # Store output
 performance.output[6, ] = c("m2.b", round(cor(m2.b$listener.p, m2.b$pred), 5), F)
 # Store plot
-m2.b.plot = qplot(stars, e6.listener.p, col=degree, 
+m2.b.plot = qplot(stars, listener.p, col=degree, 
       data=m2.b,
       main=paste("m2.b\nalpha: ", alphas[6], "\nNormalized = ", F),
       ylab="Posterior p(rating | word)") + 
@@ -354,9 +357,9 @@ m2.c = data.partial %>%
 # Store output
 performance.output[7, ] = c("m2.c", round(cor(m2.c$listener.p, m2.c$pred), 5), normalized=T)
 # Store plot
-m2.c.plot = qplot(stars, e6.listener.p, col=degree, 
+m2.c.plot = qplot(stars, listener.p, col=degree, 
       data=m2.c,
-      main=paste("m2.c\nalpha: ", alphas[3], "\nNormalized = ", T),
+      main=paste("m2.c\nalpha: ", alphas[7], "\nNormalized = ", T),
       ylab="Posterior p(rating | word)") + 
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
@@ -371,7 +374,7 @@ m2.d = data.partial %>%
 # Store output
 performance.output[8, ] = c("m2.d", round(cor(m2.d$listener.p, m2.d$pred), 5), normalized=F)
 # Store plot
-m2.d.plot = qplot(stars, e6.listener.p, col=degree, 
+m2.d.plot = qplot(stars, listener.p, col=degree, 
       data=m2.d,
       main=paste("m2.d\nalpha: ", alphas[8], "\nNormalized = ", F),
       ylab="Posterior p(rating | word)") + 
@@ -575,155 +578,177 @@ m4.d.plot = qplot(stars, e6.listener.p, col=degree,
 
 # Model 3 - Full, alpha tuning
 # ----------------------------
-alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
-m3.fit = data.full %>%
-  do(run.full(., alpha = alphas[6]))
-m3.fit.matched = m3.fit[matched.items, ]
-m3.fit.matched$degree = ifelse(m3.fit.matched$degree == "hi1", "hi", "low")
-m3.fit.matched = cbind(m3.fit.matched, data.partial$listener.p)
-# Check that everything lines up between partial and full
-all(m3.fit.matched$scale == data.partial$scale & m3.fit.matched$degree == data.partial$degree)
-colnames(m3.fit.matched)[length(colnames(m3.fit.matched))] = "e6.listener.p"
-performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred), 5))
-
-# Model 4 - Full, no alpha tuning
-# -------------------------------
-alphas[7] = 1
-m4.noFit = data.full.extras %>%
-  do(run.full(., alpha = alphas[7], addMid=T, normalize=T))
-m4.noFit.matched = m4.noFit[matched.items.extras, ]
-# Need to fix this to dealt with 'mid'
-m4.noFit.matched$degree = ifelse(m4.noFit.matched$degree == "hi1", "hi", "low")
-m4.noFit.matched = cbind(m4.noFit.matched, data.partial$listener.p)
-# Check that everything lines up between partial and full
-all(m4.noFit.matched$scale == data.partial$scale & m4.noFit.matched$degree == data.partial$degree)
-colnames(m4.noFit.matched)[length(colnames(m4.noFit.matched))] = "e6.listener.p"
-# store corr
-performance.output[7, ] = c("M4_noFit", round(cor(m4.noFit.matched$e6.listener.p, m4.noFit.matched$pred), 5))
-
-# Model 4 - Full, alpha tuning, added 'mid'
-# ----------------------------
-alphas[8] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T)
-m4.fit = data.full.extras %>%
-  do(run.full(., alpha = alphas[8], addMid=T))
-m4.fit.matched = m4.fit[matched.items.extras, ]
-m4.fit.matched$degree = ifelse(m4.fit.matched$degree == "hi1", "hi", "low")
-m4.fit.matched = cbind(m4.fit.matched, data.partial$listener.p)
-# Check that everything lines up between partial and full
-all(m4.fit.matched$scale == data.partial$scale & m4.fit.matched$degree == data.partial$degree)
-colnames(m4.fit.matched)[length(colnames(m4.fit.matched))] = "e6.listener.p"
-# store corr
-performance.output[8, ] = c("M4_fit", round(cor(m4.fit.matched$e6.listener.p, m4.fit.matched$pred), 5))
+# alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
+# m3.fit = data.full %>%
+#   do(run.full(., alpha = alphas[6]))
+# m3.fit.matched = m3.fit[matched.items, ]
+# m3.fit.matched$degree = ifelse(m3.fit.matched$degree == "hi1", "hi", "low")
+# m3.fit.matched = cbind(m3.fit.matched, data.partial$listener.p)
+# # Check that everything lines up between partial and full
+# all(m3.fit.matched$scale == data.partial$scale & m3.fit.matched$degree == data.partial$degree)
+# colnames(m3.fit.matched)[length(colnames(m3.fit.matched))] = "e6.listener.p"
+# performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred), 5))
+# 
+# # Model 4 - Full, no alpha tuning
+# # -------------------------------
+# alphas[7] = 1
+# m4.noFit = data.full.extras %>%
+#   do(run.full(., alpha = alphas[7], addMid=T, normalize=T))
+# m4.noFit.matched = m4.noFit[matched.items.extras, ]
+# # Need to fix this to dealt with 'mid'
+# m4.noFit.matched$degree = ifelse(m4.noFit.matched$degree == "hi1", "hi", "low")
+# m4.noFit.matched = cbind(m4.noFit.matched, data.partial$listener.p)
+# # Check that everything lines up between partial and full
+# all(m4.noFit.matched$scale == data.partial$scale & m4.noFit.matched$degree == data.partial$degree)
+# colnames(m4.noFit.matched)[length(colnames(m4.noFit.matched))] = "e6.listener.p"
+# # store corr
+# performance.output[7, ] = c("M4_noFit", round(cor(m4.noFit.matched$e6.listener.p, m4.noFit.matched$pred), 5))
+# 
+# # Model 4 - Full, alpha tuning, added 'mid'
+# # ----------------------------
+# alphas[8] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T)
+# m4.fit = data.full.extras %>%
+#   do(run.full(., alpha = alphas[8], addMid=T))
+# m4.fit.matched = m4.fit[matched.items.extras, ]
+# m4.fit.matched$degree = ifelse(m4.fit.matched$degree == "hi1", "hi", "low")
+# m4.fit.matched = cbind(m4.fit.matched, data.partial$listener.p)
+# # Check that everything lines up between partial and full
+# all(m4.fit.matched$scale == data.partial$scale & m4.fit.matched$degree == data.partial$degree)
+# colnames(m4.fit.matched)[length(colnames(m4.fit.matched))] = "e6.listener.p"
+# # store corr
+# performance.output[8, ] = c("M4_fit", round(cor(m4.fit.matched$e6.listener.p, m4.fit.matched$pred), 5))
 ```
 
 # Plots
 
 Overall model performance: $r^2$. M1 and M2 use literal listener values from exp8. M2 includes a generic "None" defined in terms of stars (1: 1.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0). M3 uses the full set of literal listener alternatives from exp10, however r^2 values and tuning reflects comparisons to exp6 pragmatic listener judgments (not exp11).
 ```{r overall_perf}
-performance.output$model = factor(performance.output$model, levels=c(
-  "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit", "M4_noFit", "M4_fit"
-))
-# Populate extra model info
-performance.output$cor = as.numeric(performance.output$cor)
-performance.output$alphas = alphas
-performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2), rep("full + extras", 2))
+performance.output = cbind(performance.output, alphas)
 grid.table(performance.output)
 
-qplot(data=performance.output, x=model, y=performance.output$cor,
-      geom="bar", stat="identity",
-      main = "Model performance", ylab="r^2", xlab="model") +
-  geom_text(aes(label = round(cor, 3), y = cor + 0.02), size = 3) +
-  scale_y_continuous(limits=c(0, 1))
+m1.a.plot
+m1.b.plot
+m1.c.plot
+m1.d.plot
+
+m2.a.plot
+m2.b.plot
+m2.c.plot
+m2.d.plot
+
+m3.a.plot
+m3.b.plot
+m3.c.plot
+m3.d.plot
+
+m4.a.plot
+m4.b.plot
+m4.c.plot
+m4.d.plot
+# performance.output$model = factor(performance.output$model, levels=c(
+#   "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit", "M4_noFit", "M4_fit"
+# ))
+# # Populate extra model info
+# performance.output$cor = as.numeric(performance.output$cor)
+# performance.output$alphas = alphas
+# performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2), rep("full + extras", 2))
+# grid.table(performance.output)
+# 
+# qplot(data=performance.output, x=model, y=performance.output$cor,
+#       geom="bar", stat="identity",
+#       main = "Model performance", ylab="r^2", xlab="model") +
+#   geom_text(aes(label = round(cor, 3), y = cor + 0.02), size = 3) +
+#   scale_y_continuous(limits=c(0, 1))
 ```
 
 ## Individual model performance
 ```{r individual_plots}
-m1.noFit.G = qplot(stars, listener.p, col=degree, 
-      data=m1.noFit,
-      main=paste("M1, no fit\nalpha: ", alphas[1]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m1.noFit.G
-
-m1.fit.G = qplot(stars, listener.p, col=degree, 
-      data=m1.fit,
-      main=paste("M1, fit\nalpha: ", alphas[2]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m1.fit.G
-
-m2.noFit.G = qplot(stars, listener.p, col=degree, 
-      data=m2.noFit,
-      main=paste("M2, no fit\nalpha: ", alphas[3]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m2.noFit.G
-
-m2.fit.G = qplot(stars, listener.p, col=degree, 
-      data=m2.fit,
-      main=paste("M2, fit\nalpha: ", alphas[4]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m2.fit.G
-
-m3.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
-      data=m3.noFit.matched,
-      main=paste("M3, no fit\nalpha: ", alphas[5]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m3.matched.noFit.G
-cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred)
-
-m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
-      data=m3.fit.matched,
-      main=paste("M3, fit\nalpha: ", alphas[6]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m3.matched.fit.G
-cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred)
-
-# Full model fitted - color scale
-m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
-  geom_point(aes(colour = scale)) +
-  geom_smooth(method=lm) +
-  ggtitle("Model performance: M3 fit") +
-  labs(x = "human judgments", y="model prediction")
-m3.matched.fit.CorPlot
-
-# Full model fitted - color stars
-m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
-  geom_point(aes(colour = stars)) +
-  geom_smooth(method=lm) +
-  ggtitle("Model performance: M3 fit") +
-  labs(x = "human judgments", y="model prediction")
-m3.matched.fit.CorPlot
-
-m4.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
-      data=m4.noFit.matched,
-      main=paste("M4, no fit\nalpha: ", alphas[7]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m4.matched.noFit.G
-
-m4.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
-      data=m4.fit.matched,
-      main=paste("M4, fit\nalpha: ", alphas[8]),
-      ylab="Posterior p(rating | word)") + 
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-m4.matched.fit.G
+# m1.noFit.G = qplot(stars, listener.p, col=degree, 
+#       data=m1.noFit,
+#       main=paste("M1, no fit\nalpha: ", alphas[1]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# # m1.noFit.G
+# 
+# m1.fit.G = qplot(stars, listener.p, col=degree, 
+#       data=m1.fit,
+#       main=paste("M1, fit\nalpha: ", alphas[2]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m1.fit.G
+# 
+# m2.noFit.G = qplot(stars, listener.p, col=degree, 
+#       data=m2.noFit,
+#       main=paste("M2, no fit\nalpha: ", alphas[3]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m2.noFit.G
+# 
+# m2.fit.G = qplot(stars, listener.p, col=degree, 
+#       data=m2.fit,
+#       main=paste("M2, fit\nalpha: ", alphas[4]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m2.fit.G
+# 
+# m3.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
+#       data=m3.noFit.matched,
+#       main=paste("M3, no fit\nalpha: ", alphas[5]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m3.matched.noFit.G
+# cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred)
+# 
+# m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
+#       data=m3.fit.matched,
+#       main=paste("M3, fit\nalpha: ", alphas[6]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m3.matched.fit.G
+# cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred)
+# 
+# # Full model fitted - color scale
+# m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
+#   geom_point(aes(colour = scale)) +
+#   geom_smooth(method=lm) +
+#   ggtitle("Model performance: M3 fit") +
+#   labs(x = "human judgments", y="model prediction")
+# m3.matched.fit.CorPlot
+# 
+# # Full model fitted - color stars
+# m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
+#   geom_point(aes(colour = stars)) +
+#   geom_smooth(method=lm) +
+#   ggtitle("Model performance: M3 fit") +
+#   labs(x = "human judgments", y="model prediction")
+# m3.matched.fit.CorPlot
+# 
+# m4.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
+#       data=m4.noFit.matched,
+#       main=paste("M4, no fit\nalpha: ", alphas[7]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m4.matched.noFit.G
+# 
+# m4.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
+#       data=m4.fit.matched,
+#       main=paste("M4, fit\nalpha: ", alphas[8]),
+#       ylab="Posterior p(rating | word)") + 
+#   facet_wrap(~scale) + 
+#   geom_line(aes(y = pred), lty = 4)
+# m4.matched.fit.G
 ```
 
 # Other exploration
 ```{r}
-bad.predictions = m3.fit.matched$pred > 0 &
-                  m3.fit.matched$e6.listener.p == 0 &
-                  (m3.fit.matched$pred - m3.fit.matched$e6.listener.p > 0.05)
+# bad.predictions = m3.fit.matched$pred > 0 &
+#                   m3.fit.matched$e6.listener.p == 0 &
+#                   (m3.fit.matched$pred - m3.fit.matched$e6.listener.p > 0.05)
 ```
