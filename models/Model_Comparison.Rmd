@@ -157,15 +157,19 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
       md = d %>%
         do(run.full(., alpha=n, useprior=useprior, usenone=usenone, addMid=addMid, normalize=normalize))
     }
-    # Fit to e6 data
+    # Toggle fit to e6 data
     if (!is.null(compare.data)) {
-      matched.items = which((md[, "scale"] != "some_all" &
-                               (md[, "degree"] == "hi2" | md[, "degree"] == "hi1")) |
-                              (md[, "scale"] == "some_all" &
-                                 (md[, "degree"] == "hi1" | md[, "degree"] == "low1")))
-      md = md[matched.items, ]
-      md$degree = ifelse(md$degree == "hi1", "hi", "low")
-      stopifnot("listener.p" %in% colnames(compare.data))
+      
+      # If we're using e11 data with multiple scalars
+      if ("hi1" %in% md$degree) {
+        matched.items = which((md[, "scale"] != "some_all" &
+                                 (md[, "degree"] == "hi2" | md[, "degree"] == "hi1")) |
+                                (md[, "scale"] == "some_all" &
+                                   (md[, "degree"] == "hi1" | md[, "degree"] == "low1")))
+        md = md[matched.items, ]
+        md$degree = ifelse(md$degree == "hi1", "hi", "low")
+        stopifnot("listener.p" %in% colnames(compare.data))
+      }
       md$listener.p = compare.data$listener.p
     }
     
@@ -240,10 +244,13 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 ```{r run_comparisons, message=FALSE}
 # Save performance output
 performance.output = data.frame(model=rep(NA, 16),
-                                cor=rep(NA, 16),
+                                cor.e6=rep(NA, 16),
+                                cor.e11=rep(NA, 16),
                                 normalized=rep(NA, 16))
 alphas = rep(NA, 16)
-
+data.full.transfer = data.full[matched.items, ]
+data.full.transfer$degree =
+  ifelse(data.full.transfer$degree == "hi1", "hi", "low")
 # Model 1 - Entailment only models
 # --------------------------------
 # 1.a)
@@ -253,8 +260,11 @@ alphas = rep(NA, 16)
 alphas[1] = 1
 m1.a = data.partial %>%
   do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=T))
-# Store output
-performance.output[1, ] = c("m1.a", round(cor(m1.a$listener.p, m1.a$pred), 5), T)
+# Store output and add e11
+m1.a = cbind(m1.a, data.full.transfer$listener.p)
+colnames(m1.a)[8] = "e11.listener.p"
+performance.output[1, ] = c("m1.a", round(cor(m1.a$listener.p, m1.a$pred), 5),
+                            round(cor(m1.a$e11.listener.p, m1.a$pred), 5), T)
 # Store plot
 m1.a.plot = qplot(stars, listener.p, col=degree, 
       data=m1.a,
@@ -271,7 +281,10 @@ alphas[2] = 1
 m1.b = data.partial %>%
   do(run.partial(., alpha = alphas[1], useprior=T, usenone=F, normalize=F))
 # Store output
-performance.output[2, ] = c("m1.b", round(cor(m1.b$listener.p, m1.b$pred), 5), F)
+m1.b = cbind(m1.b, data.full.transfer$listener.p)
+colnames(m1.b)[8] = "e11.listener.p"
+performance.output[2, ] = c("m1.b", round(cor(m1.b$listener.p, m1.b$pred), 5),
+                            round(cor(m1.b$e11.listener.p, m1.b$pred), 5), T)
 # Store plot
 m1.b.plot = qplot(stars, listener.p, col=degree, 
       data=m1.b,
@@ -284,11 +297,14 @@ m1.b.plot = qplot(stars, listener.p, col=degree,
 # Entailment only
 # Normalized = T
 # alpha tune = T
-alphas[3] = tune.alpha(data.partial, normalize=T)
+alphas[3] = tune.alpha(data.partial, normalize=T, compare.data=data.full.transfer)
 m1.c = data.partial %>%
   do(run.partial(., alpha = alphas[3], useprior=T, usenone=F, normalize=T))
 # Store output
-performance.output[3, ] = c("m1.c", round(cor(m1.c$listener.p, m1.c$pred), 5), normalized=T)
+m1.c = cbind(m1.c, data.full.transfer$listener.p)
+colnames(m1.c)[8] = "e11.listener.p"
+performance.output[3, ] = c("m1.c", round(cor(m1.c$listener.p, m1.c$pred), 5),
+                            round(cor(m1.c$e11.listener.p, m1.c$pred), 5), T)
 # Store plot
 m1.c.plot = qplot(stars, listener.p, col=degree, 
       data=m1.c,
@@ -305,7 +321,10 @@ alphas[4] = tune.alpha(data.partial, normalize=F)
 m1.d = data.partial %>%
   do(run.partial(., alpha = alphas[4], useprior=T, usenone=F, normalize=F))
 # Store output
-performance.output[4, ] = c("m1.d", round(cor(m1.d$listener.p, m1.d$pred), 5), normalized=F)
+m1.d = cbind(m1.d, data.full.transfer$listener.p)
+colnames(m1.d)[8] = "e11.listener.p"
+performance.output[4, ] = c("m1.d", round(cor(m1.d$listener.p, m1.d$pred), 5),
+                            round(cor(m1.d$e11.listener.p, m1.d$pred), 5), normalized=F)
 # Store plot
 m1.d.plot = qplot(stars, listener.p, col=degree, 
       data=m1.d,
@@ -324,7 +343,10 @@ alphas[5] = 1
 m2.a = data.partial %>%
   do(run.partial(., alpha = alphas[5], useprior=T, usenone=T, normalize=T))
 # Store output
-performance.output[5, ] = c("m2.a", round(cor(m2.a$listener.p, m2.a$pred), 5), T)
+m2.a = cbind(m2.a, data.full.transfer$listener.p)
+colnames(m2.a)[8] = "e11.listener.p"
+performance.output[5, ] = c("m2.a", round(cor(m2.a$listener.p, m2.a$pred), 5),
+                            round(cor(m2.a$e11.listener.p, m2.a$pred), 5), T)
 # Store plot
 m2.a.plot = qplot(stars, listener.p, col=degree, 
       data=m2.a,
@@ -341,7 +363,10 @@ alphas[6] = 1
 m2.b = data.partial %>%
   do(run.partial(., alpha = alphas[6], useprior=T, usenone=T, normalize=F))
 # Store output
-performance.output[6, ] = c("m2.b", round(cor(m2.b$listener.p, m2.b$pred), 5), F)
+m2.b = cbind(m2.b, data.full.transfer$listener.p)
+colnames(m2.b)[8] = "e11.listener.p"
+performance.output[6, ] = c("m2.b", round(cor(m2.b$listener.p, m2.b$pred), 5),
+                            round(cor(m2.b$e11.listener.p, m2.b$pred), 5), F)
 # Store plot
 m2.b.plot = qplot(stars, listener.p, col=degree, 
       data=m2.b,
@@ -354,11 +379,15 @@ m2.b.plot = qplot(stars, listener.p, col=degree,
 # Entailment + generic None
 # Normalized = T
 # alpha tune = T
-alphas[7] = tune.alpha(data.partial, normalize=T)
+# compare.data = Toggle this with data.full.transfer for e11 or NULL for e6
+alphas[7] = tune.alpha(data.partial, normalize=T, compare.data=NULL)
 m2.c = data.partial %>%
   do(run.partial(., alpha = alphas[7], useprior=T, usenone=T, normalize=T))
 # Store output
-performance.output[7, ] = c("m2.c", round(cor(m2.c$listener.p, m2.c$pred), 5), normalized=T)
+m2.c = cbind(m2.c, data.full.transfer$listener.p)
+colnames(m2.c)[8] = "e11.listener.p"
+performance.output[7, ] = c("m2.c", round(cor(m2.c$listener.p, m2.c$pred), 5),
+                            round(cor(m2.c$e11.listener.p, m2.c$pred), 5), T)
 # Store plot
 m2.c.plot = qplot(stars, listener.p, col=degree, 
       data=m2.c,
@@ -371,11 +400,15 @@ m2.c.plot = qplot(stars, listener.p, col=degree,
 # Entailment + generic None
 # Normalized = F
 # alpha tune = T
+# compare.data = Toggle this with data.full.transfer for e11 or NULL for e6
 alphas[8] = tune.alpha(data.partial, normalize=F)
 m2.d = data.partial %>%
   do(run.partial(., alpha = alphas[8], useprior=T, usenone=T, normalize=F))
 # Store output
-performance.output[8, ] = c("m2.d", round(cor(m2.d$listener.p, m2.d$pred), 5), normalized=F)
+m2.d = cbind(m2.d, data.full.transfer$listener.p)
+colnames(m2.d)[8] = "e11.listener.p"
+performance.output[8, ] = c("m2.d", round(cor(m2.d$listener.p, m2.d$pred), 5),
+                            round(cor(m2.d$e11.listener.p, m2.d$pred), 5), F)
 # Store plot
 m2.d.plot = qplot(stars, listener.p, col=degree, 
       data=m2.d,
@@ -400,7 +433,8 @@ m3.a.matched = cbind(m3.a.matched, data.partial$listener.p)
 all(m3.a.matched$scale == data.partial$scale & m3.a.matched$degree == data.partial$degree)
 colnames(m3.a.matched)[length(colnames(m3.a.matched))] = "e6.listener.p"
 # Store output
-performance.output[9, ] = c("m3.a", round(cor(m3.a.matched$e6.listener.p, m3.a.matched$pred), 5), T)
+performance.output[9, ] = c("m3.a", round(cor(m3.a.matched$e6.listener.p, m3.a.matched$pred), 5),
+                            round(cor(m3.a.matched$listener.p, m3.a.matched$pred), 5), T)
 # Store plot
 m3.a.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.a.matched,
@@ -424,7 +458,8 @@ m3.b.matched = cbind(m3.b.matched, data.partial$listener.p)
 all(m3.b.matched$scale == data.partial$scale & m3.b.matched$degree == data.partial$degree)
 colnames(m3.b.matched)[length(colnames(m3.b.matched))] = "e6.listener.p"
 # Store output
-performance.output[10, ] = c("m3.b", round(cor(m3.b.matched$e6.listener.p, m3.b.matched$pred), 5), F)
+performance.output[10, ] = c("m3.b", round(cor(m3.b.matched$e6.listener.p, m3.b.matched$pred), 5),
+                             round(cor(m3.b.matched$listener.p, m3.b.matched$pred), 5), F)
 # Store plot
 m3.b.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.b.matched,
@@ -437,6 +472,7 @@ m3.b.plot = qplot(stars, e6.listener.p, col=degree,
 # Emp alts
 # Normalized = T
 # alpha tune = T
+# compare.data = Toggle this with data.partial for e6 or NULL for e11
 alphas[11] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=T)
 m3.c = data.full %>%
   do(run.full(., alpha = alphas[11], addMid=F, normalize=T))
@@ -447,12 +483,14 @@ m3.c.matched = cbind(m3.c.matched, data.partial$listener.p)
 all(m3.c.matched$scale == data.partial$scale & m3.c.matched$degree == data.partial$degree)
 colnames(m3.c.matched)[length(colnames(m3.c.matched))] = "e6.listener.p"
 # Store output
-performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.matched$pred), 5), T)
+performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.matched$pred), 5),
+                             round(cor(m3.c.matched$listener.p, m3.c.matched$pred), 5), T)
 # Store plot
 m3.c.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.c.matched,
       main=paste("m3.c\nalpha: ", alphas[11], "\nNormalized = ", T),
-      ylab="Posterior p(rating | word)") + 
+      ylab="Posterior p(rating | word)") +
+      ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -460,6 +498,7 @@ m3.c.plot = qplot(stars, e6.listener.p, col=degree,
 # Emp alts
 # Normalized = F
 # alpha tune = T
+# compare.data = Toggle this with data.partial or NULL
 alphas[12] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
 m3.d = data.full %>%
   do(run.full(., alpha = alphas[12], addMid=F, normalize=F))
@@ -470,7 +509,8 @@ m3.d.matched = cbind(m3.d.matched, data.partial$listener.p)
 all(m3.d.matched$scale == data.partial$scale & m3.d.matched$degree == data.partial$degree)
 colnames(m3.d.matched)[length(colnames(m3.d.matched))] = "e6.listener.p"
 # Store output
-performance.output[12, ] = c("m3.d", round(cor(m3.d.matched$e6.listener.p, m3.d.matched$pred), 5), F)
+performance.output[12, ] = c("m3.d", round(cor(m3.d.matched$e6.listener.p, m3.d.matched$pred), 5),
+                             round(cor(m3.d.matched$listener.p, m3.d.matched$pred), 5), F)
 # Store plot
 m3.d.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.d.matched,
@@ -496,7 +536,8 @@ m4.a.matched = cbind(m4.a.matched, data.partial$listener.p)
 all(m4.a.matched$scale == data.partial$scale & m4.a.matched$degree == data.partial$degree)
 colnames(m4.a.matched)[length(colnames(m4.a.matched))] = "e6.listener.p"
 # Store output
-performance.output[13, ] = c("m4.a", round(cor(m4.a.matched$e6.listener.p, m4.a.matched$pred), 5), T)
+performance.output[13, ] = c("m4.a", round(cor(m4.a.matched$e6.listener.p, m4.a.matched$pred), 5), 
+                             round(cor(m4.a.matched$listener.p, m4.a.matched$pred), 5), T)
 # Store plot
 m4.a.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.a.matched,
@@ -519,7 +560,8 @@ m4.b.matched = cbind(m4.b.matched, data.partial$listener.p)
 all(m4.b.matched$scale == data.partial$scale & m4.b.matched$degree == data.partial$degree)
 colnames(m4.b.matched)[length(colnames(m4.b.matched))] = "e6.listener.p"
 # Store output
-performance.output[14, ] = c("m4.b", round(cor(m4.b.matched$e6.listener.p, m4.b.matched$pred), 5), F)
+performance.output[14, ] = c("m4.b", round(cor(m4.b.matched$e6.listener.p, m4.b.matched$pred), 5), 
+                             round(cor(m4.b.matched$listener.p, m4.b.matched$pred), 5), F)
 # Store plot
 m4.b.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.b.matched,
@@ -532,6 +574,7 @@ m4.b.plot = qplot(stars, e6.listener.p, col=degree,
 # Emp alts + extras
 # Normalized = T
 # alpha tune = T
+# compare.data = Toggle this with data.partial or NULL
 alphas[15] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=T)
 m4.c = data.full.extras %>%
   do(run.full(., alpha = alphas[15], addMid=T, normalize=T))
@@ -541,10 +584,12 @@ m4.c.matched$degree = ifelse(m4.c.matched$degree == "hi1", "hi", "low")
 m4.c.matched = cbind(m4.c.matched, data.partial$listener.p)
 all(m4.c.matched$scale == data.partial$scale & m4.c.matched$degree == data.partial$degree)
 colnames(m4.c.matched)[length(colnames(m4.c.matched))] = "e6.listener.p"
-# Store output
-performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.matched$pred), 5), T)
+# Store output (e11 and e6)
+performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.matched$pred), 5),
+                             round(cor(m4.c.matched$listener.p, m4.c.matched$pred), 5), T)
+
 # Store plot
-m4.c.plot = qplot(stars, e6.listener.p, col=degree, 
+m4.c.plot = qplot(stars, listener.p, col=degree, 
       data=m4.c.matched,
       main=paste("m4.c\nalpha: ", alphas[15], "\nNormalized = ", T),
       ylab="Posterior p(rating | word)") + 
@@ -555,6 +600,7 @@ m4.c.plot = qplot(stars, e6.listener.p, col=degree,
 # Emp alts + extras
 # Normalized = F
 # alpha tune = T
+# compare.data = Toggle this with data.partial or NULL
 alphas[16] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=F)
 m4.d = data.full.extras %>%
   do(run.full(., alpha = alphas[16], addMid=T, normalize=F))
@@ -565,7 +611,8 @@ m4.d.matched = cbind(m4.d.matched, data.partial$listener.p)
 all(m4.d.matched$scale == data.partial$scale & m4.d.matched$degree == data.partial$degree)
 colnames(m4.d.matched)[length(colnames(m4.d.matched))] = "e6.listener.p"
 # Store output
-performance.output[16, ] = c("m4.d", round(cor(m4.d.matched$e6.listener.p, m4.d.matched$pred), 5), F)
+performance.output[16, ] = c("m4.d", round(cor(m4.d.matched$e6.listener.p, m4.d.matched$pred), 5),
+                             round(cor(m4.d.matched$listener.p, m4.d.matched$pred), 5), F)
 # Store plot
 m4.d.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.d.matched,
