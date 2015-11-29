@@ -268,8 +268,11 @@ performance.output[1, ] = c("m1.a", round(cor(m1.a$listener.p, m1.a$pred), 5),
 # Store plot
 m1.a.plot = qplot(stars, listener.p, col=degree, 
       data=m1.a,
-      main=paste("m1.a\nalpha: ", alphas[1], "\nNormalized = ", T),
+      main=paste("m1.a\nalpha: ", alphas[1],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[1, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -284,12 +287,15 @@ m1.b = data.partial %>%
 m1.b = cbind(m1.b, data.full.transfer$listener.p)
 colnames(m1.b)[8] = "e11.listener.p"
 performance.output[2, ] = c("m1.b", round(cor(m1.b$listener.p, m1.b$pred), 5),
-                            round(cor(m1.b$e11.listener.p, m1.b$pred), 5), T)
+                            round(cor(m1.b$e11.listener.p, m1.b$pred), 5), F)
 # Store plot
 m1.b.plot = qplot(stars, listener.p, col=degree, 
       data=m1.b,
-      main=paste("m1.b\nalpha: ", alphas[2], "\nNormalized = ", F),
+      main=paste("m1.b\nalpha: ", alphas[2],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[2, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -308,8 +314,11 @@ performance.output[3, ] = c("m1.c", round(cor(m1.c$listener.p, m1.c$pred), 5),
 # Store plot
 m1.c.plot = qplot(stars, listener.p, col=degree, 
       data=m1.c,
-      main=paste("m1.c\nalpha: ", alphas[3], "\nNormalized = ", T),
+      main=paste("m1.c\nalpha: ", alphas[3],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[3, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -328,8 +337,11 @@ performance.output[4, ] = c("m1.d", round(cor(m1.d$listener.p, m1.d$pred), 5),
 # Store plot
 m1.d.plot = qplot(stars, listener.p, col=degree, 
       data=m1.d,
-      main=paste("m1.d\nalpha: ", alphas[4], "\nNormalized = ", F),
+      main=paste("m1.d\nalpha: ", alphas[4],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[4, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -350,8 +362,11 @@ performance.output[5, ] = c("m2.a", round(cor(m2.a$listener.p, m2.a$pred), 5),
 # Store plot
 m2.a.plot = qplot(stars, listener.p, col=degree, 
       data=m2.a,
-      main=paste("m2.a\nalpha: ", alphas[5], "\nNormalized = ", T),
+      main=paste("m2.a\nalpha: ", alphas[5],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[5, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -370,8 +385,11 @@ performance.output[6, ] = c("m2.b", round(cor(m2.b$listener.p, m2.b$pred), 5),
 # Store plot
 m2.b.plot = qplot(stars, listener.p, col=degree, 
       data=m2.b,
-      main=paste("m2.b\nalpha: ", alphas[6], "\nNormalized = ", F),
+      main=paste("m2.b\nalpha: ", alphas[6],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[6, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -391,8 +409,11 @@ performance.output[7, ] = c("m2.c", round(cor(m2.c$listener.p, m2.c$pred), 5),
 # Store plot
 m2.c.plot = qplot(stars, listener.p, col=degree, 
       data=m2.c,
-      main=paste("m2.c\nalpha: ", alphas[7], "\nNormalized = ", T),
+      main=paste("m2.c\nalpha: ", alphas[7],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[7, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -412,8 +433,11 @@ performance.output[8, ] = c("m2.d", round(cor(m2.d$listener.p, m2.d$pred), 5),
 # Store plot
 m2.d.plot = qplot(stars, listener.p, col=degree, 
       data=m2.d,
-      main=paste("m2.d\nalpha: ", alphas[8], "\nNormalized = ", F),
+      main=paste("m2.d\nalpha: ", alphas[8],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[8, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -438,8 +462,11 @@ performance.output[9, ] = c("m3.a", round(cor(m3.a.matched$e6.listener.p, m3.a.m
 # Store plot
 m3.a.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.a.matched,
-      main=paste("m3.a\nalpha: ", alphas[9], "\nNormalized = ", T),
+      main=paste("m3.a\nalpha: ", alphas[9],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[9, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -463,8 +490,11 @@ performance.output[10, ] = c("m3.b", round(cor(m3.b.matched$e6.listener.p, m3.b.
 # Store plot
 m3.b.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.b.matched,
-      main=paste("m3.b\nalpha: ", alphas[10], "\nNormalized = ", F),
+      main=paste("m3.b\nalpha: ", alphas[10],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[10, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -488,7 +518,9 @@ performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.
 # Store plot
 m3.c.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.c.matched,
-      main=paste("m3.c\nalpha: ", alphas[11], "\nNormalized = ", T),
+      main=paste("m3.c\nalpha: ", alphas[11],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[11, 2]),
       ylab="Posterior p(rating | word)") +
       ylim(0, 1) +
   facet_wrap(~scale) + 
@@ -514,8 +546,11 @@ performance.output[12, ] = c("m3.d", round(cor(m3.d.matched$e6.listener.p, m3.d.
 # Store plot
 m3.d.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.d.matched,
-      main=paste("m3.d\nalpha: ", alphas[12], "\nNormalized = ", F),
+      main=paste("m3.d\nalpha: ", alphas[12],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[12, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -541,8 +576,11 @@ performance.output[13, ] = c("m4.a", round(cor(m4.a.matched$e6.listener.p, m4.a.
 # Store plot
 m4.a.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.a.matched,
-      main=paste("m4.a\nalpha: ", alphas[13], "\nNormalized = ", T),
+      main=paste("m4.a\nalpha: ", alphas[13],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[13, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -565,8 +603,11 @@ performance.output[14, ] = c("m4.b", round(cor(m4.b.matched$e6.listener.p, m4.b.
 # Store plot
 m4.b.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.b.matched,
-      main=paste("m4.b\nalpha: ", alphas[14], "\nNormalized = ", F),
+      main=paste("m4.b\nalpha: ", alphas[14],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[14, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -591,8 +632,11 @@ performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.
 # Store plot
 m4.c.plot = qplot(stars, listener.p, col=degree, 
       data=m4.c.matched,
-      main=paste("m4.c\nalpha: ", alphas[15], "\nNormalized = ", T),
+      main=paste("m4.c\nalpha: ", alphas[15],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[15, 2]),
       ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -616,62 +660,56 @@ performance.output[16, ] = c("m4.d", round(cor(m4.d.matched$e6.listener.p, m4.d.
 # Store plot
 m4.d.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.d.matched,
-      main=paste("m4.d\nalpha: ", alphas[16], "\nNormalized = ", F),
-      ylab="Posterior p(rating | word)") + 
+      main=paste("m4.d\nalpha: ", alphas[16],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[16, 2]),
+      ylab="Posterior p(rating | word)") +
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
-
-# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
-# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
-# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
-# -- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^---- ^^^^^^^^^^--
-
-# Model 3 - Full, alpha tuning
-# ----------------------------
-# alphas[6] = tune.alpha(data.full, type = "full", compare.data=data.partial, addMid=F, normalize=F)
-# m3.fit = data.full %>%
-#   do(run.full(., alpha = alphas[6]))
-# m3.fit.matched = m3.fit[matched.items, ]
-# m3.fit.matched$degree = ifelse(m3.fit.matched$degree == "hi1", "hi", "low")
-# m3.fit.matched = cbind(m3.fit.matched, data.partial$listener.p)
-# # Check that everything lines up between partial and full
-# all(m3.fit.matched$scale == data.partial$scale & m3.fit.matched$degree == data.partial$degree)
-# colnames(m3.fit.matched)[length(colnames(m3.fit.matched))] = "e6.listener.p"
-# performance.output[6, ] = c("M3_fit", round(cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred), 5))
-# 
-# # Model 4 - Full, no alpha tuning
-# # -------------------------------
-# alphas[7] = 1
-# m4.noFit = data.full.extras %>%
-#   do(run.full(., alpha = alphas[7], addMid=T, normalize=T))
-# m4.noFit.matched = m4.noFit[matched.items.extras, ]
-# # Need to fix this to dealt with 'mid'
-# m4.noFit.matched$degree = ifelse(m4.noFit.matched$degree == "hi1", "hi", "low")
-# m4.noFit.matched = cbind(m4.noFit.matched, data.partial$listener.p)
-# # Check that everything lines up between partial and full
-# all(m4.noFit.matched$scale == data.partial$scale & m4.noFit.matched$degree == data.partial$degree)
-# colnames(m4.noFit.matched)[length(colnames(m4.noFit.matched))] = "e6.listener.p"
-# # store corr
-# performance.output[7, ] = c("M4_noFit", round(cor(m4.noFit.matched$e6.listener.p, m4.noFit.matched$pred), 5))
-# 
-# # Model 4 - Full, alpha tuning, added 'mid'
-# # ----------------------------
-# alphas[8] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T)
-# m4.fit = data.full.extras %>%
-#   do(run.full(., alpha = alphas[8], addMid=T))
-# m4.fit.matched = m4.fit[matched.items.extras, ]
-# m4.fit.matched$degree = ifelse(m4.fit.matched$degree == "hi1", "hi", "low")
-# m4.fit.matched = cbind(m4.fit.matched, data.partial$listener.p)
-# # Check that everything lines up between partial and full
-# all(m4.fit.matched$scale == data.partial$scale & m4.fit.matched$degree == data.partial$degree)
-# colnames(m4.fit.matched)[length(colnames(m4.fit.matched))] = "e6.listener.p"
-# # store corr
-# performance.output[8, ] = c("M4_fit", round(cor(m4.fit.matched$e6.listener.p, m4.fit.matched$pred), 5))
 ```
 
 # Plots
 
-Overall model performance: $r^2$. M1 and M2 use literal listener values from exp8. M2 includes a generic "None" defined in terms of stars (1: 1.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0). M3 uses the full set of literal listener alternatives from exp10, however r^2 values and tuning reflects comparisons to exp6 pragmatic listener judgments (not exp11).
+## Interpreting the output table:
+
+`m1:` Entailment only models (i.e. "some_all" scale only includes "some", "all")
+
+`m2:` Entailment + generic None models (i.e. "some_all" scale includes "some", "all", "none")
+
+`m3:` Full model with empirical alternatives (i.e. "some_all" scale includes "some", "all", "most", "none")
+
+`m4:` Entailment + empirical alternatives + additional fitted scalar (i.e. "some_all" scale includes "some", "all", "most", "none", "mid")
+
+`a:` Normalized literal listener values before running RSA, no alpha tuning
+
+`b:` No normalization for literal listener values before running RSA, no alpha tuning
+
+`c:` Normalized literal listener values before running RSA, alpha tuning
+
+`d:` No normalization for literal listener values before running RSA, alpha tuning
+
+Initial thoughts:
+
+We see fairly steady model improvement with the addition of salient alternatives. Let's focus on the normalized family of models (1a, 1c, ... , 4a, 4c) - I explain why this might be a good idea below, but I'm not totally convinced. Probably the most important comparisons to pay attention to is the jump in correlation values when we first introduce empirically derived alternatives (models m3). Comparing m2 models (entailment + generic None) and m3 models (empirically derived alternatives) we see jumps of +0.23 for r values with alpha tuning. See the plots below:
+```{r}
+m2.c.plot
+m3.c.plot
+```
+Importantly, we also see improvements with the addition of 'fitted' alternatives in m4 see the plots below:
+```{r}
+m3.c.plot
+m4.c.plot
+```
+
+
+Additional notes:
+
+1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 (see RSA+AmbiguousSemantics for a more detailed analysis for literal listener experiment differences). Our best model performance occurs with e11 and the model is m4.c, correlation = `r round(performance.outpu[15, 3], 5)`.
+
+2) Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm inclined to stick with normalized model results because of this - we're interested in whether we see model improvement from the addition of salient alternatives - not from tuning hyperparameters. We tend to see more model improvement with alternatives when we're looking at normalized models (see `m3.c` vs `m4.c`).
+
+3) We may want to explore the the idea of unique alphas for a given scale (would need to change how we've written RSA), for example using scale entropy measures.
 ```{r overall_perf}
 performance.output = cbind(performance.output, alphas)
 grid.table(performance.output)
@@ -695,105 +733,6 @@ m4.a.plot
 m4.b.plot
 m4.c.plot
 m4.d.plot
-# performance.output$model = factor(performance.output$model, levels=c(
-#   "M1_noFit", "M1_fit", "M2_noFit", "M2_fit", "M3_noFit", "M3_fit", "M4_noFit", "M4_fit"
-# ))
-# # Populate extra model info
-# performance.output$cor = as.numeric(performance.output$cor)
-# performance.output$alphas = alphas
-# performance.output$alts = c(rep("entailment only", 2), rep("entailment + None", 2), rep("full", 2), rep("full + extras", 2))
-# grid.table(performance.output)
-# 
-# qplot(data=performance.output, x=model, y=performance.output$cor,
-#       geom="bar", stat="identity",
-#       main = "Model performance", ylab="r^2", xlab="model") +
-#   geom_text(aes(label = round(cor, 3), y = cor + 0.02), size = 3) +
-#   scale_y_continuous(limits=c(0, 1))
-```
-
-## Individual model performance
-```{r individual_plots}
-# m1.noFit.G = qplot(stars, listener.p, col=degree, 
-#       data=m1.noFit,
-#       main=paste("M1, no fit\nalpha: ", alphas[1]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# # m1.noFit.G
-# 
-# m1.fit.G = qplot(stars, listener.p, col=degree, 
-#       data=m1.fit,
-#       main=paste("M1, fit\nalpha: ", alphas[2]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m1.fit.G
-# 
-# m2.noFit.G = qplot(stars, listener.p, col=degree, 
-#       data=m2.noFit,
-#       main=paste("M2, no fit\nalpha: ", alphas[3]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m2.noFit.G
-# 
-# m2.fit.G = qplot(stars, listener.p, col=degree, 
-#       data=m2.fit,
-#       main=paste("M2, fit\nalpha: ", alphas[4]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m2.fit.G
-# 
-# m3.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
-#       data=m3.noFit.matched,
-#       main=paste("M3, no fit\nalpha: ", alphas[5]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m3.matched.noFit.G
-# cor(m3.noFit.matched$e6.listener.p, m3.noFit.matched$pred)
-# 
-# m3.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
-#       data=m3.fit.matched,
-#       main=paste("M3, fit\nalpha: ", alphas[6]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m3.matched.fit.G
-# cor(m3.fit.matched$e6.listener.p, m3.fit.matched$pred)
-# 
-# # Full model fitted - color scale
-# m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
-#   geom_point(aes(colour = scale)) +
-#   geom_smooth(method=lm) +
-#   ggtitle("Model performance: M3 fit") +
-#   labs(x = "human judgments", y="model prediction")
-# m3.matched.fit.CorPlot
-# 
-# # Full model fitted - color stars
-# m3.matched.fit.CorPlot = ggplot(data=m3.fit.matched, aes(y=pred, x=e6.listener.p)) +
-#   geom_point(aes(colour = stars)) +
-#   geom_smooth(method=lm) +
-#   ggtitle("Model performance: M3 fit") +
-#   labs(x = "human judgments", y="model prediction")
-# m3.matched.fit.CorPlot
-# 
-# m4.matched.noFit.G = qplot(stars, e6.listener.p, col=degree, 
-#       data=m4.noFit.matched,
-#       main=paste("M4, no fit\nalpha: ", alphas[7]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m4.matched.noFit.G
-# 
-# m4.matched.fit.G = qplot(stars, e6.listener.p, col=degree, 
-#       data=m4.fit.matched,
-#       main=paste("M4, fit\nalpha: ", alphas[8]),
-#       ylab="Posterior p(rating | word)") + 
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = pred), lty = 4)
-# m4.matched.fit.G
 ```
 
 # Other exploration
