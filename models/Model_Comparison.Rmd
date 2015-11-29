@@ -515,7 +515,7 @@ colnames(m3.c.matched)[length(colnames(m3.c.matched))] = "e6.listener.p"
 # Store output
 performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.matched$pred), 5),
                              round(cor(m3.c.matched$listener.p, m3.c.matched$pred), 5), T)
-# Store plot
+# Store plot 1
 m3.c.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m3.c.matched,
       main=paste("m3.c\nalpha: ", alphas[11],
@@ -523,6 +523,19 @@ m3.c.plot = qplot(stars, e6.listener.p, col=degree,
                  "\nCorr = ", performance.output[11, 2]),
       ylab="Posterior p(rating | word)") +
       ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# Store plot 2 - both e6 and e11 data
+m3.c.jointPlot = m3.c.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m3.c.jointPlot$study = ifelse(m3.c.jointPlot$study == "e6.listener.p", "e6", "e11")
+qplot(stars, listener.pred, col=degree, shape=study,
+      data=m3.c.jointPlot,
+      main=paste("m3.c\nalpha: ", alphas[11],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
@@ -554,6 +567,18 @@ m3.d.plot = qplot(stars, e6.listener.p, col=degree,
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
 
+# Store plot 2 - both e6 and e11 data
+m3.d.jointPlot = m3.d.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m3.d.jointPlot$study = ifelse(m3.d.jointPlot$study == "e6.listener.p", "e6", "e11")
+qplot(stars, listener.pred, col=degree, shape=study,
+      data=m3.d.jointPlot,
+      main=paste("m3.d\nalpha: ", alphas[12],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 
 # Model 4 - Empirical alternatives + extras
 # -----------------------------------------
@@ -630,7 +655,7 @@ performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.
                              round(cor(m4.c.matched$listener.p, m4.c.matched$pred), 5), T)
 
 # Store plot
-m4.c.plot = qplot(stars, listener.p, col=degree, 
+m4.c.plot = qplot(stars, e6.listener.p, col=degree, 
       data=m4.c.matched,
       main=paste("m4.c\nalpha: ", alphas[15],
                  "\nNormalized = ", T,
@@ -639,6 +664,20 @@ m4.c.plot = qplot(stars, listener.p, col=degree,
   ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+
+# Store plot 2 - both e6 and e11 data
+m4.c.jointPlot = m4.c.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m4.c.jointPlot$study = ifelse(m4.c.jointPlot$study == "e6.listener.p", "e6", "e11")
+qplot(stars, listener.pred, col=degree, shape=study,
+      data=m4.c.jointPlot,
+      main=paste("m4.c\nalpha: ", alphas[15],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
 
 # 4.d)
 # Emp alts + extras
@@ -667,19 +706,32 @@ m4.d.plot = qplot(stars, e6.listener.p, col=degree,
   ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+
+# Store plot 2 - both e6 and e11 data
+m4.d.jointPlot = m4.d.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m4.d.jointPlot$study = ifelse(m4.d.jointPlot$study == "e6.listener.p", "e6", "e11")
+qplot(stars, listener.pred, col=degree, shape=study,
+      data=m4.d.jointPlot,
+      main=paste("m4.d\nalpha: ", alphas[16],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 ```
 
-# Plots
+# Discussion
 
 ## Interpreting the output table:
 
 `m1:` Entailment only models (i.e. "some_all" scale only includes "some", "all")
 
-`m2:` Entailment + generic None models (i.e. "some_all" scale includes "some", "all", "none")
+`m2:` Entailment + generic None models (i.e. "some_all" scale includes "none", "some", "all")
 
-`m3:` Full model with empirical alternatives (i.e. "some_all" scale includes "some", "all", "most", "none")
+`m3:` Full model with empirical alternatives (i.e. "some_all" scale includes "none", "some", "most", all")
 
-`m4:` Entailment + empirical alternatives + additional fitted scalar (i.e. "some_all" scale includes "some", "all", "most", "none", "mid")
+`m4:` Entailment + empirical alternatives + additional fitted scalar (i.e. "some_all" scale includes "none", "some", "mid", "most", all")
 
 `a:` Normalized literal listener values before running RSA, no alpha tuning
 
@@ -689,31 +741,95 @@ m4.d.plot = qplot(stars, e6.listener.p, col=degree,
 
 `d:` No normalization for literal listener values before running RSA, alpha tuning
 
-Initial thoughts:
+```{r}
+performance.output$cor.e6 = as.numeric(performance.output$cor.e6)
+performance.output$cor.e11 = as.numeric(performance.output$cor.e11)
+performance.output = performance.output %>%
+  mutate(avg.corr =
+           (cor.e6 + cor.e11) / 2)
+performance.output = cbind(performance.output, alphas)
+# reorder columns
+performance.output = performance.output[, c(1, 2, 3, 5, 4, 6)]
+grid.table(performance.output)
+```
 
-We see fairly steady model improvement with the addition of salient alternatives. Let's focus on the normalized family of models (1a, 1c, ... , 4a, 4c) - I explain why this might be a good idea below, but I'm not totally convinced. Probably the most important comparisons to pay attention to is the jump in correlation values when we first introduce empirically derived alternatives (models m3). Comparing m2 models (entailment + generic None) and m3 models (empirically derived alternatives) we see jumps of +0.23 for r values with alpha tuning. See the plots below:
+
+## Initial thoughts:
+
+### Overall
+
+Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives. The largest improvement in model fit occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models):
+```{r}
+# Tuned, normalized models r
+barchart.d = performance.output[c(3, 7, 11, 15), ] %>%
+  gather(study, cor, cor.e6, cor.e11)
+ggplot(barchart.d, aes(x=model, y=cor, fill=study)) + 
+  geom_bar(stat="identity", position="dodge") +
+  ylim(0, 1) + 
+  ggtitle("Model fit for e6 and e11\npragmatic listener judgments")
+  # geom_text(aes(x=model, y=as.numeric(cor) + 0.025, label=round(cor, 3)))
+```
+
+In particular, we first start to see a pretty 
+
+
 ```{r}
 m2.c.plot
 m3.c.plot
 ```
+
 Importantly, we also see improvements with the addition of 'fitted' alternatives in m4 see the plots below:
 ```{r}
 m3.c.plot
 m4.c.plot
 ```
 
+This improvement is particularly clear when we look at e11 data:
+```{r}
+qplot(stars, listener.p, col=degree, 
+      data=m3.c.matched,
+      main=paste("m4.c\nalpha: ", alphas[11],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[11, 3]),
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
 
-Additional notes:
+qplot(stars, listener.p, col=degree, 
+      data=m4.c.matched,
+      main=paste("m4.c\nalpha: ", alphas[15],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[15, 3]),
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+```
 
-1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 (see RSA+AmbiguousSemantics for a more detailed analysis for literal listener experiment differences). Our best model performance occurs with e11 and the model is m4.c, correlation = `r round(performance.outpu[15, 3], 5)`.
+
+## Additional notes:
+
+1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 (see `RSA+AmbiguousSemantics.Rmd` for a more detailed analysis for literal listener experiment differences). Our best model performance occurs with e11 and the model is m4.c, correlation = `r as.numeric(performance.output[15, 3])` (see plot below):
+```{r}
+qplot(stars, listener.p, col=degree, 
+      data=m4.c.matched,
+      main=paste("m4.c\nalpha: ", alphas[15],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[15, 3]),
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+```
+
 
 2) Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm inclined to stick with normalized model results because of this - we're interested in whether we see model improvement from the addition of salient alternatives - not from tuning hyperparameters. We tend to see more model improvement with alternatives when we're looking at normalized models (see `m3.c` vs `m4.c`).
 
 3) We may want to explore the the idea of unique alphas for a given scale (would need to change how we've written RSA), for example using scale entropy measures.
-```{r overall_perf}
-performance.output = cbind(performance.output, alphas)
-grid.table(performance.output)
 
+# All plots
+```{r overall_perf}
 m1.a.plot
 m1.b.plot
 m1.c.plot
