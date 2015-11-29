@@ -179,6 +179,22 @@ head(ms)
 # write.csv(ms, "../models/L0_e10.csv", row.names=FALSE)
 ```
 
+### Smoothing for e10
+```{r}
+NUM_ITEMS = 5
+ms.smoothing = d %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  group_by(scale, degree, stars) %>%
+  summarise(cil = ci.low(judgment), 
+            cih = ci.high(judgment), 
+            cnt.judgment = sum(judgment) + 1,
+            speaker.p2 = cnt.judgment / (n() + 1),
+            speaker.p = mean(judgment))
+ms.smoothing
+
+write.csv(ms, "../models/model_data/L0_e10_laplace.csv", row.names=FALSE)
+```
+
 
 # Pragmatic Listener study e6 output
 
