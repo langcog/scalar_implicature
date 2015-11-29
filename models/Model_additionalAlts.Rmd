@@ -175,6 +175,8 @@ tune.alpha = function(d, alphas = seq(from=1, to=10),
 unif.priors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 emp.priors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
 priors = unif.priors
+
+scales.entropy = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/scales_entropy.csv")
 ```
 
 # Model Comparisons
@@ -202,6 +204,8 @@ data.full = left_join(speaker, listener) %>%
   select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
   mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
   group_by(scale)
+
+data.full$entropy = scales.entropy[data.full$scale, ]$Entropy
 ```
 
 ### Data for full model - alternatives
@@ -227,7 +231,7 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
           (data.full.extras[, "degree"] == "hi1" | data.full.extras[, "degree"] == "low1")))
 ```
 
-Focus on `good_excellent`:
+Focus on single scalar fn()
 ```{r}
 focus_alts = function(target, combos, normalize=F) {
   if (is.null(combos)) {
@@ -245,7 +249,8 @@ focus_alts = function(target, combos, normalize=F) {
     target.scalars = c("hi1", "hi2")
     # Run model)
     m1 = ge.subset %>%
-      do(run.full(., alpha = 8, addMid = T, normalize=normalize))
+      do(run.full(., alpha = 1,
+                  addMid = T, normalize=normalize))
     if (target == "some_all") {
       target.scalars = c("hi1", "low1")
       m1 = m1[m1$degree %in% target.scalars, ]  
@@ -256,22 +261,29 @@ focus_alts = function(target, combos, normalize=F) {
   }
   cors 
   
-  i = which(cors == max(cors))
+  i = which(cors == max(cors))[1]
   # combos[i]
   ge.subset = data.full.extras[data.full.extras$scale == target, ]
     ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
   m1 = ge.subset %>%
-    do(run.full(., alpha = 8, addMid = T))
+    do(run.full(., alpha = 1, addMid = T))
   
   qplot(stars, listener.p, col=degree, 
         data=m1,
         ylab="Posterior p(rating | word)") + 
     geom_line(aes(y = pred), lty = 4)
-  return(combos[i])
+  return(c(combos[i], cors[i]))
 }
 
+combos = data.frame(c(0, 0, 1, 0, 0),
+                    c(0, 0.05, 1, .05, 0),
+                    c(0, 0.1, 1, .1, 0),
+                    c(0.05, 0.1, 1, .1, 0.05),
+                    c(0.1, 0.1, 1, .1, 0.1))  
+focus_alts("liked_loved", combos=combos)
+colnames(combos) = LETTERS[1:length(colnames(combos))]
 focus_alts("good_excellent", combos=NULL)
-focus_alts("liked_loved", combos=NULL)
+
 combos = data.frame(c(0, 1, 0, 0, 0),
                     c(0.05, 0.9, 0.05, 0, 0),
                     c(0.1, 0.8, 0.1, 0, 0),
