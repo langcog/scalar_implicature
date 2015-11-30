@@ -515,23 +515,13 @@ colnames(m3.c.matched)[length(colnames(m3.c.matched))] = "e6.listener.p"
 # Store output
 performance.output[11, ] = c("m3.c", round(cor(m3.c.matched$e6.listener.p, m3.c.matched$pred), 5),
                              round(cor(m3.c.matched$listener.p, m3.c.matched$pred), 5), T)
-# Store plot 1
-m3.c.plot = qplot(stars, e6.listener.p, col=degree, 
-      data=m3.c.matched,
-      main=paste("m3.c\nalpha: ", alphas[11],
-                 "\nNormalized = ", T,
-                 "\nCorr = ", performance.output[11, 2]),
-      ylab="Posterior p(rating | word)") +
-      ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
 
 # Store plot 2 - both e6 and e11 data
-m3.c.jointPlot = m3.c.matched %>%
+m3.c.jointD = m3.c.matched %>%
   gather(study, listener.pred, listener.p, e6.listener.p)
-m3.c.jointPlot$study = ifelse(m3.c.jointPlot$study == "e6.listener.p", "e6", "e11")
-qplot(stars, listener.pred, col=degree, shape=study,
-      data=m3.c.jointPlot,
+m3.c.jointD$study = ifelse(m3.c.jointD$study == "e6.listener.p", "e6", "e11")
+m3.c.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m3.c.jointD,
       main=paste("m3.c\nalpha: ", alphas[11],
                  "\nNormalized = ", T,
                  ylab="Posterior p(rating | word)")) +
@@ -556,23 +546,13 @@ colnames(m3.d.matched)[length(colnames(m3.d.matched))] = "e6.listener.p"
 # Store output
 performance.output[12, ] = c("m3.d", round(cor(m3.d.matched$e6.listener.p, m3.d.matched$pred), 5),
                              round(cor(m3.d.matched$listener.p, m3.d.matched$pred), 5), F)
-# Store plot
-m3.d.plot = qplot(stars, e6.listener.p, col=degree, 
-      data=m3.d.matched,
-      main=paste("m3.d\nalpha: ", alphas[12],
-                 "\nNormalized = ", F,
-                 "\nCorr = ", performance.output[12, 2]),
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
 
 # Store plot 2 - both e6 and e11 data
-m3.d.jointPlot = m3.d.matched %>%
+m3.d.jointD = m3.d.matched %>%
   gather(study, listener.pred, listener.p, e6.listener.p)
-m3.d.jointPlot$study = ifelse(m3.d.jointPlot$study == "e6.listener.p", "e6", "e11")
-qplot(stars, listener.pred, col=degree, shape=study,
-      data=m3.d.jointPlot,
+m3.d.jointD$study = ifelse(m3.d.jointD$study == "e6.listener.p", "e6", "e11")
+m3.d.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m3.d.jointD,
       main=paste("m3.d\nalpha: ", alphas[12],
                  "\nNormalized = ", T,
                  ylab="Posterior p(rating | word)")) +
@@ -654,23 +634,12 @@ colnames(m4.c.matched)[length(colnames(m4.c.matched))] = "e6.listener.p"
 performance.output[15, ] = c("m4.c", round(cor(m4.c.matched$e6.listener.p, m4.c.matched$pred), 5),
                              round(cor(m4.c.matched$listener.p, m4.c.matched$pred), 5), T)
 
-# Store plot
-m4.c.plot = qplot(stars, e6.listener.p, col=degree, 
-      data=m4.c.matched,
-      main=paste("m4.c\nalpha: ", alphas[15],
-                 "\nNormalized = ", T,
-                 "\nCorr = ", performance.output[15, 2]),
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-
 # Store plot 2 - both e6 and e11 data
-m4.c.jointPlot = m4.c.matched %>%
+m4.c.jointD = m4.c.matched %>%
   gather(study, listener.pred, listener.p, e6.listener.p)
-m4.c.jointPlot$study = ifelse(m4.c.jointPlot$study == "e6.listener.p", "e6", "e11")
-qplot(stars, listener.pred, col=degree, shape=study,
-      data=m4.c.jointPlot,
+m4.c.jointD$study = ifelse(m4.c.jointD$study == "e6.listener.p", "e6", "e11")
+m4.c.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m4.c.jointD,
       main=paste("m4.c\nalpha: ", alphas[15],
                  "\nNormalized = ", T,
                  ylab="Posterior p(rating | word)")) +
@@ -696,23 +665,13 @@ colnames(m4.d.matched)[length(colnames(m4.d.matched))] = "e6.listener.p"
 # Store output
 performance.output[16, ] = c("m4.d", round(cor(m4.d.matched$e6.listener.p, m4.d.matched$pred), 5),
                              round(cor(m4.d.matched$listener.p, m4.d.matched$pred), 5), F)
-# Store plot
-m4.d.plot = qplot(stars, e6.listener.p, col=degree, 
-      data=m4.d.matched,
-      main=paste("m4.d\nalpha: ", alphas[16],
-                 "\nNormalized = ", F,
-                 "\nCorr = ", performance.output[16, 2]),
-      ylab="Posterior p(rating | word)") +
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
 
 # Store plot 2 - both e6 and e11 data
-m4.d.jointPlot = m4.d.matched %>%
+m4.d.jointD = m4.d.matched %>%
   gather(study, listener.pred, listener.p, e6.listener.p)
-m4.d.jointPlot$study = ifelse(m4.d.jointPlot$study == "e6.listener.p", "e6", "e11")
-qplot(stars, listener.pred, col=degree, shape=study,
-      data=m4.d.jointPlot,
+m4.d.jointD$study = ifelse(m4.d.jointD$study == "e6.listener.p", "e6", "e11")
+m4.d.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m4.d.jointD,
       main=paste("m4.d\nalpha: ", alphas[16],
                  "\nNormalized = ", T,
                  ylab="Posterior p(rating | word)")) +
@@ -763,54 +722,35 @@ Across e6 and e11 pragmatic listener judgements we see model fit improve as we a
 # Tuned, normalized models r
 barchart.d = performance.output[c(3, 7, 11, 15), ] %>%
   gather(study, cor, cor.e6, cor.e11)
+barchart.d$cor = as.numeric(barchart.d$cor)
 ggplot(barchart.d, aes(x=model, y=cor, fill=study)) + 
   geom_bar(stat="identity", position="dodge") +
   ylim(0, 1) + 
-  ggtitle("Model fit for e6 and e11\npragmatic listener judgments")
-  # geom_text(aes(x=model, y=as.numeric(cor) + 0.025, label=round(cor, 3)))
+  ggtitle("Model fit for e6 and e11\npragmatic listener judgments") +
+  geom_text(aes(x=model, y=as.numeric(cor) + 0.025, label=round(cor, 3), col=(study)))
 ```
 
-In particular, we first start to see a pretty 
-
-
+Here's another look at the improvement in model fit between normalized `m2` and `m3`.
 ```{r}
 m2.c.plot
-m3.c.plot
+m3.c.jointPlot
 ```
 
 Importantly, we also see improvements with the addition of 'fitted' alternatives in m4 see the plots below:
 ```{r}
-m3.c.plot
-m4.c.plot
+m3.c.jointPlot
+m4.c.jointPlot
 ```
 
-This improvement is particularly clear when we look at e11 data:
-```{r}
-qplot(stars, listener.p, col=degree, 
-      data=m3.c.matched,
-      main=paste("m4.c\nalpha: ", alphas[11],
-                 "\nNormalized = ", T,
-                 "\nCorr = ", performance.output[11, 3]),
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-
-qplot(stars, listener.p, col=degree, 
-      data=m4.c.matched,
-      main=paste("m4.c\nalpha: ", alphas[15],
-                 "\nNormalized = ", T,
-                 "\nCorr = ", performance.output[15, 3]),
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-```
-
+This presents a little bit more of a challenge, however, as we'd like to jointly fit our alpha as well as our alternatives - is this worth delving into? Currently we're just fitting alpha and then finding alternatives.
 
 ## Additional notes:
 
-1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 (see `RSA+AmbiguousSemantics.Rmd` for a more detailed analysis for literal listener experiment differences). Our best model performance occurs with e11 and the model is m4.c, correlation = `r as.numeric(performance.output[15, 3])` (see plot below):
+1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 see:
+
+https://cdn.rawgit.com/langcog/scalar_implicature/master/models/RSA%2BAmbiguousSemantics.html#pragmatic-listener-studies---judgement-distributional-differences
+
+Our best model performance occurs with e11 and the model is m4.c, correlation = `r as.numeric(performance.output[15, 3])` (see plot below):
 ```{r}
 qplot(stars, listener.p, col=degree, 
       data=m4.c.matched,
@@ -823,12 +763,13 @@ qplot(stars, listener.p, col=degree,
   geom_line(aes(y = pred), lty = 4)
 ```
 
+Normalizing vs not normalizing before running RSA:
 
-2) Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm inclined to stick with normalized model results because of this - we're interested in whether we see model improvement from the addition of salient alternatives - not from tuning hyperparameters. We tend to see more model improvement with alternatives when we're looking at normalized models (see `m3.c` vs `m4.c`).
+Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm not sure if there is a theoretical consideration here that RSA may want to address? What does it mean to normalize literal listener values prior to computing the posterior? One repercussion is that during normalization we'll see larger impact from salient alternatives... In `Model_addtionalAlts.Rmd` I'm seeing that higher entropy scales `memorable_unforgettable`, `palatable_delicious` appear to be looking for more alternatives (correlation improves when I add wacky distributions such as [0, 0.1, 0.9, 0.1, 0.9] which suggests that we need possibly *two* more alternatives, not just one). This seems intuitive in the higher entropy setting... Can we interpret this kind of finding (at least intuitively) as the model telling us it wants *more* alternatives? See
 
-3) We may want to explore the the idea of unique alphas for a given scale (would need to change how we've written RSA), for example using scale entropy measures.
+https://cdn.rawgit.com/langcog/scalar_implicature/master/models/Model_additionalAlts.html#match-items-between-studies-full-and-partial
 
-# All plots
+# All plots with e6 prag judgements
 ```{r overall_perf}
 m1.a.plot
 m1.b.plot
@@ -842,13 +783,13 @@ m2.d.plot
 
 m3.a.plot
 m3.b.plot
-m3.c.plot
-m3.d.plot
+m3.c.jointPlot
+m3.d.jointPlot
 
 m4.a.plot
 m4.b.plot
-m4.c.plot
-m4.d.plot
+m4.c.jointPlot
+m4.d.jointPlot
 ```
 
 # Other exploration
