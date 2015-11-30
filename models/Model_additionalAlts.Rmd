@@ -233,7 +233,14 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 
 Focus on single scalar fn()
 ```{r}
-focus_alts = function(target, combos, normalize=F) {
+# focus_alts
+# ---------
+# target    --> specific scalar family we're interested in (i.e. "some_all")
+# combos    --> collection of possible 'mid' l0 distribution
+# normalize --> normaize pre RSA?
+# alpha     --> set alpha level
+focus_alts = function(target, combos, normalize=F, alpha=1) {
+  # Default normalish looking distr
   if (is.null(combos)) {
     combos = data.frame(c(0, 0, 1, 0, 0),
                         c(0, 0.05, 0.9, 0.05, 0),
@@ -242,15 +249,17 @@ focus_alts = function(target, combos, normalize=F) {
                         c(0, 0.25, 0.5, 0.25, 0))  
   }
   colnames(combos) = LETTERS[1:length(colnames(combos))]
+  
+  # Find best distribution
   cors = c()
   for (i in 1:ncol(combos)) {
     ge.subset = data.full.extras[data.full.extras$scale == target, ]
     ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
     target.scalars = c("hi1", "hi2")
-    # Run model)
+    
+    # Run model
     m1 = ge.subset %>%
-      do(run.full(., alpha = 1,
-                  addMid = T, normalize=normalize))
+      do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
     if (target == "some_all") {
       target.scalars = c("hi1", "low1")
       m1 = m1[m1$degree %in% target.scalars, ]  
@@ -259,37 +268,81 @@ focus_alts = function(target, combos, normalize=F) {
     }
     cors[i] = cor(m1$pred, m1$listener.p)  
   }
-  cors 
   
+  # Get index of highest correlation
   i = which(cors == max(cors))[1]
-  # combos[i]
   ge.subset = data.full.extras[data.full.extras$scale == target, ]
     ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
   m1 = ge.subset %>%
-    do(run.full(., alpha = 1, addMid = T))
+    do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
   
-  qplot(stars, listener.p, col=degree, 
+  p = qplot(stars, listener.p, col=degree, 
         data=m1,
         ylab="Posterior p(rating | word)") + 
     geom_line(aes(y = pred), lty = 4)
+  
   return(c(combos[i], cors[i]))
 }
+```
 
+```{r}
+# liked_loved
 combos = data.frame(c(0, 0, 1, 0, 0),
                     c(0, 0.05, 1, .05, 0),
                     c(0, 0.1, 1, .1, 0),
-                    c(0.05, 0.1, 1, .1, 0.05),
+                    c(0, 0.1, 0.9, .1, 0),
+                    c(0, 0.2, 0.8, .2, 0),
+                    c(0, 0.25, 0.8, .25, 0),
+                    c(0.05, 0.1, 1, .1, 0.9),
                     c(0.1, 0.1, 1, .1, 0.1))  
-focus_alts("liked_loved", combos=combos)
-colnames(combos) = LETTERS[1:length(colnames(combos))]
-focus_alts("good_excellent", combos=NULL)
+focus_alts("liked_loved", combos=combos, alpha=4, normalize=T)
+focus_alts("liked_loved", combos=combos, alpha=8, normalize=F)
 
+# good_excellent
+combos = data.frame(c(0, 0, 1, 0, 0),
+                    c(0, 0.05, 0.9, 0.05, 0),
+                    c(0, 0.1, 0.8, 0.1, 0),
+                    c(0, 0.2, 0.6, 0.2, 0.9),
+                    c(0, 0.2, 0.6, 0.2, 1),
+                    c(0.05, 0.2, 0.6, 0.2, 0.05),
+                    c(0, 0.25, 0.5, 0.25, 0))  
+focus_alts("good_excellent", combos=combos, alpha = 4, normalize=T)
+focus_alts("good_excellent", combos=combos, alpha = 8, normalize=F)
+
+# some_all
 combos = data.frame(c(0, 1, 0, 0, 0),
-                    c(0.05, 0.9, 0.05, 0, 0),
+                    c(0.05, 2, 0.05, 0.05, 0.05),
                     c(0.1, 0.8, 0.1, 0, 0),
                     c(0.2, 0.6, 0.2, 0, 0),
                     c(0.25, 0.5, 0.25, 0, 0))
-focus_alts("some_all", combos=combos)
+focus_alts("some_all", combos=combos, alpha=4, normalize=T)
+focus_alts("some_all", combos=combos, alpha=8, normalize=F)
+
+# memorable_unforgettable
+combos = data.frame(rep(0.1, 5),
+                    c(0.05, 2, 0.05, 0.05, 0.05),
+                    c(0.05, 1, 0.05, 0.05, 0.05),
+                    c(0.05, 0.9, 0.05, 0.05, 0.05),
+                    c(0.05, 0.8, 0.05, 0.05, 0.05),
+                    c(0.05, 0.7, 0.05, 0.05, 0.05),
+                    c(0.05, 0.6, 0.05, 0.05, 0.05),
+                    c(0.05, 0.5, 0.05, 0.05, 0.05),
+                    c(0.1, 0.8, 0.1, 0.1, 0.1))
+focus_alts("memorable_unforgettable", combos=combos, alpha=4, normalize=T)
+focus_alts("memorable_unforgettable", combos=combos, alpha=8, normalize=F)
+
+# palatable_delicious
+combos = data.frame(rep(0.1, 5),
+                    c(0.05, 2, 0.05, 0.05, 0.05),
+                    c(0.05, 1, 0.05, 0.05, 0.05),
+                    c(0.05, 0.05, 0.05, 0.9, 0.1),
+                    c(0.05, 0.8, 0.05, 0.9, 0.05),
+                    c(0.05, 0.7, 0.05, 0.9, 0.05),
+                    c(0.05, 0.6, 0.05, 0.05, 0.05),
+                    c(0.05, 0.5, 0.05, 0.05, 0.05),
+                    c(0.1, 0.8, 0.1, 0.1, 0.1))
+focus_alts("palatable_delicious", combos=combos, alpha=4, normalize=T)
+focus_alts("palatable_delicious", combos=combos, alpha=8, normalize=F)
 ```
 
 
