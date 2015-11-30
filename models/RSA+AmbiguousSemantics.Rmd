@@ -7,7 +7,7 @@ output:
     highlight: pygments
     theme: flatly
     toc: yes
-    toc_depth: 2
+    toc_depth: 3
 ---
 ```{r load_data, results="hide", message=FALSE, warning=FALSE}
 rm(list = ls())
@@ -123,29 +123,6 @@ summary(glm(n.exp ~ scale + degree + stars + speaker.p, data=match.scalars))
 head(match.scalars)
 
 ```
-
-### Pragmatic Listener studies - judgement distributional differences
-```{r}
-e6.d = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
-e11.d = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
-match_scales = which((e11.d[, "scale"] != "some_all" &
-        (e11.d[, "degree"] == "hi2" | e11.d[, "degree"] == "hi1")) |
-       (e11.d[, "scale"] == "some_all" &
-          (e11.d[, "degree"] == "hi1" | e11.d[, "degree"] == "low1")))
-e11.d.mod = e11.d[match_scales,]
-e11.d.mod$degree = ifelse(e11.d.mod$degree == "hi1", "hi", "low")
-e11.d.mod = e11.d.mod %>%
-  select(degree, scale, stars, listener.p) %>%
-  mutate(exp = "e11")
-e6.d = e6.d %>% mutate(exp = "e6")
-combined.d = rbind(e6.d, e11.d.mod)
-
-ggplot(combined.d, aes(x=stars, y=listener.p, fill=exp)) +
-  geom_bar(stat="identity", position="dodge") +
-  facet_wrap(~scale+degree) +
-  ggtitle("e6 vs e11 prag listener judgements")
-```
-
 
 
 ### Description
@@ -293,6 +270,27 @@ With a slight modification to our current paradigm, we can get estimates of this
 <img src="RSA+AmbiguousSemantics_Images/prag_listener_example.png" alt="Pragmatic Listener example" style="width: 500px;" align="middle" border="2"/>
 </center>
 
+### Pragmatic Listener studies - judgement distributional differences
+```{r}
+e6.d = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
+e11.d = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
+match_scales = which((e11.d[, "scale"] != "some_all" &
+        (e11.d[, "degree"] == "hi2" | e11.d[, "degree"] == "hi1")) |
+       (e11.d[, "scale"] == "some_all" &
+          (e11.d[, "degree"] == "hi1" | e11.d[, "degree"] == "low1")))
+e11.d.mod = e11.d[match_scales,]
+e11.d.mod$degree = ifelse(e11.d.mod$degree == "hi1", "hi", "low")
+e11.d.mod = e11.d.mod %>%
+  dplyr::select(degree, scale, stars, listener.p) %>%
+  mutate(exp = "e11")
+e6.d = e6.d %>% mutate(exp = "e6")
+combined.d = rbind(e6.d, e11.d.mod)
+
+ggplot(combined.d, aes(x=stars, y=listener.p, fill=exp)) +
+  geom_bar(stat="identity", position="dodge") +
+  facet_wrap(~scale+degree) +
+  ggtitle("e6 vs e11 prag listener judgements")
+```
 
 
 
