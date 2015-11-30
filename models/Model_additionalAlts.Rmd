@@ -2,7 +2,12 @@
 title: "Model_additionalAlts"
 author: "BPeloquin"
 date: "November 25, 2015"
-output: html_document
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_depth: 3
 ---
 ```{r include=FALSE}
 rm(list=ls())
@@ -302,16 +307,24 @@ focus_alts("liked_loved", combos=combos, alpha=8, normalize=F)
 combos = data.frame(c(0, 0, 1, 0, 0),
                     c(0, 0.05, 0.9, 0.05, 0),
                     c(0, 0.1, 0.8, 0.1, 0),
-                    c(0, 0.2, 0.6, 0.2, 0.9),
+                    c(0, 0.2, 0.2, 0.2, 0.9),
                     c(0, 0.2, 0.6, 0.2, 1),
+                    c(0, 0.2, 0.6, 0.3, 0.2),
+                    c(0, 0.2, 0.6, 0.3, 0.3),
+                    c(0, 0.2, 0.6, 0.5, 0.4),
+                    c(0, 0.2, 0.6, 0.5, 0.5),
+                    c(0, 0.2, 0.6, 0.6, 0.4),
                     c(0.05, 0.2, 0.6, 0.2, 0.05),
                     c(0, 0.25, 0.5, 0.25, 0))  
-focus_alts("good_excellent", combos=combos, alpha = 4, normalize=T)
+focus_alts("good_excellent", combos=combos, alpha = 1, normalize=T)
 focus_alts("good_excellent", combos=combos, alpha = 8, normalize=F)
 
 # some_all
 combos = data.frame(c(0, 1, 0, 0, 0),
                     c(0.05, 2, 0.05, 0.05, 0.05),
+                    c(0.2, 0.9, 0.2, 0.1, 0.1),
+                    c(0.2, 0.9, 0.2, 0.1, 0),
+                    c(0.1, 0.9, 0.1, 0, 0),
                     c(0.1, 0.8, 0.1, 0, 0),
                     c(0.2, 0.6, 0.2, 0, 0),
                     c(0.25, 0.5, 0.25, 0, 0))
@@ -336,54 +349,12 @@ combos = data.frame(rep(0.1, 5),
                     c(0.05, 2, 0.05, 0.05, 0.05),
                     c(0.05, 1, 0.05, 0.05, 0.05),
                     c(0.05, 0.05, 0.05, 0.9, 0.1),
-                    c(0.05, 0.8, 0.05, 0.9, 0.05),
-                    c(0.05, 0.7, 0.05, 0.9, 0.05),
+                    c(0.05, 0.05, 0.05, 0.9, 0.05),
+                    c(0.05, 0.7, 0.05, 0.5, 0.05),
                     c(0.05, 0.6, 0.05, 0.05, 0.05),
                     c(0.05, 0.5, 0.05, 0.05, 0.05),
                     c(0.1, 0.8, 0.1, 0.1, 0.1))
 focus_alts("palatable_delicious", combos=combos, alpha=4, normalize=T)
 focus_alts("palatable_delicious", combos=combos, alpha=8, normalize=F)
-```
-
-
-Focus on `some_all`:
-```{r}
-ge.subset = data.full[data.full$scale == "some_all", ]
-ge.subset[ge.subset$degree == "mid", "speaker.p"] = c(0, 1, 0, 0, 0)
-head(ge.subset, n = 20)
-target.scalars = c("hi1", "low1")
-
-# Run model
-m1 = ge.subset %>%
-  do(run.full(., alpha = 8, addMid = T))
-cor(m1$pred, m1$listener.p)
-
-qplot(stars, listener.p, col=degree, 
-      data=m1,
-      ylab="Posterior p(rating | word)") + 
-  geom_line(aes(y = pred), lty = 4)
-
-m1 = m1[m1$degree %in% target.scalars, ]
-cor(m1$pred, m1$listener.p)
-
-combos = data.frame(c(0, 0, 1, 0, 0),
-                    c(0, 0.05, 0.9, 0.05, 0),
-                    c(0, 0.1, 0.8, 0.1, 0),
-                    c(0, 0.2, 0.6, 0.2, 0),
-                    c(0, 0.25, 0.5, 0.25, 0))
-colnames(combos) = LETTERS[1:length(colnames(combos))]
-cors = c()
-for (i in 1:ncol(combos)) {
-  print(i)
-  ge.subset = data.full[data.full$scale == "good_excellent", ]
-  ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
-  target.scalars = c("hi1", "hi2")
-  # Run model
-  m1 = ge.subset %>%
-    do(run.full(., alpha = 8, addMid = T))
-  m1 = m1[m1$degree %in% target.scalars, ]
-  cors[i] = cor(m1$pred, m1$listener.p)  
-}
-cors 
 ```
 
