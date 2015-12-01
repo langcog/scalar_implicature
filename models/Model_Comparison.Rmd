@@ -218,7 +218,9 @@ data.full = left_join(speaker, listener) %>%
 
 ### Data for full model - alternatives
 ```{r}
-speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10a.csv")
+# made up alts in 'L0_e10a.csv'
+# fitted alts in 'L0_e10fittedAlts.csv'
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10fittedAlts.csv")
 data.full.extras = left_join(speaker, listener) %>%
   left_join(priors) %>%
   rowwise %>%
@@ -713,11 +715,11 @@ grid.table(performance.output)
 ```
 
 
-## Initial thoughts:
+# Interpretation
 
-### Overall
+## Overall results
 
-Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives. The largest improvement in model fit occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models):
+Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives: The largest improvement in model fit occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models)
 ```{r}
 # Tuned, normalized models r
 barchart.d = performance.output[c(3, 7, 11, 15), ] %>%
@@ -730,46 +732,40 @@ ggplot(barchart.d, aes(x=model, y=cor, fill=study)) +
   geom_text(aes(x=model, y=as.numeric(cor) + 0.025, label=round(cor, 3), col=(study)))
 ```
 
-Here's another look at the improvement in model fit between normalized `m2` and `m3`.
+Here's a closer look at the improvement in fit between between normalized `m2` and `m3`.
 ```{r}
 m2.c.plot
 m3.c.jointPlot
 ```
 
-Importantly, we also see improvements with the addition of 'fitted' alternatives in m4 see the plots below:
+## Including alternatives
+
+Importantly, we also see improvements with the addition of 'fitted' alternatives in m4 see the plots below - especially in matching `weaker` scalar distriubtions (i.e. 'some' in 'some_all').
 ```{r}
-m3.c.jointPlot
 m4.c.jointPlot
 ```
 
-This presents a little bit more of a challenge, however, as we'd like to jointly fit our alpha as well as our alternatives - is this worth delving into? Currently we're just fitting alpha and then finding alternatives.
+## Questions:
 
-## Additional notes:
+### 1) How do we want to deal with e6 vs e11 prag listener judgement differences?
+[e6 and e11 prag listener judgement differences](https://cdn.rawgit.com/langcog/scalar_implicature/master/models/RSA%2BAmbiguousSemantics.html#pragmatic-listener-studies---judgement-distributional-differences)
 
-1) In general model performance is greater (correlation) for e11 data. This may be due in part to less extreme literal listener evaluations in e11 see:
+### 2) Normalizing vs not normalizing before running RSA:
 
-https://cdn.rawgit.com/langcog/scalar_implicature/master/models/RSA%2BAmbiguousSemantics.html#pragmatic-listener-studies---judgement-distributional-differences
+Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm not sure if there is a theoretical consideration here that RSA may want to address? What does it mean to normalize literal listener values prior to computing the posterior? One repercussion is that during normalization we'll see larger impact from salient alternatives...
 
-Our best model performance occurs with e11 and the model is m4.c, correlation = `r as.numeric(performance.output[15, 3])` (see plot below):
+### 3) Coming up with alternatives
+
+I was trying to estimate what seemed liked 'sensible' alternatives and decided to try and 'fit' the distributions for alternatives using a pseudo gradient descent algorithm - 
+[fitting alternatives](https://cdn.rawgit.com/langcog/scalar_implicature/master/models/Model_additionalAlts.html#plot-distr)
+
+How can we interpret some of the more funky alternatives (i.e. `memorable_unforgettable`, `some_all`)? Does this scalar family 'want' more than one more alternative? That is, maybe the model is telling us that only one additional alternative is not enough...? Can we link this intuition back to entropy measures for the scales? 
 ```{r}
-qplot(stars, listener.p, col=degree, 
-      data=m4.c.matched,
-      main=paste("m4.c\nalpha: ", alphas[15],
-                 "\nNormalized = ", T,
-                 "\nCorr = ", performance.output[15, 3]),
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
+# entropy measures 
+scales.entropy
 ```
 
-Normalizing vs not normalizing before running RSA:
-
-Non-normalized models seem to be more sensitive to alpha tuning as the number of alternatives increases (see m4.d and m3.d with alpha = 8). I'm not sure if there is a theoretical consideration here that RSA may want to address? What does it mean to normalize literal listener values prior to computing the posterior? One repercussion is that during normalization we'll see larger impact from salient alternatives... In `Model_addtionalAlts.Rmd` I'm seeing that higher entropy scales `memorable_unforgettable`, `palatable_delicious` appear to be looking for more alternatives (correlation improves when I add wacky distributions such as [0, 0.1, 0.9, 0.1, 0.9] which suggests that we need possibly *two* more alternatives, not just one). This seems intuitive in the higher entropy setting... Can we interpret this kind of finding (at least intuitively) as the model telling us it wants *more* alternatives? See
-
-https://cdn.rawgit.com/langcog/scalar_implicature/master/models/Model_additionalAlts.html#match-items-between-studies-full-and-partial
-
-# All plots with e6 prag judgements
+# All plots
 ```{r overall_perf}
 m1.a.plot
 m1.b.plot
