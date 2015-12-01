@@ -21,7 +21,7 @@ library(gridExtra)
 ```
 
 # RSA functionality
-```{r}
+```{r RSA_function}
 # speaker informativity
 # ---------------------
 speaker.inf = function(d, alpha, cost = 0) {
@@ -50,7 +50,7 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 ```
 
 # Run model functionality
-```{r}
+```{r run_functions}
 # run.partial()
 # ------------
 # Run RSA with model1 (entailment) and model2 (entailment + generic)
@@ -136,7 +136,7 @@ run.full = function(d, alpha=1, useprior=F, usenone=F, addMid=F, normalize=F) {
 ```
 
 ## Tune hyperparams
-```{r}
+```{r alpha_tuning}
 # tune.alhpa()
 # ------------
 # d        --> data
@@ -214,7 +214,7 @@ data.full$entropy = scales.entropy[data.full$scale, ]$Entropy
 ```
 
 ### Data for full model - alternatives
-```{r}
+```{r full_model_data + alternatives, message=FALSE, warning=FALSE}
 speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10a.csv")
 data.full.extras = left_join(speaker, listener) %>%
   left_join(priors) %>%
@@ -225,7 +225,7 @@ data.full.extras = left_join(speaker, listener) %>%
 ```
 
 ## Match items between studies (full and partial)
-```{r}
+```{r match_items_between_studies}
 matched.items = which((data.full[, "scale"] != "some_all" &
         (data.full[, "degree"] == "hi2" | data.full[, "degree"] == "hi1")) |
        (data.full[, "scale"] == "some_all" &
@@ -239,7 +239,7 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 
 # Fit extra scalar literal listener distributions
 ## modified gradient descent / MLE fn()
-```{r}
+```{r Fit extra scalars functions, warning=FALSE}
 # normalize()
 # -----------
 # normalize a generic vector
@@ -295,9 +295,15 @@ fit_distr = function(target, numIters = 100, eta=0.01, normalize=T,
 
 
 # Fit extra scalar literal listener distributions
-```{r}
+```{r Run fit extra scalars}
+# Set parameters for tunin
 # Normalize in RSA?
 norm = T
+eta = 0.01
+alpha = 4
+numIters = 100
+
+
 # Our scalars
 scalars = c("good_excellent",
             "liked_loved",
@@ -313,8 +319,8 @@ for (i in 1:length(scalars)) {
   # record fitting
   data.record = data.frame(matrix(rep(NA, 5), ncol=5))
   # output is optimal distr [[1]] and [[2]] record of fitting
-  out = fit_distr(scalars[i], numIters=20, eta=0.01,
-                  verbose=F, normalize=norm, alpha=4, data.record=data.record)
+  out = fit_distr(scalars[i], numIters=numIters, eta=eta,
+                  verbose=F, normalize=norm, alpha=alpha, data.record=data.record)
   
   # get fitted scalar distr
   fitted.distr[, i] = out[[1]]
@@ -326,28 +332,33 @@ for (i in 1:length(scalars)) {
 ```
 
 
-```{r}
+```{r format tracking data}
 # Format track data for display
 track.data = track.data[-1, ]
-track.data$step = rep(seq(1, 20), 5)
+track.data$step = rep(seq(1, numIters), 5)
 track.data = track.data %>% 
   gather(stars, value, X1:X5)
+track.data$stars = ifelse(track.data$stars == "X1", "1",
+                          ifelse(track.data$stars == "X2", "2",
+                                 ifelse(track.data$stars == "X3", "3",
+                                        ifelse(track.data$stars == "X4", "4", 5))))
+colnames(track.data)[1] = "scale"
 ```
 
 ## Run distribution fitting
-```{r}
+```{r Run-data}
 for (scale in scalars) {
   data.full.extras[data.full.extras$scale == scale &
                      data.full.extras$degree == "mid", ]$speaker.p =
     normalize(fitted.distr[ , scale])
 }
 m = data.full.extras %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=norm))
+  do(run.full(., alpha = alpha, addMid=T, normalize=norm))
 cor(m[matched.items.extras, ]$listener.p, m[matched.items.extras, ]$pred)
 ```
 
 ## Plot distr
-```{r}
+```{r Plots}
 # Normalize speaker.p for plotting
 for (scale in scalars) {
   degrees = unique(data.full.extras$degree)
@@ -360,16 +371,33 @@ for (scale in scalars) {
 }
 
 # Differentiate tuned 'mid' scalar
-data.full.extras$type = ifelse(data.full.extras$degree == "mid", "red", "blue")
+plot.data = data.full.extras
+plot.data$type = ifelse(plot.data$degree == "mid", "red", "blue")
 qplot(x = stars, y = speaker.p, colour = type,
       geom = "line", stat = "identity", position = "dodge", 
       main = "Literal listener semantics\nEmpirical estimates and tuned extra 'mid'",
       ylab = "P_{L0}(Word | Rating) - Normalized",
-      data = data.full.extras) + 
+      data = plot.data) + 
   facet_wrap(~scale + degree)
 
 # Tracking of gradient descent tuning
 ggplot(data=track.data, aes(x=step, y=value, col=stars)) +
   geom_line() +
-  facet_wrap(~X6)
+  facet_wrap(~scale) +
+  ylab("Normalized p(m | u)") +
+  xlab("Iterations") +
+  ggtitle("Fitted alternative distr fitting")
 ```
+
+## Output fitted literal listener to .csv
+```{r}
+data.out = data.full.extras %>%
+  select(degree, stars, speaker.p) %>%
+  mutate(cil = NA,
+         cih = NA,
+         cnt.judgment = NA)
+data.out = data.out[, c(1, 2, 3, 5, 6, 7, 4)]
+# write.csv(data.out,
+#           "~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10fittedAlts.csv")
+```
+
