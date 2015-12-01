@@ -291,6 +291,10 @@ focus_alts = function(target, combos, normalize=F, alpha=1) {
 ```
 
 ```{r}
+
+
+
+
 # liked_loved
 combos = data.frame(c(0, 0, 1, 0, 0),
                     c(0, 0.05, 1, .05, 0),
@@ -358,3 +362,113 @@ focus_alts("palatable_delicious", combos=combos, alpha=4, normalize=T)
 focus_alts("palatable_delicious", combos=combos, alpha=8, normalize=F)
 ```
 
+Fit params - weight update fn()
+```{r}
+# fit_distr()
+# -----------
+# target        --> specific scalar family we're interested in (i.e. "some_all")
+# numIters      --> 
+# eta           --> 
+# normalize     --> 
+fit_distr = function(target, numIters = 100, eta=0.01,  normalize=F, alpha=1, verbose=F) {
+  # Initialize to uniform
+  w = rep(0.1, 5)
+  # Focus on scalar 'target'
+  scalar.focused = data.full.extras[data.full.extras$scale == target, ]
+  # Initialize 'mid' alternative
+  
+  match.scalars = which(scalar.focused$degree == "hi1" | scalar.focused$degree == "hi2")
+
+  # For numIters iterations...
+  for (i in 1:numIters) {
+    scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = w
+    m = scalar.focused %>%
+      do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
+    w[1] = w[1] - eta * (sum(m[m$stars == 1, ]$listener.p - m[m$stars == 1, ]$pred))
+    w[2] = w[2] - eta * (sum(m[m$stars == 2, ]$listener.p - m[m$stars == 2, ]$pred))
+    w[3] = w[3] - eta * (sum(m[m$stars == 3, ]$listener.p - m[m$stars == 3, ]$pred))
+    w[4] = w[4] - eta * (sum(m[m$stars == 4, ]$listener.p - m[m$stars == 4, ]$pred))
+    w[5] = w[5] - eta * (sum(m[m$stars == 5, ]$listener.p - m[m$stars == 5, ]$pred))
+    w = ifelse(w <= 0, 0, w)
+    w = ifelse(w >= 1, 1, w)
+    if(verbose) {print(w)}
+  }
+  return(w)
+}
+normalize = function(w) { return (w / sum(w))}
+
+```
+
+
+```{r}
+targets = c("hi1", "hi2")
+fitted.w = fit_distr("good_excellent", numIters=100, alpha=4, eta=0.001, normalize=T)
+scalar.focused = data.full.extras[data.full.extras$scale == "good_excellent", ]
+scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
+m = scalar.focused %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=T))
+cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
+normalize(fitted.w)
+
+
+fitted.w = fit_distr("liked_loved", numIters=100, alpha=4, eta=0.001, normalize=T)
+# fitted.w = fitted.w / sum(fitted.w)
+scalar.focused = data.full.extras[data.full.extras$scale == "good_excellent", ]
+scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
+m = scalar.focused %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=T))
+cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
+normalize(fitted.w)
+
+targets = c("hi1", "low1")
+fitted.w = fit_distr("some_all", numIters=200, alpha=4, eta=0.001, normalize=T)
+# fitted.w = fitted.w / sum(fitted.w)
+scalar.focused = data.full.extras[data.full.extras$scale == "some_all", ]
+scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
+m = scalar.focused %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=T))
+cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
+normalize(fitted.w)
+qplot(stars, listener.p, col=degree, 
+      data=m[m$degree %in% targets,],
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+
+targets = c("hi1", "hi2")
+fitted.w = fit_distr("palatable_delicious", numIters=200, alpha=4, eta=0.001, normalize=T)
+# fitted.w = fitted.w / sum(fitted.w)
+scalar.focused = data.full.extras[data.full.extras$scale == "palatable_delicious", ]
+scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
+m = scalar.focused %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=T))
+cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
+normalize(fitted.w)
+
+qplot(stars, listener.p, col=degree, 
+      data=m[m$degree %in% targets,],
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+targets = c("hi1", "hi2")
+fitted.w = fit_distr("memorable_unforgettable", numIters=200, alpha=4, eta=0.01, normalize=T)
+# fitted.w = fitted.w / sum(fitted.w)
+scalar.focused = data.full.extras[data.full.extras$scale == "memorable_unforgettable", ]
+scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
+m = scalar.focused %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=T))
+cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
+
+normalize(fitted.w)
+
+qplot(stars, listener.p, col=degree, 
+      data=m[m$degree %in% targets,],
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+```
