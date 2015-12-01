@@ -236,134 +236,15 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
           (data.full.extras[, "degree"] == "hi1" | data.full.extras[, "degree"] == "low1")))
 ```
 
-Focus on single scalar fn()
+
+# Fit extra scalar literal listener distributions
+## modified gradient descent / MLE fn()
 ```{r}
-# focus_alts
-# ---------
-# target    --> specific scalar family we're interested in (i.e. "some_all")
-# combos    --> collection of possible 'mid' l0 distribution
-# normalize --> normaize pre RSA?
-# alpha     --> set alpha level
-focus_alts = function(target, combos, normalize=F, alpha=1) {
-  # Default normalish looking distr
-  if (is.null(combos)) {
-    combos = data.frame(c(0, 0, 1, 0, 0),
-                        c(0, 0.05, 0.9, 0.05, 0),
-                        c(0, 0.1, 0.8, 0.1, 0),
-                        c(0, 0.2, 0.6, 0.2, 0),
-                        c(0, 0.25, 0.5, 0.25, 0))  
-  }
-  colnames(combos) = LETTERS[1:length(colnames(combos))]
-  
-  # Find best distribution
-  cors = c()
-  for (i in 1:ncol(combos)) {
-    ge.subset = data.full.extras[data.full.extras$scale == target, ]
-    ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
-    target.scalars = c("hi1", "hi2")
-    
-    # Run model
-    m1 = ge.subset %>%
-      do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
-    if (target == "some_all") {
-      target.scalars = c("hi1", "low1")
-      m1 = m1[m1$degree %in% target.scalars, ]  
-    } else {
-      m1 = m1[m1$degree %in% target.scalars, ]  
-    }
-    cors[i] = cor(m1$pred, m1$listener.p)  
-  }
-  
-  # Get index of highest correlation
-  i = which(cors == max(cors))[1]
-  ge.subset = data.full.extras[data.full.extras$scale == target, ]
-    ge.subset[ge.subset$degree == "mid", "speaker.p"] = combos[, i]
-  m1 = ge.subset %>%
-    do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
-  
-  p = qplot(stars, listener.p, col=degree, 
-        data=m1,
-        ylab="Posterior p(rating | word)") + 
-    geom_line(aes(y = pred), lty = 4)
-  
-  return(c(combos[i], cors[i]))
-}
-```
+# normalize()
+# -----------
+# normalize a generic vector
+normalize = function(w) { return (w / sum(w))}
 
-```{r}
-
-
-
-
-# liked_loved
-combos = data.frame(c(0, 0, 1, 0, 0),
-                    c(0, 0.05, 1, .05, 0),
-                    c(0, 0.1, 1, .1, 0),
-                    c(0, 0.1, 0.9, .1, 0),
-                    c(0, 0.2, 0.8, .2, 0),
-                    c(0, 0.25, 0.8, .25, 0),
-                    c(0.05, 0.1, 1, .1, 0.9),
-                    c(0.1, 0.1, 1, .1, 0.1))  
-focus_alts("liked_loved", combos=combos, alpha=4, normalize=T)
-focus_alts("liked_loved", combos=combos, alpha=8, normalize=F)
-
-# good_excellent
-combos = data.frame(c(0, 0, 1, 0, 0),
-                    c(0, 0.05, 0.9, 0.05, 0),
-                    c(0, 0.1, 0.8, 0.1, 0),
-                    c(0, 0.2, 0.2, 0.2, 0.9),
-                    c(0, 0.2, 0.6, 0.2, 1),
-                    c(0, 0.2, 0.6, 0.3, 0.2),
-                    c(0, 0.2, 0.6, 0.3, 0.3),
-                    c(0, 0.2, 0.6, 0.5, 0.4),
-                    c(0, 0.2, 0.6, 0.5, 0.5),
-                    c(0, 0.2, 0.6, 0.6, 0.4),
-                    c(0.05, 0.2, 0.6, 0.2, 0.05),
-                    c(0, 0.25, 0.5, 0.25, 0))  
-focus_alts("good_excellent", combos=combos, alpha = 1, normalize=T)
-focus_alts("good_excellent", combos=combos, alpha = 8, normalize=F)
-
-# some_all
-combos = data.frame(c(0, 1, 0, 0, 0),
-                    c(0.05, 2, 0.05, 0.05, 0.05),
-                    c(0.2, 0.9, 0.2, 0.1, 0.1),
-                    c(0.2, 0.9, 0.2, 0.1, 0),
-                    c(0.1, 0.9, 0.1, 0, 0),
-                    c(0.1, 0.8, 0.1, 0, 0),
-                    c(0.2, 0.6, 0.2, 0, 0),
-                    c(0.25, 0.5, 0.25, 0, 0))
-focus_alts("some_all", combos=combos, alpha=4, normalize=T)
-focus_alts("some_all", combos=combos, alpha=8, normalize=F)
-
-# memorable_unforgettable
-combos = data.frame(rep(0.1, 5),
-                    c(0.05, 2, 0.05, 0.05, 0.05),
-                    c(0.05, 1, 0.05, 0.05, 0.05),
-                    c(0.05, 0.9, 0.05, 0.05, 0.05),
-                    c(0.05, 0.8, 0.05, 0.05, 0.05),
-                    c(0.05, 0.7, 0.05, 0.05, 0.05),
-                    c(0.05, 0.6, 0.05, 0.05, 0.05),
-                    c(0.05, 0.5, 0.05, 0.05, 0.05),
-                    c(0.1, 0.8, 0.1, 0.1, 0.1))
-focus_alts("memorable_unforgettable", combos=combos, alpha=4, normalize=T)
-focus_alts("memorable_unforgettable", combos=combos, alpha=8, normalize=F)
-
-# palatable_delicious
-combos = data.frame(rep(0.1, 5),
-                    c(0.05, 2, 0.05, 0.05, 0.05),
-                    c(0.05, 1, 0.05, 0.05, 0.05),
-                    c(0.05, 0.05, 0.05, 0.9, 0.1),
-                    c(0.05, 0.05, 0.05, 0.9, 0.05),
-                    c(0.05, 0.7, 0.05, 0.5, 0.05),
-                    c(0.05, 0.6, 0.05, 0.05, 0.05),
-                    c(0.05, 0.5, 0.05, 0.05, 0.05),
-                    c(0.1, 0.8, 0.1, 0.1, 0.1))
-focus_alts("palatable_delicious", combos=combos, alpha=4, normalize=T)
-focus_alts("palatable_delicious", combos=combos, alpha=8, normalize=F)
-```
-
-Fit params - weight update fn()
-```{r}
 # fit_distr()
 # -----------
 # target        --> specific scalar family we're interested in (i.e. "some_all")
@@ -371,7 +252,10 @@ Fit params - weight update fn()
 # eta           --> step size
 # alpha         --> alpha level for RSA?
 # normalize     --> normalize in RSA?
-fit_distr = function(target, numIters = 100, eta=0.01, normalize=T, alpha=1, verbose=F) {
+fit_distr = function(target, numIters = 100, eta=0.01, normalize=T,
+                     alpha=1, verbose=F, data.record=NULL) {
+  
+  if (verbose) { print(paste("Currently fitting", target, "...")) }
   # Initialize to uniform
   w = rep(0.1, 5)
   # Focus on scalar 'target'
@@ -379,6 +263,7 @@ fit_distr = function(target, numIters = 100, eta=0.01, normalize=T, alpha=1, ver
   
   # For numIters iterations...
   for (i in 1:numIters) {
+    prev.w = w
     scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = w
     m = scalar.focused %>%
       do(run.full(., alpha = alpha, addMid=T, normalize=normalize))
@@ -389,84 +274,102 @@ fit_distr = function(target, numIters = 100, eta=0.01, normalize=T, alpha=1, ver
     w[5] = w[5] - eta * (sum(m[m$stars == 5, ]$listener.p - m[m$stars == 5, ]$pred))
     w = ifelse(w <= 0, 0, w)
     w = ifelse(w >= 1, 1, w)
-    if(verbose) {print(w)}
+    w = normalize(w)
+    
+    # Record convergence
+    if (!is.null(data.record)) {
+      data.record = rbind(data.record, w)
+    }
+    
+    # Check if we've converged
+    if (sum(abs(prev.w - w)) < 0.00001) {
+      if(verbose) { print("Convergence") }
+      return(list(w, data.record))
+    }
+    
+    if(verbose) {print(list(i, w))}
   }
-  return(w)
+  return(list(w, data.record))
 }
-normalize = function(w) { return (w / sum(w))}
+```
 
+
+# Fit extra scalar literal listener distributions
+```{r}
+# Normalize in RSA?
+norm = T
+# Our scalars
+scalars = c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+fitted.distr = data.frame(matrix(rep(NA, 25), ncol=5))
+colnames(fitted.distr) = scalars
+
+# Fit each of our scalars / track fitting
+track.data = data.frame(matrix(ncol=6))
+for (i in 1:length(scalars)) {
+  # record fitting
+  data.record = data.frame(matrix(rep(NA, 5), ncol=5))
+  # output is optimal distr [[1]] and [[2]] record of fitting
+  out = fit_distr(scalars[i], numIters=20, eta=0.01,
+                  verbose=F, normalize=norm, alpha=4, data.record=data.record)
+  
+  # get fitted scalar distr
+  fitted.distr[, i] = out[[1]]
+  # get tracking data
+  tracking = as.data.frame(out[[2]][-1,]) %>%
+    mutate(X6 = scalars[i])
+  track.data = rbind(track.data, tracking)
+}
 ```
 
 
 ```{r}
-targets = c("hi1", "hi2")
-fitted.w = fit_distr("good_excellent", numIters=100, alpha=4, eta=0.001, normalize=T)
-scalar.focused = data.full.extras[data.full.extras$scale == "good_excellent", ]
-scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
-m = scalar.focused %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=T))
-cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
-normalize(fitted.w)
+# Format track data for display
+track.data = track.data[-1, ]
+track.data$step = rep(seq(1, 20), 5)
+track.data = track.data %>% 
+  gather(stars, value, X1:X5)
+```
 
+## Run distribution fitting
+```{r}
+for (scale in scalars) {
+  data.full.extras[data.full.extras$scale == scale &
+                     data.full.extras$degree == "mid", ]$speaker.p =
+    normalize(fitted.distr[ , scale])
+}
+m = data.full.extras %>%
+  do(run.full(., alpha = 4, addMid=T, normalize=norm))
+cor(m[matched.items.extras, ]$listener.p, m[matched.items.extras, ]$pred)
+```
 
-fitted.w = fit_distr("liked_loved", numIters=100, alpha=4, eta=0.001, normalize=T)
-# fitted.w = fitted.w / sum(fitted.w)
-scalar.focused = data.full.extras[data.full.extras$scale == "good_excellent", ]
-scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
-m = scalar.focused %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=T))
-cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
-normalize(fitted.w)
+## Plot distr
+```{r}
+# Normalize speaker.p for plotting
+for (scale in scalars) {
+  degrees = unique(data.full.extras$degree)
+  for (degree in degrees) {
+    data.full.extras[data.full.extras$scale == scale &
+                       data.full.extras$degree == degree, ]$speaker.p = 
+        normalize(data.full.extras[data.full.extras$scale == scale &
+                                     data.full.extras$degree == degree, ]$speaker.p)
+  }
+}
 
-targets = c("hi1", "low1")
-fitted.w = fit_distr("some_all", numIters=200, alpha=4, eta=0.001, normalize=T)
-# fitted.w = fitted.w / sum(fitted.w)
-scalar.focused = data.full.extras[data.full.extras$scale == "some_all", ]
-scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
-m = scalar.focused %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=T))
-cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
-normalize(fitted.w)
-qplot(stars, listener.p, col=degree, 
-      data=m[m$degree %in% targets,],
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
+# Differentiate tuned 'mid' scalar
+data.full.extras$type = ifelse(data.full.extras$degree == "mid", "red", "blue")
+qplot(x = stars, y = speaker.p, colour = type,
+      geom = "line", stat = "identity", position = "dodge", 
+      main = "Literal listener semantics\nEmpirical estimates and tuned extra 'mid'",
+      ylab = "P_{L0}(Word | Rating) - Normalized",
+      data = data.full.extras) + 
+  facet_wrap(~scale + degree)
 
-
-targets = c("hi1", "hi2")
-fitted.w = fit_distr("palatable_delicious", numIters=200, alpha=4, eta=0.001, normalize=T)
-# fitted.w = fitted.w / sum(fitted.w)
-scalar.focused = data.full.extras[data.full.extras$scale == "palatable_delicious", ]
-scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
-m = scalar.focused %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=T))
-cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
-normalize(fitted.w)
-
-qplot(stars, listener.p, col=degree, 
-      data=m[m$degree %in% targets,],
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
-
-targets = c("hi1", "hi2")
-fitted.w = fit_distr("memorable_unforgettable", numIters=200, alpha=4, eta=0.01, normalize=T)
-# fitted.w = fitted.w / sum(fitted.w)
-scalar.focused = data.full.extras[data.full.extras$scale == "memorable_unforgettable", ]
-scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = fitted.w
-m = scalar.focused %>%
-  do(run.full(., alpha = 4, addMid=T, normalize=T))
-cor(m[m$degree %in% targets, ]$listener.p, m[m$degree %in% targets, ]$pred)
-
-normalize(fitted.w)
-
-qplot(stars, listener.p, col=degree, 
-      data=m[m$degree %in% targets,],
-      ylab="Posterior p(rating | word)") + 
-  ylim(0, 1) +
-  facet_wrap(~scale) + 
-  geom_line(aes(y = pred), lty = 4)
+# Tracking of gradient descent tuning
+ggplot(data=track.data, aes(x=step, y=value, col=stars)) +
+  geom_line() +
+  facet_wrap(~X6)
 ```
