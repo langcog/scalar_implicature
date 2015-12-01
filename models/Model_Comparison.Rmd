@@ -719,7 +719,7 @@ grid.table(performance.output)
 
 ## Overall results
 
-Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives: The largest improvement in model fit occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models)
+Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives: The largest improvement occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models)
 ```{r}
 # Tuned, normalized models r
 barchart.d = performance.output[c(3, 7, 11, 15), ] %>%
