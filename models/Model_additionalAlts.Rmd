@@ -367,18 +367,16 @@ Fit params - weight update fn()
 # fit_distr()
 # -----------
 # target        --> specific scalar family we're interested in (i.e. "some_all")
-# numIters      --> 
-# eta           --> 
-# normalize     --> 
-fit_distr = function(target, numIters = 100, eta=0.01,  normalize=F, alpha=1, verbose=F) {
+# numIters      --> number of iterations to run
+# eta           --> step size
+# alpha         --> alpha level for RSA?
+# normalize     --> normalize in RSA?
+fit_distr = function(target, numIters = 100, eta=0.01, normalize=T, alpha=1, verbose=F) {
   # Initialize to uniform
   w = rep(0.1, 5)
   # Focus on scalar 'target'
   scalar.focused = data.full.extras[data.full.extras$scale == target, ]
-  # Initialize 'mid' alternative
   
-  match.scalars = which(scalar.focused$degree == "hi1" | scalar.focused$degree == "hi2")
-
   # For numIters iterations...
   for (i in 1:numIters) {
     scalar.focused[scalar.focused$degree == "mid", "speaker.p"] = w
