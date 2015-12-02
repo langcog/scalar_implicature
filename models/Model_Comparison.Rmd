@@ -762,7 +762,7 @@ I was trying to estimate what seemed liked 'sensible' alternatives and decided t
 How can we interpret some of the more funky alternatives (i.e. `memorable_unforgettable`, `some_all`)? Does this scalar family 'want' more than one more alternative? That is, maybe the model is telling us that only one additional alternative is not enough...? Can we link this intuition back to entropy measures for the scales? 
 ```{r}
 # entropy measures 
-scales.entropy
+scales.entropy[order(scales.entropy$Entropy, decreasing=T),]
 ```
 
 # All plots
