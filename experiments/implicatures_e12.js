@@ -1,3 +1,5 @@
+// Experiment 12 literal listener with 'neutral alternative'
+
 //############################## Helper functions ##############################
 // Shows slides. We're using jQuery here - the **$** is the jQuery selector function, which takes as input either a DOM element or a CSS selector string.
 function showSlide(id) {
@@ -50,44 +52,49 @@ var sents = {
 		liked_loved: {		   
 		    hi1:  "<b>loved</b> the food?",
 		    hi2:  "<b>liked</b> the food?",
+		    mid: "<b>mid</b the food",
 		    low1:  "<b>disliked</b> the food?",
 		    low2:  "<b>hated</b> the food?",
 		},
 		good_excellent: {
 			hi1:  "thought the food was <b>excellent</b>?",
 		    hi2:  "thought the food was <b>good</b>?",
+		    mid:  "thought the food was <b>mid</b>?",
 		    low1:  "thought the food was <b>bad</b>?",
 		    low2:  "thought the food was <b>terrible</b>?"
 		},
 		palatable_delicious: {
 			hi1:  "thought the food was <b>delicious</b>?",
 		    hi2:  "thought the food was <b>palatable</b>?",
+		    mid:  "thought the food was <b>mid</b>?",
 		    low1:  "thought the food was <b>gross</b>?",
 		    low2:  "thought the food was <b>disgusting</b>?"
 		},
 		memorable_unforgettable: {
 			hi1:  "thought the food was <b>unforgettable</b>?",
 		    hi2:  "thought the food was <b>memorable</b>?",
+		    mid:  "thought the food was <b>mid</b>?",
 		    low1:  "thought the food was <b>bland</b>?",
 		    low2:  "thought the food was <b>forgettable</b>?"
 		},
 		some_all: {
 			hi1: "enjoyed <b>all</b> of the food they ate?",
 			hi2: "enjoyed <b>most</b> of the food they ate?",
-			low1: "enjoyed <b>some</b> of the food they ate?",
+			mid: "enjoyed <b>some</b> of the food they ate?",
+			low1: "enjoyed <b>low1</b> of the food they ate?",
 			low2: "enjoyed <b>none</b> of the food they ate?"
 		}
     },
 };
 
 //Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 102;
+var TOTAL_TRIALS = 152;
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
 }
 var scales = Object.keys(sents.scale);
-var scale_degrees = ["hi1", "hi2", "low1", "low2"];
+var scale_degrees = ["hi1", "hi2", "mid","low1", "low2"];
 var manipulation = ["20", "40", "60", "80", "100"];
 //var totalTrials = trials.length;
 //Trial condition params initializations ------------------->
@@ -165,9 +172,9 @@ var experiment = {
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
 		    //Trial params ---------------------------->
-		    if(trials.length > 100) {
+		    if(trials.length > 150) {
 		    	// training #1: 'hi2' == "high" with 5 stars
-		    	if (trials.length == 102) {
+		    	if (trials.length == 152) {
 			    	trials.shift();
 			    	current_scale = scales[0];
 			    	degree = "hi2";
@@ -179,28 +186,34 @@ var experiment = {
 			    	degree = "low1";
 			    	manipulation_level = "20";
 		    	} 
-		    } else if (trials.length == 100) {
+		    } else if (trials.length == 150) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 4];
+		    	degree = scale_degrees[current_trial % 5];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    } else {
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 4];
+		    	degree = scale_degrees[current_trial % 5];
 		    	manipulation_level = manipulation[current_trial % 5];
 		    }
 			sent_materials = sents.scale[current_scale][degree];
 		    //Trial params ---------------------------->
 
 
-		    //Display Trials -------------------------->
+		    // Display Trials -------------------------->
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
 		    $("#sent_question").html("Do you think the person "+
 					     sent_materials);
-		    //Display Trials -------------------------->
+		    // Run time checks
+		    // console.log("current_trial", current_trial);
+		    console.log("--------------------------");
+		    console.log("current_scale", current_scale);
+		    console.log("degree", degree);
+		    console.log("manipulation_level", manipulation_level);
+		    // Display Trials -------------------------->
 
 		    //Log Data -------------------------------->
 		    experiment.data.scale.push(current_scale);
