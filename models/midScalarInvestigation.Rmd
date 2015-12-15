@@ -1,5 +1,5 @@
 ---
-title: "responeToFrankeTypicalUse"
+title: "responseToFrankeTypicalUse..."
 author: "Ben Peloquin"
 date: "December 14, 2015"
 output:
