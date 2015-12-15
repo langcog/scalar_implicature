@@ -52,28 +52,28 @@ var sents = {
 		liked_loved: {		   
 		    hi1:  "<b>loved</b> the food?",
 		    hi2:  "<b>liked</b> the food?",
-		    mid: "<b>mid</b the food",
+		    mid: "<b>felt indifferent about</b the food",
 		    low1:  "<b>disliked</b> the food?",
 		    low2:  "<b>hated</b> the food?",
 		},
 		good_excellent: {
 			hi1:  "thought the food was <b>excellent</b>?",
 		    hi2:  "thought the food was <b>good</b>?",
-		    mid:  "thought the food was <b>mid</b>?",
+		    mid:  "thought the food was <b>okay</b>?",
 		    low1:  "thought the food was <b>bad</b>?",
 		    low2:  "thought the food was <b>terrible</b>?"
 		},
 		palatable_delicious: {
 			hi1:  "thought the food was <b>delicious</b>?",
 		    hi2:  "thought the food was <b>palatable</b>?",
-		    mid:  "thought the food was <b>mid</b>?",
+		    mid:  "thought the food was <b>mediocre</b>?",
 		    low1:  "thought the food was <b>gross</b>?",
 		    low2:  "thought the food was <b>disgusting</b>?"
 		},
 		memorable_unforgettable: {
 			hi1:  "thought the food was <b>unforgettable</b>?",
 		    hi2:  "thought the food was <b>memorable</b>?",
-		    mid:  "thought the food was <b>mid</b>?",
+		    mid:  "thought the food was <b>ordinary</b>?",
 		    low1:  "thought the food was <b>bland</b>?",
 		    low2:  "thought the food was <b>forgettable</b>?"
 		},
@@ -81,7 +81,7 @@ var sents = {
 			hi1: "enjoyed <b>all</b> of the food they ate?",
 			hi2: "enjoyed <b>most</b> of the food they ate?",
 			mid: "enjoyed <b>some</b> of the food they ate?",
-			low1: "enjoyed <b>low1</b> of the food they ate?",
+			low1: "enjoyed <b>a little</b> of the food they ate?",
 			low2: "enjoyed <b>none</b> of the food they ate?"
 		}
     },
