@@ -1,0 +1,161 @@
+---
+title: "responeToFrankeTypicalUse"
+author: "Ben Peloquin"
+date: "December 14, 2015"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_depth: 3
+---
+```{r}
+rm(list = ls())
+setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/models")
+library(tidyr)
+source("../analysis/useful_dplyr.R")
+library(dplyr)
+library(rjson)
+library(ggplot2)
+library(MASS)
+library(jsonlite)
+```
+
+```{r multiplot(), echo=FALSE}
+multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+# "neutral" target scalars for e12/e13
+
+We're trying to come up with scalars that will approximate the blue distributions here:
+["https://htmlpreview.github.io/?https://raw.githubusercontent.com/langcog/scalar_implicature/master/models/Model_additionalAlts.html#plot-distr"]
+
+## Currently proposing for e12 / e13:
+
+I've populated e12/e13 with the first items (1) listed below. So we're including `okay` with good_excellent because that was the most frequent and "applicable" alternative.
+
+"Somebody said they thought the food was \___."
+
+good_excellent scale: 1) `okay`, 2) `average`, 3) `fine`
+
+palatable_delicious scale: 1) `mediocre`, 2) `okay`
+
+memorable_unforgettable scale: 1) `ordinary`, 2) `average`, 3) `unremarkable`
+
+"Somebody said they \___ the food."
+
+liked_loved scale: 1) `felt indifferent about`, 2) `appreciated`
+
+(we might want to go with something like "felt okay about" or "felt fine about", but those weren't top competitors for liked_loved)
+
+"Somebody said they enjoyed \___ of the food."
+
+some_all scale: 1) `a little bit of`, 2) `bits of` 3) `parts of`
+
+# Study e9 - Empirically derived alts (frequencies)
+```{r}
+d = fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T)
+d = as.data.frame(d, stringsAsFactors = FALSE)
+
+d = d %>% 
+  gather(base, alt, 
+         palatable, liked, good, loved, some, all, 
+         delicious, excellent, memorable, unforgettable) %>%
+  mutate(base = as.character(base)) %>%
+  rowwise %>%
+  mutate(scale = ifelse(base == "some" | base == "all", "some_all", 
+                        ifelse(base == "palatable" | base == "delicious", "palatable_delicious",
+                               ifelse(base == "liked" | base == "loved", "liked_loved",
+                                      ifelse(base == "good" | base == "excellent", 
+                                             "good_excellent", "memorable_unforgettable"))))) %>%
+  group_by(scale, alt) %>%
+  summarise(n = n())
+
+# Plot findings of salient alternatives for each scale
+# -------------------------------------------------------
+scales = unique(d$scale)
+ggplot(data=d[d$scale==scales[1],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 60) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", scales[1])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=d[d$scale==scales[2],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 60) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", scales[2])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=d[d$scale==scales[3],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 60) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", scales[3])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=d[d$scale==scales[4],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 60) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", scales[4])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=d[d$scale==scales[5],], aes(x=reorder(alt, -n), y=n)) +
+  geom_bar(stat="identity") + ylim(0, 60) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", scales[5])) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# multiplot(p1, p2, p3, p4, p5, cols=1)
+```
+
+# Emp alts for Some / All individually
+```{r}
+d = fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T)
+d = as.data.frame(d, stringsAsFactors = FALSE)
+
+d.some = d$some
+d.some = as.data.frame(as.factor(d.some))
+d.some = as.data.frame(table(d.some))
+d.some = d.some[rev(order(d.some$Freq)), ]
+d.some$prop = d.some$Freq / sum(d.some$Freq)
+ggplot(d.some, aes(x=reorder(d.some, Freq), y=Freq)) +
+  geom_bar(stat="identity", position="dodge") +
+  xlab("alternatives") +
+  ylab("frequency counts") +
+  ggtitle("e9 - alternatives to 'some'")
+
+d.all = d$all
+d.all = as.data.frame(as.factor(d.all))
+d.all = as.data.frame(table(d.all))
+d.all = d.all[rev(order(d.all$Freq)), ]
+d.all$prop = d.all$Freq / sum(d.all$Freq)
+ggplot(d.all, aes(x=reorder(d.all, Freq), y=Freq)) +
+  geom_bar(stat="identity", position="dodge") +
+  xlab("alternatives") +
+  ylab("frequency counts") +
+  ggtitle("e9 - alternatives to 'all'")
+```
