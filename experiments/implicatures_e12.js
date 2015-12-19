@@ -87,8 +87,10 @@ var sents = {
     },
 };
 
-//Trial condition params initializations ------------------->
-var TOTAL_TRIALS = 152;
+// Trial condition params initializations ------------------->
+
+// 5 scale_degrees * 5 rating levels * 5 manipulation levels + 2 training trials
+var TOTAL_TRIALS = 127;
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
@@ -96,8 +98,8 @@ for(var i = TOTAL_TRIALS; i > 0; --i) {
 var scales = Object.keys(sents.scale);
 var scale_degrees = ["hi1", "hi2", "mid","low1", "low2"];
 var manipulation = ["20", "40", "60", "80", "100"];
-//var totalTrials = trials.length;
-//Trial condition params initializations ------------------->
+
+// Trial condition params initializations ------------------->
 
 
 
@@ -172,9 +174,9 @@ var experiment = {
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
 		    //Trial params ---------------------------->
-		    if(trials.length > 150) {
+		    if(trials.length > 125) {
 		    	// training #1: 'hi2' == "high" with 5 stars
-		    	if (trials.length == 152) {
+		    	if (trials.length == 127) {
 			    	trials.shift();
 			    	current_scale = scales[0];
 			    	degree = "hi2";
@@ -186,7 +188,7 @@ var experiment = {
 			    	degree = "low1";
 			    	manipulation_level = "20";
 		    	} 
-		    } else if (trials.length == 150) {
+		    } else if (trials.length == 125) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
