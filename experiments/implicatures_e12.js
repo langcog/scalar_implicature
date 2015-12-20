@@ -52,7 +52,7 @@ var sents = {
 		liked_loved: {		   
 		    hi1:  "<b>loved</b> the food?",
 		    hi2:  "<b>liked</b> the food?",
-		    mid: "<b>felt indifferent about</b the food",
+		    mid: "<b>felt indifferent about</b> the food",
 		    low1:  "<b>disliked</b> the food?",
 		    low2:  "<b>hated</b> the food?",
 		},
@@ -89,8 +89,9 @@ var sents = {
 
 // Trial condition params initializations ------------------->
 
-// 5 scale_degrees * 5 rating levels * 5 manipulation levels + 2 training trials
+// 5 scales * 5 rating levels * 5 manipulation levels + 2 training trials
 var TOTAL_TRIALS = 127;
+
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
@@ -173,15 +174,15 @@ var experiment = {
 		    $("#prog").attr("style","width:" +
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
-		    //Trial params ---------------------------->
+		    // Trial params
 		    if(trials.length > 125) {
-		    	// training #1: 'hi2' == "high" with 5 stars
+		    	// training #1: 'hi2' == "high" with 5 stars (expect 'Yes' resopnse)
 		    	if (trials.length == 127) {
 			    	trials.shift();
 			    	current_scale = scales[0];
 			    	degree = "hi2";
 			    	manipulation_level = "100";
-			    } // training #2: 'low1' == "low" with 1 star
+			    } // training #2: 'low1' == "low" with 1 star (expect 'Yes' resopnse)
 			    else {
 			    	trials.shift();
 			    	current_scale = scales[0];
@@ -191,9 +192,10 @@ var experiment = {
 		    } else if (trials.length == 125) {
 		    	trials = shuffle(trials); 
 		    	current_trial = trials.shift();
-		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 5];
-		    	manipulation_level = manipulation[current_trial % 5];
+		    	current_scale_num = Math.floor(current_trial / 25) 	// i.e liked_loved is 0 - 24 range and good_exc is 25 - 49
+		    	current_scale = scales[current_scale_num];
+		    	degree = scale_degrees[current_trial % 5]; 			// i.e. if current_trial == 100, degree = scale_degrees[0] ('hi1')
+		    	manipulation_level = manipulation[current_scale_num % 5];	// i.e. if current_scale_num == 49, 
 		    } else {
 		    	current_trial = trials.shift();
 		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
@@ -201,7 +203,7 @@ var experiment = {
 		    	manipulation_level = manipulation[current_trial % 5];
 		    }
 			sent_materials = sents.scale[current_scale][degree];
-		    //Trial params ---------------------------->
+			console.log(trials)
 
 
 		    // Display Trials -------------------------->
