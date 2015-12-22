@@ -88,18 +88,20 @@ var sents = {
 };
 
 // Trial condition params initializations ------------------->
-
+var NUM_DEGREES = 5
+var NUM_SCALES = 5
+var NUM_STARS = 5
 // 5 scales * 5 rating levels * 5 manipulation levels + 2 training trials
-var TOTAL_TRIALS = 127;
+var TOTAL_TRIALS = NUM_SCALES * NUM_STARS * NUM_DEGREES + 2;
+
+var scales = Object.keys(sents.scale);
+var scale_degrees = ["hi1", "hi2", "mid","low1", "low2"];
+var manipulation = ["20", "40", "60", "80", "100"];
 
 var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
 }
-var scales = Object.keys(sents.scale);
-var scale_degrees = ["hi1", "hi2", "mid","low1", "low2"];
-var manipulation = ["20", "40", "60", "80", "100"];
-
 // Trial condition params initializations ------------------->
 
 
@@ -174,10 +176,10 @@ var experiment = {
 		    $("#prog").attr("style","width:" +
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
-		    // Trial params
-		    if(trials.length > 125) {
+		    // Check for training runs
+		    if(trials.length > TOTAL_TRIALS - 2) {
 		    	// training #1: 'hi2' == "high" with 5 stars (expect 'Yes' resopnse)
-		    	if (trials.length == 127) {
+		    	if (trials.length == TOTAL_TRIALS) {
 			    	trials.shift();
 			    	current_scale = scales[0];
 			    	degree = "hi2";
@@ -189,18 +191,16 @@ var experiment = {
 			    	degree = "low1";
 			    	manipulation_level = "20";
 		    	} 
-		    } else if (trials.length == 125) {
-		    	trials = shuffle(trials); 
-		    	current_trial = trials.shift();
-		    	current_scale_num = Math.floor(current_trial / 25) 	// i.e liked_loved is 0 - 24 range and good_exc is 25 - 49
-		    	current_scale = scales[current_scale_num];
-		    	degree = scale_degrees[current_trial % 5]; 			// i.e. if current_trial == 100, degree = scale_degrees[0] ('hi1')
-		    	manipulation_level = manipulation[current_scale_num % 5];	// i.e. if current_scale_num == 49, 
 		    } else {
+		    	if (trials.length == TOTAL_TRIALS - 2) { // TOTAL_TRIALS - 2 == 125
+		    		trials = shuffle(trials); 
+		    	}
 		    	current_trial = trials.shift();
-		    	current_scale = scales[(Math.floor(current_trial / 10)) % 5 + 1];
-		    	degree = scale_degrees[current_trial % 5];
-		    	manipulation_level = manipulation[current_trial % 5];
+		   		current_scale_num = Math.floor(current_trial / 25)		// Get scale range (1 - 5)
+		    	current_scale = scales[current_scale_num + 1];			// Set scale (i.e. liked_loved is 0 - 24)
+		    	target_range = current_trial - (25 * current_scale_num) // Convert to 0 - 24 range for degree and manipulation level
+		    	degree = scale_degrees[Math.floor(target_range / 5)]	// Set scalar degree (i.e. 0-4 is 'hi2', 5-10 is 'hi1')
+		    	manipulation_level = manipulation[target_range % 5];	// Set star manipulation level
 		    }
 			sent_materials = sents.scale[current_scale][degree];
 			console.log(trials)
