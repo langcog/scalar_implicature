@@ -1,6 +1,9 @@
-// Experiment 12 literal listener with 'neutral alternative'
+// ################################################################################
+// ######### Experiment 12 literal listener with 'neutral alternative' ############
+// ################################################################################
 
-//############################## Helper functions ##############################
+// Helper fns()
+// ------------
 // Shows slides. We're using jQuery here - the **$** is the jQuery selector function, which takes as input either a DOM element or a CSS selector string.
 function showSlide(id) {
 	// Hide all slides
@@ -39,8 +42,10 @@ function shuffle (a) {
 	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
 	return o;
 }
-//############################## Helper functions ##############################	
 
+
+// Target scalar items
+// -------------------
 var sents = {
     scale: {
 		training1: {
@@ -87,7 +92,8 @@ var sents = {
     },
 };
 
-// Trial condition params initializations ------------------->
+// Trial Parameters
+// ----------------
 var NUM_DEGREES = 5
 var NUM_SCALES = 5
 var NUM_STARS = 5
@@ -102,16 +108,14 @@ var trials = [];
 for(var i = TOTAL_TRIALS; i > 0; --i) {
 	trials.push(i);
 }
-// Trial condition params initializations ------------------->
-
-
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
-//###:-----------------MAIN EVENT-------------------:###
+// Run Experiment
+// --------------
 var experiment = {
-    //Data object for logging responses, etc
+    // Data object
     data: {
 		scale: [],
 		degree: [],
@@ -124,7 +128,7 @@ var experiment = {
 		gender:[]
     },
     
-    //End the experiment
+    // End experiment
     end: function() {
 		showSlide("finished");
 		setTimeout(function() {
@@ -132,10 +136,10 @@ var experiment = {
 		}, 1500);
     },
 
-    //Log response
+    // Log response
     log_response: function() {
 		var response_logged = false;
-		//Array of radio buttons
+		// Array of radio buttons
 		var radio = document.getElementsByName("judgment");
 		
 		// Loop through radio buttons
@@ -149,29 +153,29 @@ var experiment = {
 		if (response_logged) {
 		    nextButton.blur();
 		    
-		    //Uncheck radio buttons
+		    // Uncheck radio buttons
 		    for (i = 0; i < radio.length; i++) {
 				radio[i].checked = false
 		    }
-		    experiment.next(); //Move to next condition
+		    experiment.next(); // Move to next condition
 		} else {
-			//Else respondent didn't make a response
+			// Else respondent didn't make a response
 		    $("#testMessage").html('<font color="red">' + 
 					   'Please make a response!' + 
 					   '</font>');
 		}
 	},
     
-    //Run every trial
+    // Run every trial
     next: function() {
-    	//If no trials are left go to debriefing
+    	// If no trials are left go to debriefing
 		if (!trials.length) {
 			return experiment.debriefing();
 		}
 		
-		//Allow experiment to start if it's a turk worker OR if it's a test run
+		// Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top || turk.workerId.length > 0) {
-		    //Clear the test message and adjust progress bar
+		    // Clear the test message and adjust progress bar
 		    $("#testMessage").html('');  
 		    $("#prog").attr("style","width:" +
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
@@ -203,27 +207,23 @@ var experiment = {
 		    	manipulation_level = manipulation[target_range % 5];	// Set star manipulation level
 		    }
 			sent_materials = sents.scale[current_scale][degree];
-			console.log(trials)
 
-
-		    // Display Trials -------------------------->
+		    // Display trials to respondent
 			$(".rating-stars").attr("style","width: " +
 							    manipulation_level + "%");
 		    $("#sent_question").html("Do you think the person "+
 					     sent_materials);
-		    // Run time checks
-		    // console.log("current_trial", current_trial);
+
+		    // Run-time checks
 		    console.log("--------------------------");
 		    console.log("current_scale", current_scale);
 		    console.log("degree", degree);
 		    console.log("manipulation_level", manipulation_level);
-		    // Display Trials -------------------------->
 
-		    //Log Data -------------------------------->
+		    // Log Data
 		    experiment.data.scale.push(current_scale);
 		    experiment.data.degree.push(degree);
 		    experiment.data.manipulation_level.push(manipulation_level);
-		    //Log Data -------------------------------->
 		    
 		    showSlide("stage");
 		}
@@ -240,7 +240,7 @@ var experiment = {
     	$('#age').html(select_age);    	
     },
 
-    //###:-------------Log debrief data-------------:###
+    // Log data
     submit_comments: function() {
 		experiment.data.language.push(document.getElementById("homelang").value);		// language
 		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);	// thoughts
@@ -253,5 +253,4 @@ var experiment = {
     	}
 		experiment.end();
     }
-    //###:-------------Log debrief data-------------:###
 };
