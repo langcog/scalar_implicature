@@ -201,7 +201,7 @@ var experiment = {
 		    	}
 		    	current_trial = trials.shift();
 		   		current_scale_num = Math.floor(current_trial / 25)		// Get scale range (1 - 5)
-		    	current_scale = scales[current_scale_num + 1];			// Set scale (i.e. liked_loved is 0 - 24)
+		    	current_scale = scales[current_scale_num + 1];			// Set scale (i.e. liked_loved is trial nums 0 - 24)
 		    	target_range = current_trial - (25 * current_scale_num) // Convert to 0 - 24 range for degree and manipulation level
 		    	degree = scale_degrees[Math.floor(target_range / 5)]	// Set scalar degree (i.e. 0-4 is 'hi2', 5-10 is 'hi1')
 		    	manipulation_level = manipulation[target_range % 5];	// Set star manipulation level
