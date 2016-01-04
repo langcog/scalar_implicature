@@ -97,17 +97,16 @@ var sents = {
 var NUM_DEGREES = 5
 var NUM_SCALES = 5
 var NUM_STARS = 5
+var NUM_TRAINING_TRIALS = 2
 // 5 scales * 5 rating levels * 5 manipulation levels + 2 training trials
-var TOTAL_TRIALS = NUM_SCALES * NUM_STARS * NUM_DEGREES + 2;
+var TOTAL_TRIALS = NUM_SCALES * NUM_STARS * NUM_DEGREES + NUM_TRAINING_TRIALS;
 
 var scales = Object.keys(sents.scale);
 var scale_degrees = ["hi1", "hi2", "mid","low1", "low2"];
 var manipulation = ["20", "40", "60", "80", "100"];
 
 var trials = [];
-for(var i = TOTAL_TRIALS; i > 0; --i) {
-	trials.push(i);
-}
+for(var i = TOTAL_TRIALS - 1; i >= 0; --i) trials.push(i);
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -181,13 +180,14 @@ var experiment = {
 				    String(100 * ((TOTAL_TRIALS - trials.length)/TOTAL_TRIALS)) + "%");
 		    
 		    // Check for training runs
-		    if(trials.length > TOTAL_TRIALS - 2) {
+		    if(trials.length > TOTAL_TRIALS - NUM_TRAINING_TRIALS) {
 		    	// training #1: 'hi2' == "high" with 5 stars (expect 'Yes' resopnse)
 		    	if (trials.length == TOTAL_TRIALS) {
 			    	trials.shift();
 			    	current_scale = scales[0];
 			    	degree = "hi2";
 			    	manipulation_level = "100";
+
 			    } // training #2: 'low1' == "low" with 1 star (expect 'Yes' resopnse)
 			    else {
 			    	trials.shift();
