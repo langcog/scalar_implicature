@@ -86,7 +86,7 @@ var sents = {
 			hi1: "enjoyed <b>all</b> of the food they ate?",
 			hi2: "enjoyed <b>most</b> of the food they ate?",
 			mid: "enjoyed <b>some</b> of the food they ate?",
-			low1: "enjoyed <b>a little</b> of the food they ate?",
+			low1: "enjoyed <b>little</b> of the food they ate?",
 			low2: "enjoyed <b>none</b> of the food they ate?"
 		}
     },
