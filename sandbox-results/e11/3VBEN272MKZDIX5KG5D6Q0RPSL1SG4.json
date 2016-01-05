@@ -1,0 +1,101 @@
+{
+    "AutoApprovalTime": "2015-10-17T18:40:43Z",
+    "AssignmentId": "3VBEN272MKZDIX5KG5D6Q0RPSL1SG4",
+    "WorkerId": "A2IQK2Y0G5O6WR",
+    "answers": {
+        "data": {
+            "scale": [
+                "training1",
+                "training1",
+                "palatable_delicious",
+                "palatable_delicious",
+                "some_all",
+                "some_all",
+                "good_excellent",
+                "memorable_unforgettable",
+                "some_all",
+                "palatable_delicious",
+                "liked_loved",
+                "memorable_unforgettable",
+                "palatable_delicious",
+                "memorable_unforgettable",
+                "liked_loved",
+                "liked_loved",
+                "liked_loved",
+                "good_excellent",
+                "some_all",
+                "good_excellent",
+                "good_excellent",
+                "memorable_unforgettable"
+            ],
+            "degree": [
+                "hi2",
+                "low1",
+                "low1",
+                "low2",
+                "low2",
+                "hi1",
+                "hi1",
+                "low1",
+                "low1",
+                "hi1",
+                "low2",
+                "low2",
+                "hi2",
+                "hi2",
+                "hi2",
+                "low1",
+                "hi1",
+                "low1",
+                "hi2",
+                "low2",
+                "hi2",
+                "hi1"
+            ],
+            "language": [
+                "english"
+            ],
+            "gender": [
+                "female"
+            ],
+            "age": [
+                "20"
+            ],
+            "expt_aim": [
+                "not sure"
+            ],
+            "expt_gen": [
+                "ood"
+            ],
+            "judgment": [
+                4,
+                1,
+                1,
+                1,
+                1,
+                5,
+                5,
+                2,
+                3,
+                5,
+                1,
+                2,
+                3,
+                4,
+                4,
+                2,
+                5,
+                2,
+                4,
+                1,
+                4,
+                5
+            ]
+        }
+    },
+    "AcceptTime": "2015-10-17T18:34:26Z",
+    "HITId": "37Y5RYYI0P5LHZ2GFD88Q2W2JGYXSV",
+    "Assignment": "",
+    "AssignmentStatus": "Submitted",
+    "SubmitTime": "2015-10-17T18:35:43Z"
+}
