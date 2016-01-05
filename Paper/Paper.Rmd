@@ -1,0 +1,97 @@
+---
+title: "The importance of negative alternatives in pragmatic implicature"
+bibliography: library.bib
+csl: apa6.csl
+document-params: "10pt, letterpaper"
+
+author-information: > 
+    \author{{\large \bf Benjamin Peloquin} \\ \texttt{bpeloquin@stanford.edu} \\ Department of Psychology \\ Stanford University
+    \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
+
+abstract: 
+    "Frameworks of pragmatic enrichment, starting with Grice 1975, implicitly assume the presence of salient alternatives. For example, the standard quantity implicature arises the presence of a competiting and more informative alternatives. Using a Bayesian formulzation of this theory we assess the degree to which alternatives influence pragmatic enrichment of scalar items. Our findings suggest that the presence of a complete of set of possible alternatives."
+    
+keywords:
+    "pragmatics; scalar implicature; bayesian modeling"
+    
+output: cogsci2016::cogsci_paper
+---
+
+```{r global_options, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", fig.path='figs/',
+                      echo=F, warning=F, cache=F, message=F, sanitize = T)
+```
+
+```{r, libraries}
+library(ggplot2)
+```
+
+# Introduction
+
+Implicature as a case study for pragmatics
+
+RSA as a way of studying implicature [@frank2012]
+
+Scalar implicature in particular, what are the alternatives? [@franke2014] [@degen2015]
+
+Using the scalar diversity approach to get beyond the some/all implicature [@vantiel2013]
+ 
+Outline of the rest of the paper
+
+# Experiment 1a,b: Entailment scales
+
+## Participants
+
+## Procedure
+
+## Results and Discussion
+
+
+
+# Experiment 2: What are the alternatives?
+
+## Participants
+
+## Procedure
+
+## Results and Discussion
+
+
+
+# Experiment 3a,b: Adding Negative alternatives
+
+## Participants
+
+## Procedure
+
+## Results and Discussion
+
+
+
+# Model
+
+## Details
+
+
+## Model fitting and comparison
+
+
+
+# General Discussion
+
+
+# Acknowledgements
+
+Thanks to NSF BCS #XYZ. Thanks to Michael Franke, Judith Degen, and Noah Goodman.
+
+# References 
+
+```{r}
+# References will be generated automatically by Pandoc and included here.
+# The following code is some latex to format the bibliography. Do not remove it.
+```
+
+\setlength{\parindent}{-0.1in} 
+\setlength{\leftskip}{0.125in}
+\noindent
