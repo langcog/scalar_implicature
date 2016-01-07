@@ -31,6 +31,10 @@ library(ggplot2)
 
 Implicature as a case study for pragmatics
 
+
+
+
+
 RSA as a way of studying implicature [@frank2012]
 
 Scalar implicature in particular, what are the alternatives? [@franke2014] [@degen2015]
@@ -39,21 +43,36 @@ Using the scalar diversity approach to get beyond the some/all implicature [@van
  
 Outline of the rest of the paper
 
-# Experiment 1a,b: Entailment scales
+# Experiments - Literal listener and Pragmatic Listener tasks
+
+We used a food review paradigm to approximate semantic and pragmatic judgments for scalar items. Within this framework, 'meaning' for a given scalar term is quantified as a distribution over stars. Previous work has  a quantitative measures of what would otherwise be ambiguous literal listener semantics. Second, this framework 
+
+it allowed us to assses both semantic and pragmatic judgments of scalar items. Second, it provided an empirical measure of literal semantics for otherwise ambiguous scalar items (scalar diversity approach).
+
+Semantic judgments were assessed through a compatibility measure in what we've called a 'Literal Listener' task. Participants were presented a star-rating (betwen 1-5 stars) and asked "Do you think the person thought the person *loved* the food." We used a binary dependent measure "yes/no" to assess compatibility. To assess pragmatic judgments in our 'Pragmatic Listener' task, participants were presented a sentence such as "Someone said they *loved* the food" and were asked to select the number of stars the reviewer likely gave. In this case, the dependent measure was a star-rating from 1-5 stars.
+
+# Experimental 1a,b: Entailment scales
+
+Experiment 1a and 1b were conducted to assess semantic and pragmatic judgments for positive valenced scalar terms (such as 'good' and 'excellent'). See Appendix 'X' for the complete list of scalar terms.
 
 ## Participants
+Using Amazon's Mechanical Turk, N workers were paid $0.20 to particpate in the Literal Listener task and N workers were paid $0.20 to participate in the Pragmatic Listener task. n workers were dropped from the analysis because they either failed to pass training trials or were not native English speakers. The final sample was N workers, all of whom  were naive to the purposeof the experiment.
 
-## Procedure
+## Procedure - Literal Listener
+On each trial participants were presented with a star-rating and asked a question with an embedded scalar term such as, "Do you think the person *____*ed the food". Participants were asked to judge the compatibility of the target scalar term with the stars by selecting 'yes/no'. Each participant saw the full set of scalar item / star-ratings pairs. Scalar item and star-rating combinations were randomized for each participant.
 
 ## Results and Discussion
 
-
-
 # Experiment 2: What are the alternatives?
 
+Building off van Tiel (2014) we wanted to 
+
 ## Participants
+Using Amazon's Mechanical Turk, N workers were paid $0.20 to particpate. n workers were dropped from the analysis because they either failed to pass training trials or were not native English speakers. The final sample was N workers, all of whom  were naive to the purposeof the experiment.
 
 ## Procedure
+
+Participants were presented a target scalar term embedded in a sentence such as, "In a recent restaurant review someone said they thought they *----*ed the food." Participants were then presented, "If they'd felt differently about the food, what other words could they have used instead of *----*?" and asked to generate three alternatives.
 
 ## Results and Discussion
 
