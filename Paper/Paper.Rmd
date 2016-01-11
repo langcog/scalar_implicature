@@ -1,5 +1,5 @@
 ---
-title: "The importance of full scale representations in scalar implicature"
+title: "The importance of negative alternatives in scalar implicature"
 bibliography: library.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
