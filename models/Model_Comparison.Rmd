@@ -235,6 +235,8 @@ matched.items = which((data.full[, "scale"] != "some_all" &
         (data.full[, "degree"] == "hi2" | data.full[, "degree"] == "hi1")) |
        (data.full[, "scale"] == "some_all" &
           (data.full[, "degree"] == "hi1" | data.full[, "degree"] == "low1")))
+# Run if looking at MLE alts
+# --------------------------
 matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
         (data.full.extras[, "degree"] == "hi2" | data.full.extras[, "degree"] == "hi1")) |
        (data.full.extras[, "scale"] == "some_all" &
@@ -245,11 +247,11 @@ matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
 ## Run comparisons
 ```{r run_comparisons, message=FALSE}
 # Save performance output
-performance.output = data.frame(model=rep(NA, 16),
-                                cor.e6=rep(NA, 16),
-                                cor.e11=rep(NA, 16),
-                                normalized=rep(NA, 16))
-alphas = rep(NA, 16)
+performance.output = data.frame(model=rep(NA, 20),
+                                cor.e6=rep(NA, 20),
+                                cor.e11=rep(NA, 20),
+                                normalized=rep(NA, 20))
+alphas = rep(NA, 20)
 data.full.transfer = data.full[matched.items, ]
 data.full.transfer$degree =
   ifelse(data.full.transfer$degree == "hi1", "hi", "low")
@@ -680,6 +682,174 @@ m4.d.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
   ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = pred), lty = 4)
+
+
+# Model 5 - Empirical alternatives + Empircal extras (e12)
+# -----------------------------------------
+
+# Run if looking at e12 data
+# --------------------------
+matched.items.extras = which((data.full.extras[, "scale"] != "some_all" &
+        (data.full.extras[, "degree"] == "hi2" | data.full.extras[, "degree"] == "hi1")) |
+       (data.full.extras[, "scale"] == "some_all" &
+          (data.full.extras[, "degree"] == "hi1" | data.full.extras[, "degree"] == "mid")))
+
+speaker = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
+data.full.extras = left_join(speaker, listener) %>%
+  left_join(priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, listener.p, prior.p) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p)) %>%
+  group_by(scale)
+
+# 5.a)
+# Emp alts + extras
+# Normalized = T
+# alpha tuning = F
+alphas[17] = 1
+m5.a = data.full.extras %>%
+  do(run.full(., alpha = alphas[17], addMid=T, normalize=T))
+# Match with e6 w/ checks
+m5.a.matched = m5.a[matched.items.extras, ]
+m5.a.matched$degree = ifelse(m5.a.matched$degree == "hi1", "hi", "low")
+m5.a.matched = cbind(m5.a.matched, data.partial$listener.p)
+all(m5.a.matched$scale == data.partial$scale & m5.a.matched$degree == data.partial$degree)
+colnames(m5.a.matched)[length(colnames(m5.a.matched))] = "e6.listener.p"
+# Store output
+performance.output[17, ] = c("m5.a", round(cor(m5.a.matched$e6.listener.p, m5.a.matched$pred), 5), 
+                             round(cor(m5.a.matched$listener.p, m5.a.matched$pred), 5), T)
+# Store plot
+m5.a.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m5.a.matched,
+      main=paste("m5.a\nalpha: ", alphas[17],
+                 "\nNormalized = ", T,
+                 "\nCorr = ", performance.output[17, 2]),
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 5.b)
+# Emp alts + extras
+# Normalized = F
+# alpha tune = F
+alphas[18] = 1
+m5.b = data.full.extras %>%
+  do(run.full(., alpha = alphas[18], addMid=T, normalize=F))
+# Match with e6 w/ checks
+m5.b.matched = m5.b[matched.items.extras, ]
+m5.b.matched$degree = ifelse(m5.b.matched$degree == "hi1", "hi", "low")
+m5.b.matched = cbind(m5.b.matched, data.partial$listener.p)
+all(m5.b.matched$scale == data.partial$scale & m5.b.matched$degree == data.partial$degree)
+colnames(m5.b.matched)[length(colnames(m5.b.matched))] = "e6.listener.p"
+# Store output
+performance.output[18, ] = c("m5.b", round(cor(m5.b.matched$e6.listener.p, m5.b.matched$pred), 5), 
+                             round(cor(m5.b.matched$listener.p, m5.b.matched$pred), 5), F)
+# Store plot
+m5.b.plot = qplot(stars, e6.listener.p, col=degree, 
+      data=m5.b.matched,
+      main=paste("m5.b\nalpha: ", alphas[18],
+                 "\nNormalized = ", F,
+                 "\nCorr = ", performance.output[18, 2]),
+      ylab="Posterior p(rating | word)") + 
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+# 5.c)
+# Emp alts + extras
+# Normalized = T
+# alpha tune = T
+# compare.data = Toggle this with data.partial or NULL
+alphas[19] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=T)
+m5.c = data.full.extras %>%
+  do(run.full(., alpha = alphas[19], addMid=T, normalize=T))
+# Match with e6 w/ checks
+m5.c.matched = m5.c[matched.items.extras, ]
+m5.c.matched$degree = ifelse(m5.c.matched$degree == "hi1", "hi", "low")
+m5.c.matched = cbind(m5.c.matched, data.partial$listener.p)
+all(m5.c.matched$scale == data.partial$scale & m5.c.matched$degree == data.partial$degree)
+colnames(m5.c.matched)[length(colnames(m5.c.matched))] = "e6.listener.p"
+# Store output (e11 and e6)
+performance.output[19, ] = c("m5.c", round(cor(m5.c.matched$e6.listener.p, m5.c.matched$pred), 5),
+                             round(cor(m5.c.matched$listener.p, m5.c.matched$pred), 5), T)
+
+# Store plot 2 - both e6 and e11 data
+m5.c.jointD = m5.c.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m5.c.jointD$study = ifelse(m5.c.jointD$study == "e6.listener.p", "e6", "e11")
+m5.c.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m5.c.jointD,
+      main=paste("m5.c\nalpha: ", alphas[19],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+
+
+# 5.d)
+# Emp alts + extras
+# Normalized = F
+# alpha tune = T
+# compare.data = Toggle this with data.partial or NULL
+alphas[20] = tune.alpha(data.full.extras, type = "full", compare.data=data.partial, addMid=T, normalize=F)
+m5.d = data.full.extras %>%
+  do(run.full(., alpha = alphas[20], addMid=T, normalize=F))
+# Match with e6 w/ checks
+m5.d.matched = m5.d[matched.items.extras, ]
+m5.d.matched$degree = ifelse(m5.d.matched$degree == "hi1", "hi", "low")
+m5.d.matched = cbind(m5.d.matched, data.partial$listener.p)
+all(m5.d.matched$scale == data.partial$scale & m5.d.matched$degree == data.partial$degree)
+colnames(m5.d.matched)[length(colnames(m5.d.matched))] = "e6.listener.p"
+# Store output
+performance.output[20, ] = c("m5.d", round(cor(m5.d.matched$e6.listener.p, m5.d.matched$pred), 5),
+                             round(cor(m5.d.matched$listener.p, m5.d.matched$pred), 5), F)
+
+# Store plot 2 - both e6 and e11 data
+m5.d.jointD = m5.d.matched %>%
+  gather(study, listener.pred, listener.p, e6.listener.p)
+m5.d.jointD$study = ifelse(m5.d.jointD$study == "e6.listener.p", "e6", "e11")
+m5.d.jointPlot = qplot(stars, listener.pred, col=degree, shape=study,
+      data=m5.d.jointD,
+      main=paste("m5.d\nalpha: ", alphas[20],
+                 "\nNormalized = ", T,
+                 ylab="Posterior p(rating | word)")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = pred), lty = 4)
+```
+
+## Looking at empirically derived 'mids'
+```{r}
+normalize = function(w) { return (w / sum(w))}
+
+scalars = c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+
+for (scale in scalars) {
+  degrees = unique(data.full.extras$degree)
+  for (degree in degrees) {
+    data.full.extras[data.full.extras$scale == scale &
+                       data.full.extras$degree == degree, ]$speaker.p = 
+        normalize(data.full.extras[data.full.extras$scale == scale &
+                                     data.full.extras$degree == degree, ]$speaker.p)
+  }
+}
+
+# Differentiate tuned 'mid' scalar
+plot.data = data.full.extras
+plot.data$type = ifelse((plot.data$degree == "mid" & plot.data$scale != "some_all") |
+                          (plot.data$degree == "low1" & plot.data$scale == "some_all"), "red", "blue")
+qplot(x = stars, y = speaker.p, colour = type,
+      geom = "line", stat = "identity", position = "dodge", 
+      main = "Literal listener semantics\nEmpirical estimates and tuned extra 'mid'",
+      ylab = "P_{L0}(Word | Rating) - Normalized",
+      data = plot.data) + 
+  facet_wrap(~scale + degree)
 ```
 
 # Discussion
@@ -714,6 +884,17 @@ performance.output = performance.output[, c(1, 2, 3, 5, 4, 6)]
 grid.table(performance.output)
 ```
 
+Output for LangCog Lab meeting 1/12/16
+```{r}
+# Relevant studies into long data
+plot.data <- subset(performance.output, model %in% c("m1.c", "m2.c", "m3.c"))
+plot.data <- plot.data %>%
+  gather(exp, cor, -c(normalized, model))
+ggplot(plot.data, aes(x=model, y=cor, fill=exp)) +
+  geom_bar(stat="identity", position="dodge") +
+  ylim(0.0, 1.0)
+```
+
 
 # Interpretation
 
@@ -722,14 +903,31 @@ grid.table(performance.output)
 Across e6 and e11 pragmatic listener judgements we see model fit improve as we add more alternatives: The largest improvement occurs when we first include the empirically derived salient alternatives (correlations jump +0.23). Have a look at the `m2` vs `m3` correlation for models with pre-RSA normalization below (`c` models)
 ```{r}
 # Tuned, normalized models r
-barchart.d = performance.output[c(3, 7, 11, 15), ] %>%
+barchart.d = performance.output[c(3, 7, 11), ] %>%
   gather(study, cor, cor.e6, cor.e11)
+barchart.d$model <- as.factor(barchart.d$model)
+levels(barchart.d$model) <- c("Entailment only",
+                              "Entailment + \ngeneric none",
+                              "Full model")
 barchart.d$cor = as.numeric(barchart.d$cor)
-ggplot(barchart.d, aes(x=model, y=cor, fill=study)) + 
+cor.chart <- ggplot(barchart.d, aes(x=model, y=cor, fill=study)) + 
   geom_bar(stat="identity", position="dodge") +
+  ylab("Correlation") +
+  xlab("Model") +
   ylim(0, 1) + 
-  ggtitle("Model fit for e6 and e11\npragmatic listener judgments") +
+  ggtitle("Model fit correlation coefficients") +
+  guides(colour=FALSE) +
   geom_text(aes(x=model, y=as.numeric(cor) + 0.025, label=round(cor, 3), col=(study)))
+
+png(filename="practiceChart.png", 
+    #type="cairo",
+    units="in", 
+    width=10, 
+    height=8, 
+    pointsize=12, 
+    res=96)
+cor.chart
+dev.off()
 ```
 
 Here's a closer look at the improvement in fit between between normalized `m2` and `m3`.
@@ -774,8 +972,8 @@ m1.d.plot
 
 m2.a.plot
 m2.b.plot
-m2.c.plot
 m2.d.plot
+m2.c.plot
 
 m3.a.plot
 m3.b.plot
