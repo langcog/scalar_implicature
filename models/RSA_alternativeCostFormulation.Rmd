@@ -1,0 +1,491 @@
+---
+title: "alternativeRSA"
+author: "Ben Peloquin"
+date: "January 13, 2016"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(ggplot2)
+library(knitr)
+library(rjson)
+library(dplyr)
+library(tidyr)
+library(gridExtra)
+```
+
+
+Old RSA formulation
+```{r}
+# speaker informativity
+# ---------------------
+speaker.inf = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost))
+}
+# speaker likelihood
+# ------------------
+speaker.lhd = function(rating, degree, m, alpha) {
+  numerator = speaker.inf(m[rating, degree], alpha)
+  normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
+  return(numerator / normalize)
+}
+# non-normalized posterior
+# -----------------------
+nn.post = function(rating, degree, m, alpha, useprior) {
+  prior = priors[rating, "prior.p"]
+  return(speaker.lhd(rating, degree, m, alpha) * prior)
+}
+# normalized posterior
+# --------------------
+norm.post = function(rating, degree, m, alpha, useprior) {
+  nn = nn.post(rating, degree, m, alpha, useprior)
+  normalize = sum(unlist(sapply(seq(1, 5),
+                                function(i){nn.post(i, degree, m, alpha, useprior)})))
+  return(nn / normalize)
+}
+```
+
+New Prior incorporation
+```{r}
+speaker.inf3 = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost))
+}
+# speaker likelihood
+# ------------------
+speaker.lhd3 = function(currRating, currDegree, m, alpha, costs, allDegrees) {
+  currCost <- subset(costs, degree == currDegree)$cost
+  numerator = speaker.inf3(m[[currDegree]][currRating], alpha, currCost)
+#   normalize = sum(unlist(sapply(seq(nrow(m)),
+#                                 function(i) {
+#                                   speaker.inf3(m[i, currDegree],
+#                                                alpha,
+#                                                subset(costs, degree == currDegree)$cost)})))
+  # normalize over other words
+  normalize <- sum(sapply(seq(allDegrees), FUN = 
+                            function(i) {
+                              speaker.inf(m[[allDegrees[i]]][currRating], alpha,
+                                          subset(costs, degree == allDegrees[i])$cost)}
+                          ))
+  return(numerator / normalize)
+  # return(numerator)
+}
+# old !!!!
+# speaker.lhd = function(rating, degree, m, alpha) {
+#   numerator = speaker.inf(m[rating, degree], alpha)
+#   normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
+#   return(numerator / normalize)
+# }
+
+# non-normalized posterior
+# -----------------------
+nn.post3 = function(currRating, currDegree, m, alpha, costs, priors, allDegrees) {
+  # prior <- priors[rating, "prior.p"]
+  # prior <- costs[degree]
+  currPrior <- subset(priors, stars == currRating)$prior.p
+  return(speaker.lhd3(currRating, currDegree, m, alpha, costs, allDegrees) * currPrior)
+}
+# normalized posterior
+# --------------------
+norm.post3 = function(currRating, currDegree, m, alpha, costs, priors, allDegrees) {
+  nn <- nn.post3(currRating, currDegree, m, alpha, costs, priors, allDegrees)
+  normalize <- sum(unlist(sapply(seq(1, 5),
+                                function(i) {
+                                  nn.post3(i, currDegree, m, alpha, costs, priors, allDegrees)}
+                                )))
+  return(nn / normalize)
+}
+
+normedVec <- function(vec) {
+  vec / sum(vec)
+}
+```
+
+New run fn()
+```{r}
+computePosteriors <- c(norm.post, norm.post3)
+runFull2 <- function(data, calcFn = 1, alpha = 1) {
+#############################################################################
+## data       => contains scale | degree | stars | speaker.p | prior.p | cost
+## calcFN     => without cost = 1, with cost = 2
+## alpha      => set alpha level
+                                      
+  results <-
+    data.frame(scale = c(),
+               stars = c(),
+               degree = c(),
+               preds = c())
+  
+  scales <- unique(data$scale)
+  for (s in scales) {
+    force(
+      mat <- subset(data, scale  == s) %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+#         mutate(hi1 = hi1 / sum(hi1),
+#                hi2 = hi2 / sum(hi2),
+#                mid = mid / sum(mid),
+#                low1 = low1 / sum(low1),
+#                low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, mid, low1, low2)
+      )
+    stars <- subset(data, scale == s)$stars
+    degrees <- as.character(subset(data, scale == s)$degree)
+    currCosts <- unique(subset(data, scale == s) %>% select(degree, cost))
+    priors <- data %>% select(c(stars, prior.p)) %>% head(., n=5)
+    
+    results <- rbind(results,
+                     data.frame(scale = s,
+                                preds =
+                                  as.numeric(mapply(computePosteriors[[calcFn]],
+                                                    stars,
+                                                    degrees,
+                                                    MoreArgs =
+                                                      list(m = mat,
+                                                           alpha = alpha,
+                                                           costs = currCosts,
+                                                           priors = priors,
+                                                           allDegrees = unique(degrees)))),
+                                stars = stars,
+                                degree = degrees,
+                                stringsAsFactors = FALSE))
+  }
+  left_join(data, results)
+}
+```
+
+
+Data
+```{r}
+# priors
+# -------
+unifPriors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+empPriors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
+salience <- c(0.22, 0.08, 0.05, 1, 1)
+saliencePriors <- data.frame(stars=1:5, prior.p = (salience / sum(salience)))
+salienceCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+                            cost = -1 * (salience / sum(salience)), stringsAsFactors = FALSE)
+emptyCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+                            cost = rep(0.0, 5), stringsAsFactors = FALSE)
+yelpPriors <- data.frame(stars=1:5,
+                         prior.p =
+                           c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
+
+# speaker
+speakerL12 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
+speakerL10 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
+speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
+# listener
+listener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
+
+costs <- salienceCosts
+priors <- unifPriors
+
+data <- left_join(speakerL12, costs) %>%
+  left_join(., priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, prior.p, cost) %>%
+  group_by(scale)
+```
+
+Explore
+```{r}
+test <- runFull2(data, calcFn = 2, alpha = 20)
+
+predDf <- test
+getOverallCor <- function(predDf, listenerDf) {
+  combinedDf <- data.frame(scale = c(), degree = c(), speaker.p = c(), prior.p = c(), cost = c(), preds = c())
+  for (s in unique(predDf$scale)) {
+    if (s == "some_all") {
+      tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "mid")) %>%
+        mutate(degree = ifelse(degree == "hi1", "hi", "low"))  
+    } else {
+      tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
+        mutate(degree = ifelse(degree == "hi1", "hi", "low"))  
+    }
+    combinedDf <- rbind(combinedDf, tempDf)
+  }
+  results <- merge(x = combinedDf,
+                   y = listenerDf,
+                   by = c("degree", "stars", "scale"),
+                   all.x = TRUE) %>%
+    mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p))
+  
+  cor(results$preds, results$listener.p)
+}
+getOverallCor(test, listener)
+
+tuneAlphas <- function(alphas = seq(1, 12), humanDf) {
+  sapply(alphas, function(i) {
+    predDf <- runFull2(data, calcFn = 2, alpha = i)
+    getOverallCor(predDf, humanDf)
+    })
+}
+tuneAlphas(humanDf = listener)
+```
+
+
+```{r}
+
+normedVec(subset(test, scale == "good_excellent" & degree == "hi1")$preds)
+#normedVec(subset(test, scale == "good_excellent" & degree == "mid")$preds)
+sum(subset(test, scale == "good_excellent" & degree == "hi1")$preds)
+dfPreds <- test
+dfHuman <- listener
+name <- "good_excellent"
+getCorrs <- function(dfPreds, dfHuman, name) {
+  predSubset <- subset(dfPreds, scale == name & (degree == "hi1" | degree == "hi2"))
+  predSubset$degree = with(predSubset,
+                           ifelse(degree == "hi1", "hi", "low"))
+  humanSubset <- subset(dfHuman, scale == name)
+  joinedDf <- merge(x = predSubset,
+                    y = humanSubset,
+                    by = c("degree", "stars", "scale"),
+                    all.x = TRUE) %>%
+    mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p))
+  cor(joinedDf$preds, joinedDf$listener.p)
+}
+
+
+getCorrs(test, listener, "good_excellent")
+getCorrs(test, listener, "liked_loved")
+getCorrs(test, listener, "memorable_unforgettable")
+getCorrs(test, listener, "palatable_delicious")
+
+
+######################################################################
+----------------------------------------------------------------------
+######################################################################
+
+runModel <- function(model, mat, degree, alpha) {
+  if (model == 1) unlist(mapply(seq(1,5),
+                                FUN=function(x) norm.post(x, degree, mat, alpha, priors)))
+}
+mat <- data %>% 
+  select(stars, degree, speaker.p) %>%
+  spread(degree, speaker.p) %>%
+  mutate(hi1 = hi1 / sum(hi1),
+         hi2 = hi2 / sum(hi2),
+         mid = mid / sum(mid),
+         low1 = low1 / sum(low1),
+         low2 = low2 / sum(low2)) %>%
+  select(hi1, hi2, mid, low1, low2)
+
+
+runModel(1, mat[1:5, ], 1, 6)
+runModel(1, mat[1:5, ], 2, 6)
+
+subset(listener, scale == "good_excellent")
+
+```
+
+
+New cost formulation
+```{r}
+speaker.inf2 = function(d, alpha, cost = 0) {
+  exp(alpha*(log(d) - cost))
+}
+# speaker likelihood
+# ------------------
+speaker.lhd2 = function(rating, degree, m, alpha, costs) {
+  numerator = speaker.inf2(m[rating, degree], alpha, costs[degree])
+  normalize = sum(unlist(sapply(seq(nrow(m)),
+                                function(i) {speaker.inf2(m[i, ], alpha, costs[degree])})))
+  return(numerator / normalize)
+  # return(numerator)
+}
+# non-normalized posterior
+# -----------------------
+nn.post2 = function(rating, degree, m, alpha, costs, useprior) {
+  prior = priors[rating, "prior.p"]
+  # prior <- 0.2
+  return(speaker.lhd2(rating, degree, m, alpha, costs) * prior)
+}
+# normalized posterior
+# --------------------
+norm.post2 = function(rating, degree, m, alpha, costs, useprior) {
+  nn = nn.post2(rating, degree, m, alpha, costs, useprior)
+  normalize = sum(unlist(sapply(seq(1, 5),
+                                function(i){nn.post2(rating, i, m, alpha, costs, useprior)})))
+  return(nn / normalize)
+}
+```
+
+
+```{r}
+# good excellent
+mat[1:5,]
+salience <- c(1, 1, 0.05, 0.08, 0.22)
+normed.salience <- -1 * (salience / sum(salience))
+
+
+normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 1, mat[1:5,], 5, normed.salience))))
+normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 2, mat[1:5,], 5, normed.salience))))
+
+#################################
+# good_excellent
+# --------------
+# low
+good.exc.low <-
+  listener[with(listener, which(scale == "good_excellent" & degree == "low")),]$listener.p %>%
+  c(. , rep(0, 2))
+# high
+good.exc.high <-
+  listener[with(listener, which(scale == "good_excellent" & degree == "hi")),]$listener.p %>%
+  c(. , rep(0, 3))
+# new formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 2, mat[1:5,], 7, normed.salience)))),
+    good.exc.low[c(5, 4, 1, 2, 3)])
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 1, mat[1:5,], 7, normed.salience)))),
+    good.exc.high[c(5, 4, 3, 1, 2)])
+# old formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 2, mat[1:5,], 7)))),
+    good.exc.low[c(5, 4, 1, 2, 3)])
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 1, mat[1:5,], 7)))),
+    good.exc.high[c(5, 4, 3, 1, 2)])
+
+#################################
+# liked_loved
+# low
+liked.loved.low <-
+  listener[with(listener, which(scale == "liked_loved" & degree == "low")),]$listener.p %>%
+  c(. , rep(0, 2))
+# high
+liked.loved.high <-
+  listener[with(listener, which(scale == "liked_loved" & degree == "hi")),]$listener.p %>%
+  c(. , rep(0, 3))
+# new formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 2, mat[6:10,], 7, normed.salience)))),
+    liked.loved.low[c(5, 1, 2, 3, 4)])
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 1, mat[6:10,], 7, normed.salience)))),
+    liked.loved.high[c(5, 4, 3, 1, 2)])
+# old formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 2, mat[6:10,], 7)))),
+    liked.loved.low[c(5, 1, 2, 3, 4)])
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 1, mat[6:10,], 7)))),
+    liked.loved.high[c(5, 4, 3, 1, 2)])
+
+#################################
+# memorable_unforgettable
+# low
+mem.unf.low <-
+  listener[with(listener, which(scale == "memorable_unforgettable" & degree == "low")),]$listener.p %>%
+  c(. , rep(0, 3))
+mem.unf.low <- mem.unf.low[c(5, 4, 3, 2, 1)]
+# high
+mem.unf.high <-
+  listener[with(listener,
+                which(scale == "memorable_unforgettable" & degree == "hi")),]$listener.p %>%
+  c(. , rep(0, 1))
+mem.unf.high <- mem.unf.high[c(1, 5, 2, 3, 4)]
+# new formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 2, mat[11:15,], 7, normed.salience)))),
+    mem.unf.low)
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post2(x, 1, mat[6:10,], 7, normed.salience)))),
+    mem.unf.high)
+# old formulations
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 2, mat[6:10,], 3)))),
+    mem.unf.low)
+cor(normalize(unlist(mapply(seq(1,5),
+                        FUN=function(x) norm.post(x, 1, mat[6:10,], 7)))),
+    mem.unf.high)
+```
+
+How to implement this using saliency rewards (negative costs)???
+```{r}
+run.newCosts = function(d, alpha=1, useprior=F, usenone=F, normalize=F) {
+  mat <- data.full.extras %>% 
+    select(stars, degree, speaker.p) %>%
+    spread(degree, speaker.p) %>%
+    select(hi1, hi2, mid, low1, low2)
+  
+  if (usenone) {
+    mat$none = c(1, 0, 0, 0, 0)
+  } 
+  d$degree <- with(d, ifelse(degree == "hi1", 5,
+                             ifelse(degree == "hi2", 4,
+                                    ifelse(degree == "mid", 3, 
+                                           ifelse(degree == "low1", 2, 3)))))
+  d$pred = round(as.numeric(mapply(norm.post2, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha,
+                                                    costs = normed.salience,
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(normalize(d))
+}
+run.newCosts(data.full.extras, alpha=7, useprior=TRUE, usenone=FALSE, normalize=normalize)
+```
+
+Old `run` function
+```{r}
+run.full = function(d, alpha=1, useprior=F, usenone=F, addMid=F, normalize=F) {
+  # alpha = scales.entropy[scales.entropy$scale==d$scale[1], ]$Entropy
+  if (addMid) {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               mid = mid / sum(mid),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, mid, low1, low2)    
+    }
+  } else {
+    if (normalize) {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        mutate(hi1 = hi1 / sum(hi1),
+               hi2 = hi2 / sum(hi2),
+               low1 = low1 / sum(low1),
+               low2 = low2 / sum(low2)) %>%
+        select(hi1, hi2, low1, low2)
+    } else {
+      mat = d %>%
+        select(stars, degree, speaker.p) %>%
+        spread(degree, speaker.p) %>%
+        select(hi1, hi2, low1, low2)
+    }
+  }
+  
+  if (usenone) {
+    mat$none = c(1, 0, 0, 0, 0)
+  } 
+  
+  d$pred = round(as.numeric(mapply(norm.post, d$stars, d$degree, 
+                                    MoreArgs = list(m = mat, 
+                                                    alpha = alpha, 
+                                                    useprior = useprior))), 
+                  digits=4)
+  
+  return(d)
+}
+```
+
+```{r}
+run.full(data.full.extras, useprior = TRUE, usenone = FALSE, addMid = TRUE, normalize = TRUE)
+cor(data.full.extras$listener.p, data.full.extras$pred)
+```
+
