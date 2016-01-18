@@ -49,18 +49,14 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 New Prior incorporation
 ```{r}
 speaker.inf3 = function(d, alpha, cost = 0) {
-  exp(alpha*(log(d) - cost))
+  exp(-1 * alpha * (-log(d) - cost))
+  # exp(alpha * (log(d) - cost))
 }
 # speaker likelihood
 # ------------------
 speaker.lhd3 = function(currRating, currDegree, m, alpha, costs, allDegrees) {
   currCost <- subset(costs, degree == currDegree)$cost
   numerator = speaker.inf3(m[[currDegree]][currRating], alpha, currCost)
-#   normalize = sum(unlist(sapply(seq(nrow(m)),
-#                                 function(i) {
-#                                   speaker.inf3(m[i, currDegree],
-#                                                alpha,
-#                                                subset(costs, degree == currDegree)$cost)})))
   # normalize over other words
   normalize <- sum(sapply(seq(allDegrees), FUN = 
                             function(i) {
@@ -101,15 +97,15 @@ normedVec <- function(vec) {
 }
 ```
 
-New run fn()
+Run RSA - five item scales
 ```{r}
 computePosteriors <- c(norm.post, norm.post3)
-runFull2 <- function(data, calcFn = 1, alpha = 1) {
-#############################################################################
-## data       => contains scale | degree | stars | speaker.p | prior.p | cost
-## calcFN     => without cost = 1, with cost = 2
-## alpha      => set alpha level
-                                      
+# runFull() 
+# ---------
+# data       => contains scale | degree | stars | speaker.p | prior.p | cost
+# calcFN     => without cost = 1, with cost = 2
+# alpha      => set alpha level
+runFull <- function(data, calcFn = 1, alpha = 1, numAlts = 5) {
   results <-
     data.frame(scale = c(),
                stars = c(),
@@ -118,17 +114,33 @@ runFull2 <- function(data, calcFn = 1, alpha = 1) {
   
   scales <- unique(data$scale)
   for (s in scales) {
-    force(
-      mat <- subset(data, scale  == s) %>%
-        select(stars, degree, speaker.p) %>%
-        spread(degree, speaker.p) %>%
-#         mutate(hi1 = hi1 / sum(hi1),
-#                hi2 = hi2 / sum(hi2),
-#                mid = mid / sum(mid),
-#                low1 = low1 / sum(low1),
-#                low2 = low2 / sum(low2)) %>%
-        select(hi1, hi2, mid, low1, low2)
-      )
+      if (numAlts == 5) {
+        mat <- subset(data, scale  == s) %>%
+          select(stars, degree, speaker.p) %>%
+          spread(degree, speaker.p) %>%
+#           mutate(hi1 = hi1 / sum(hi1),
+#                  hi2 = hi2 / sum(hi2),
+#                  mid = mid / sum(mid),
+#                  low1 = low1 / sum(low1),
+#                  low2 = low2 / sum(low2)) %>%
+          select(hi1, hi2, mid, low1, low2)
+      } else if (numAlts == 4) {
+        mat <- subset(data, scale  == s) %>%
+          select(stars, degree, speaker.p) %>%
+          spread(degree, speaker.p) %>%
+          mutate(hi1 = hi1 / sum(hi1),
+                 hi2 = hi2 / sum(hi2),
+                 low1 = low1 / sum(low1),
+                 low2 = low2 / sum(low2)) %>%
+          select(hi1, hi2, low1, low2)
+      } else if (numAlts == 2) {
+        mat <- subset(data, scale  == s) %>%
+          select(stars, degree, speaker.p) %>%
+          spread(degree, speaker.p) %>%
+          mutate(hi1 = hi1 / sum(hi1),
+                 hi2 = hi2 / sum(hi2)) %>%
+          select(hi1, hi2)
+      }
     stars <- subset(data, scale == s)$stars
     degrees <- as.character(subset(data, scale == s)$degree)
     currCosts <- unique(subset(data, scale == s) %>% select(degree, cost))
@@ -155,78 +167,131 @@ runFull2 <- function(data, calcFn = 1, alpha = 1) {
 ```
 
 
-Data
+Data set-up
 ```{r}
-# priors
-# -------
+# All scales studied
+# ------------------
+scales <- c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+# Priors
+# ------
 unifPriors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
 empPriors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
-salience <- c(0.22, 0.08, 0.05, 1, 1)
-saliencePriors <- data.frame(stars=1:5, prior.p = (salience / sum(salience)))
-salienceCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
-                            cost = -1 * (salience / sum(salience)), stringsAsFactors = FALSE)
-emptyCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
-                            cost = rep(0.0, 5), stringsAsFactors = FALSE)
 yelpPriors <- data.frame(stars=1:5,
                          prior.p =
                            c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
+# Cost / rewards
+# --------------
+emptyCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+                            cost = rep(0.0, 5), stringsAsFactors = FALSE)
+salienceCosts <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences.csv")
+for (s in scales) {
+  salienceCosts[salienceCosts$scale == s, ]$cost <-
+    -1 * normedVec(salienceCosts[salienceCosts$scale == s, ]$cost)
+}
+# salience <- c(0.22, 0.08, 0.05, 1, 1)
+# saliencePriors <- data.frame(stars=1:5, prior.p = (salience / sum(salience)))
+# salienceCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+#                             cost = -1 * (salience / sum(salience)), stringsAsFactors = FALSE)
 
-# speaker
+# Speaker
+# -------
 speakerL12 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
 speakerL10 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
 speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
-# listener
+# Listener
+# --------
 listener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
 
 costs <- salienceCosts
 priors <- unifPriors
-
 data <- left_join(speakerL12, costs) %>%
   left_join(., priors) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, prior.p, cost) %>%
   group_by(scale)
+
+# run fns()
+checkSaliences()
+tuneAlphas(modelData = data, humanDf = listener)
 ```
 
 Explore
 ```{r}
-test <- runFull2(data, calcFn = 2, alpha = 20)
-
-predDf <- test
-getOverallCor <- function(predDf, listenerDf) {
-  combinedDf <- data.frame(scale = c(), degree = c(), speaker.p = c(), prior.p = c(), cost = c(), preds = c())
+# matchModelHumandData()
+# -----------------------
+matchModelHumanData <- function(predDf, listenerDf, study) {
+  combinedDf <- data.frame(scale = c(),
+                           degree = c(),
+                           speaker.p = c(),
+                           prior.p = c(),
+                           cost = c(),
+                           preds = c())
+  
   for (s in unique(predDf$scale)) {
     if (s == "some_all") {
       tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "mid")) %>%
-        mutate(degree = ifelse(degree == "hi1", "hi", "low"))  
+            mutate(degree = ifelse(degree == "hi1", "hi", "low"))
     } else {
       tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
-        mutate(degree = ifelse(degree == "hi1", "hi", "low"))  
+            mutate(degree = ifelse(degree == "hi1", "hi", "low"))
     }
     combinedDf <- rbind(combinedDf, tempDf)
   }
+
   results <- merge(x = combinedDf,
                    y = listenerDf,
                    by = c("degree", "stars", "scale"),
                    all.x = TRUE) %>%
     mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p))
   
-  cor(results$preds, results$listener.p)
+  results
 }
-getOverallCor(test, listener)
+# mergedData <- matchModelHumanData(test, listener)
 
-tuneAlphas <- function(alphas = seq(1, 12), humanDf) {
+# Alpha Tuning - maximixize correlation
+# -------------------------------------
+tuneAlphas <- function(modelData, humanDf, alphas = seq(1, 12), numAlts = 5){
   sapply(alphas, function(i) {
-    predDf <- runFull2(data, calcFn = 2, alpha = i)
-    getOverallCor(predDf, humanDf)
-    })
+    predDf <- runFull(modelData, calcFn = 2, alpha = i, numAlts = numAlts)
+    mergedData <- matchModelHumanData(predDf, listener)
+    cor(mergedData$preds, mergedData$listener.p)
+  })
 }
-tuneAlphas(humanDf = listener)
+tuneAlphas(modelData = data, humanDf = listener)
+
+checkSaliences <- function() {
+  predDf <- runFull(data, calcFn = 2, alpha = 1, numAlts = 5)
+  mergedData <- matchModelHumanData(predDf, listener)
+  cor(mergedData$preds, mergedData$listener.p)
+}
+checkSaliences()
+```
+
+
+Visualize
+```{r}
+mergedData <- matchModelHumanData(runFull(data, calcFn = 2, alpha = 7, numAlts = 5), listener)
+plotData <- mergedData
+qplot(stars, listener.p, col=degree,
+      data=plotData,
+      main=paste("title")) +
+  ylim(0, 1) +
+  facet_wrap(~scale) + 
+  geom_line(aes(y = preds), lty = 4)
+
+correlationScatterPlot <-
+  ggplot(mergedData, aes(x = listener.p, y = preds, col=stars)) +
+  geom_point() + 
+  stat_smooth(method="lm")
+  
 ```
 
 
 ```{r}
-
 normedVec(subset(test, scale == "good_excellent" & degree == "hi1")$preds)
 #normedVec(subset(test, scale == "good_excellent" & degree == "mid")$preds)
 sum(subset(test, scale == "good_excellent" & degree == "hi1")$preds)
