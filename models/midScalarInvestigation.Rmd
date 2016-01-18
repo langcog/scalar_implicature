@@ -148,7 +148,7 @@ ggplot(d.some, aes(x=reorder(d.some, Freq), y=Freq)) +
   ylab("frequency counts") +
   ggtitle("e9 - alternatives to 'some'")
 
-d.all = d$all
+
 d.all = as.data.frame(as.factor(d.all))
 d.all = as.data.frame(table(d.all))
 d.all = d.all[rev(order(d.all$Freq)), ]
@@ -158,4 +158,94 @@ ggplot(d.all, aes(x=reorder(d.all, Freq), y=Freq)) +
   xlab("alternatives") +
   ylab("frequency counts") +
   ggtitle("e9 - alternatives to 'all'")
+
+d.good = d$good
+d.good = as.data.frame(as.factor(d.good))
+d.good = as.data.frame(table(d.good))
+d.good = d.good[rev(order(d.good$Freq)), ]
+d.good$prop = d.good$Freq / sum(d.good$Freq)
+ggplot(d.good, aes(x=reorder(d.good, Freq), y=Freq)) +
+  geom_bar(stat="identity", position="dodge") +
+  xlab("alternatives") +
+  ylab("frequency counts") +
+  ggtitle("e9 - alternatives to 'good'")
+# bad
+d.good[d.good$d.good == "bad", "prop"] / sum(d.good$prop)
+# terrrible
+d.good[d.good$d.good == "terrible", "prop"] / sum(d.good$prop)
+salience <- c(1, 1, 0.05, 0.08, 0.22)
+normed.salience <- salience / sum(salience)
+
+top.4 <- data.frame(c("excellent", "good", "okay", "bad", "terrible"),
+                    c(1, 1, 0.05, 0.22))
 ```
+
+```{r}
+d <- fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T) %>% as.data.frame(., stingasFactors = FALSE)
+
+scales <- c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+degrees <- c("hi1", "hi2", "mid", "low1", "low2")
+
+# alternative counts
+altCounts <- data.frame(Var1 = c(), Freq = c(), percent = c())
+for (s in scales) {
+  scaleHeads <- strsplit(s, "_")[[1]]
+  s1 <- scaleHeads[1]
+  s2 <- scaleHeads[2]
+  combinedDf <- rbind(as.data.frame(table(d[, s1])), as.data.frame(table(d[, s2]))) %>%
+    aggregate(Freq ~ Var1 ,data = ., FUN = sum) %>%
+    mutate(scale = s,
+           percent = Freq / sum(Freq))
+  altCounts <- rbind(altCounts, combinedDf)
+}
+fullScales <- c("excellent", "good", "okay", "bad", "terrible",
+               "loved", "liked", "indifferent", "disliked", "hated",
+               "delicious", "palatable", "mediocre", "gross", "disgusting",
+               "unforgettable", "memorable", "ordinary", "bland", "forgettable",
+               "all", "most", "some", "little", "none")
+topAlts <- data.frame(good_excellent = c("okay", "bad", "terrible"),
+             liked_loved = c("indifferent", "disliked", "hated"),
+             palatable_delicious = c("mediocre", "gross", "disgusting"),
+             memorable_unforgettable = c("ordinary", "bland", "forgettable"),
+             some_all = c("most", "little", "none"))
+scales
+saliences <- data.frame(scale = unlist(sapply(scales, FUN=function(i){rep(i, 5)})),
+                        degree = unlist(sapply(degrees, FUN=function(i){rep(i, 5)})),
+                        salienceCost = rep(NA, 5^2))
+
+saliences <- data.frame(scale = c(rep(scales[1], 5),
+                                  rep(scales[2], 5),
+                                  rep(scales[3], 5),
+                                  rep(scales[4], 5),
+                                  rep(scales[5], 5)),
+                        degree = rep(degrees, 5),
+#                                   rep(degrees[2], 5),
+#                                   rep(degrees[3], 5),
+#                                   rep(degrees[4], 5),
+#                                   rep(degrees[5], 5)),
+                        salienceCost = rep(NA, 5^2),
+                        stringsAsFactors = FALSE)
+
+# subset(altCounts, scale == "good_excellent" & Var1 == "amazing")$percent
+# mapply(saliences$scale, saliences$degree, FUN = function(s, d) {
+#   subset(altCounts, scale == s & degree == d)$percent
+# })
+
+# Saliency
+
+# good_excellent
+saliences[saliences$scale == "good_excellent",]$salienceCost <- c(1, 1, 0.022, 0.189, 0.089)
+saliences[saliences$scale == "liked_loved",]$salienceCost <- c(1, 1, 0.0056, 0.25, 0.28)
+saliences[saliences$scale == "palatable_delicious",]$salienceCost <- c(1, 1, 0.011, 0.089, 0.133)
+saliences[saliences$scale == "memorable_unforgettable",]$salienceCost <- c(1, 1, 0.0389, 0.0722, 0.022)
+saliences[saliences$scale == "some_all",]$salienceCost <- c(1, 0.1278, 1, 0.09444, 0.2167)
+write.csv(saliences, file="saliences.csv")
+
+currScale = "some_all"
+subset(altCounts, scale == currScale & Var1 %in% topAlts[, currScale])
+```
+
