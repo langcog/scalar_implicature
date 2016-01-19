@@ -58,11 +58,11 @@ speaker.lhd3 = function(currRating, currDegree, m, alpha, costs, allDegrees) {
   currCost <- subset(costs, degree == currDegree)$cost
   numerator = speaker.inf3(m[[currDegree]][currRating], alpha, currCost)
   # normalize over other words
-  normalize <- sum(sapply(seq(allDegrees), FUN = 
+  normalize <- sum(unlist(sapply(seq(allDegrees), FUN = 
                             function(i) {
                               speaker.inf(m[[allDegrees[i]]][currRating], alpha,
                                           subset(costs, degree == allDegrees[i])$cost)}
-                          ))
+                          )))
   return(numerator / normalize)
   # return(numerator)
 }
@@ -105,7 +105,7 @@ computePosteriors <- c(norm.post, norm.post3)
 # data       => contains scale | degree | stars | speaker.p | prior.p | cost
 # calcFN     => without cost = 1, with cost = 2
 # alpha      => set alpha level
-runFull <- function(data, calcFn = 1, alpha = 1, numAlts = 5) {
+runFull <- function(data, calcFn = 2, alpha = 1, numAlts = 5) {
   results <-
     data.frame(scale = c(),
                stars = c(),
@@ -118,11 +118,11 @@ runFull <- function(data, calcFn = 1, alpha = 1, numAlts = 5) {
         mat <- subset(data, scale  == s) %>%
           select(stars, degree, speaker.p) %>%
           spread(degree, speaker.p) %>%
-#           mutate(hi1 = hi1 / sum(hi1),
-#                  hi2 = hi2 / sum(hi2),
-#                  mid = mid / sum(mid),
-#                  low1 = low1 / sum(low1),
-#                  low2 = low2 / sum(low2)) %>%
+          mutate(hi1 = hi1 / sum(hi1),
+                 hi2 = hi2 / sum(hi2),
+                 mid = mid / sum(mid),
+                 low1 = low1 / sum(low1),
+                 low2 = low2 / sum(low2)) %>%
           select(hi1, hi2, mid, low1, low2)
       } else if (numAlts == 4) {
         mat <- subset(data, scale  == s) %>%
@@ -137,9 +137,9 @@ runFull <- function(data, calcFn = 1, alpha = 1, numAlts = 5) {
         mat <- subset(data, scale  == s) %>%
           select(stars, degree, speaker.p) %>%
           spread(degree, speaker.p) %>%
-          mutate(hi1 = hi1 / sum(hi1),
-                 hi2 = hi2 / sum(hi2)) %>%
-          select(hi1, hi2)
+          mutate(hi = hi / sum(hi),
+                 low = low / sum(low)) %>%
+          select(hi, low)
       }
     stars <- subset(data, scale == s)$stars
     degrees <- as.character(subset(data, scale == s)$degree)
@@ -185,12 +185,21 @@ yelpPriors <- data.frame(stars=1:5,
                            c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
 # Cost / rewards
 # --------------
-emptyCosts <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+emptyCosts5 <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
                             cost = rep(0.0, 5), stringsAsFactors = FALSE)
-salienceCosts <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences.csv")
-for (s in scales) {
-  salienceCosts[salienceCosts$scale == s, ]$cost <-
-    -1 * normedVec(salienceCosts[salienceCosts$scale == s, ]$cost)
+emptyCosts4 <- data.frame(degree = c("low2", "low1","hi2", "hi1"),
+                            cost = rep(0.0, 4), stringsAsFactors = FALSE)
+emptyCosts2 <- data.frame(degree = c("low", "hi"),
+                            cost = rep(0.0, 2), stringsAsFactors = FALSE)
+salienceCosts5 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences5.csv")
+salienceCosts4 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences4.csv")
+salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences2.csv")
+normNegSalienceCosts <- function(saliences) {
+  for (s in scales) {
+    saliences[saliences$scale == s, ]$cost <-
+      -1 * normedVec(saliences[saliences$scale == s, ]$cost)
+  }
+  saliences
 }
 # salience <- c(0.22, 0.08, 0.05, 1, 1)
 # saliencePriors <- data.frame(stars=1:5, prior.p = (salience / sum(salience)))
@@ -206,9 +215,9 @@ speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/
 # --------
 listener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
 
-costs <- salienceCosts
+costs <- salienceCosts2
 priors <- unifPriors
-data <- left_join(speakerL12, costs) %>%
+data <- left_join(speakerL08, costs) %>%
   left_join(., priors) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, prior.p, cost) %>%
@@ -216,14 +225,15 @@ data <- left_join(speakerL12, costs) %>%
 
 # run fns()
 checkSaliences()
-tuneAlphas(modelData = data, humanDf = listener)
+tuneAlphas(modelData = data, humanDf = listener, numAlts = 2)
 ```
 
-Explore
+Data exploration Fns()
 ```{r}
 # matchModelHumandData()
 # -----------------------
-matchModelHumanData <- function(predDf, listenerDf, study) {
+# NEED TO FINISH WORKING HERE!!!!!!!!!!!!!!!!!!
+matchModelHumanData <- function(predDf, listenerDf, study = "e12") {
   combinedDf <- data.frame(scale = c(),
                            degree = c(),
                            speaker.p = c(),
@@ -232,13 +242,26 @@ matchModelHumanData <- function(predDf, listenerDf, study) {
                            preds = c())
   
   for (s in unique(predDf$scale)) {
-    if (s == "some_all") {
-      tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "mid")) %>%
+    if (study == "e12") {
+      if (s == "some_all") {
+        tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "mid")) %>%
+          mutate(degree = ifelse(degree == "hi1", "hi", "low"))
+        } else {
+          tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
             mutate(degree = ifelse(degree == "hi1", "hi", "low"))
-    } else {
-      tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
+        }
+    } else if (study == "e10") {
+        if (s == "some_all") {
+          tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "low1")) %>%
             mutate(degree = ifelse(degree == "hi1", "hi", "low"))
+        } else {
+          tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
+            mutate(degree = ifelse(degree == "hi1", "hi", "low"))
+        }
+    } else { ## study e6
+      tempDf <- subset(predDf, scale == s)
     }
+    
     combinedDf <- rbind(combinedDf, tempDf)
   }
 
@@ -250,25 +273,25 @@ matchModelHumanData <- function(predDf, listenerDf, study) {
   
   results
 }
-# mergedData <- matchModelHumanData(test, listener)
+# mergedData <- matchModelHumanData(data, listener, study = "e6")
 
 # Alpha Tuning - maximixize correlation
 # -------------------------------------
-tuneAlphas <- function(modelData, humanDf, alphas = seq(1, 12), numAlts = 5){
+tuneAlphas <- function(modelData, humanDf, alphas = seq(1, 12), numAlts = 5, study = "e12"){
   sapply(alphas, function(i) {
     predDf <- runFull(modelData, calcFn = 2, alpha = i, numAlts = numAlts)
-    mergedData <- matchModelHumanData(predDf, listener)
+    mergedData <- matchModelHumanData(predDf, listener, study = study)
     cor(mergedData$preds, mergedData$listener.p)
   })
 }
-tuneAlphas(modelData = data, humanDf = listener)
+# tuneAlphas(modelData = data, humanDf = listener, numAlts = 4)
 
-checkSaliences <- function() {
-  predDf <- runFull(data, calcFn = 2, alpha = 1, numAlts = 5)
-  mergedData <- matchModelHumanData(predDf, listener)
+checkSaliences <- function(d, study = "e12", alpha = 1, numAlts = 5) {
+  predDf <- runFull(d, calcFn = 2, alpha = alpha, numAlts = numAlts)
+  mergedData <- matchModelHumanData(predDf, listener, study = study)
   cor(mergedData$preds, mergedData$listener.p)
 }
-checkSaliences()
+# checkSaliences(data, study = "e6", alpha = 1, numAlts = 2)
 ```
 
 
@@ -276,19 +299,108 @@ Visualize
 ```{r}
 mergedData <- matchModelHumanData(runFull(data, calcFn = 2, alpha = 7, numAlts = 5), listener)
 plotData <- mergedData
-qplot(stars, listener.p, col=degree,
-      data=plotData,
+
+# predPlot()
+# ---------
+# plot preds over stars with human data
+predPlot <- function(d) {
+  qplot(stars, listener.p, col=degree,
+      data=d,
       main=paste("title")) +
   ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = preds), lty = 4)
-
-correlationScatterPlot <-
-  ggplot(mergedData, aes(x = listener.p, y = preds, col=stars)) +
+}
+# correlationScatterPlot()
+# -----------------------
+# plot correleation with low / hi
+correlationScatterPlot <- function(d) {
+  ggplot(d, aes(x = listener.p, y = preds, col=stars)) +
   geom_point() + 
   stat_smooth(method="lm")
-  
+}
 ```
+
+Entailment analysis
+```{r}
+
+
+```
+
+Negative alts analysis
+```{r}
+
+```
+
+Symmetric scale analysis
+```{r}
+# Set-up data
+
+completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
+  results <- list() ## Will return this
+  
+  newCosts <- normNegSalienceCosts(costs)
+  data <- left_join(speaker, newCosts) %>%
+    left_join(., priors) %>%
+    rowwise %>%
+    select(scale, degree, stars, speaker.p, prior.p, cost) %>%
+    group_by(scale)
+
+  studyNum <- ifelse(numAlts == 5, "e12", ifelse(numAlts == 4, "e10", "e6"))
+  # Tune alpha
+  bestAlpha <- which.max(tuneAlphas(data, listener, numAlts = numAlts, study = studyNum))
+  # Run model
+  modelData <- runFull(data, calcFn = 2, alpha = bestAlpha, numAlts = numAlts)
+  # Final data set for plotting / model fit
+  
+  combinedDf <- matchModelHumanData(modelData, listener, study = studyNum)
+  fit <- cor(combinedDf$preds, combinedDf$listener.p)
+
+  # plots
+#   predPlot(combinedDf)
+#   correlationScatterPlot(combinedDf)
+  
+  results[[1]] <- combinedDf
+  results[[2]] <- modelData
+  results[[3]] <- bestAlpha
+  results[[4]] <- fit
+  results[[5]] <- predPlot(combinedDf)
+  results[[6]] <- correlationScatterPlot(combinedDf)
+  results
+}
+```
+
+Entailment / Neg alts / Symmetric scale
+```{r}
+symmetricScalerun <- completeModelRun(speakerL12, listener, unifPriors, salienceCosts5, numAlts = 5)
+symmetricScalerun[[4]]
+negAltsRun <-        completeModelRun(speakerL10, listener, unifPriors, salienceCosts4, numAlts = 4)
+negAltsRun[[4]]
+entailmentRun <-      completeModelRun(speakerL08, listener, unifPriors, salienceCosts2, numAlts = 2)
+entailmentRun[[4]]
+```
+
+Aggregate analysis
+```{r}
+cors <- data.frame(cors = c(symmetricScalerun[[4]], negAltsRun[[4]], entailmentRun[[4]]),
+                   m = c("full", "neg_alts", "entailment"))
+ggplot(cors, aes(x=reorder(m, cors), y = cors)) +
+  geom_bar(stat="identity", position="dodge") +
+  ylab("Correlation") +
+  xlab("Model") +
+  ylim(0, 1) + 
+  ggtitle("Model fit correlation coefficients") +
+  guides(colour=FALSE) +
+  geom_text(aes(x=m, y=as.numeric(cors) + 0.025, label=round(cors, 3)))
+```
+
+
+
+
+
+
+
+
 
 
 ```{r}
