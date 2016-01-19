@@ -201,14 +201,17 @@ Fifty particpants were recruited for Experiment 3b (Pragmatic Listener task). Da
 ## Results and Discussion
 
 ```{r}
-# Literal listener: Negative alts (e10)
-ggplot(data = speakerE10, aes(x = stars, y = speaker.p, col=degree)) +
-  geom_line() +
-  facet_wrap(~scale) +
-  ylab("Percent yes") +
-  geom_linerange(aes(ymin = speaker.p - cil, 
-                     ymax = speaker.p + cih))
-  ggtitle("Literal listener compatibility judgments")
+# Literal listener: Negative alts (e11)
+
+# FOR SOME REASON THIS ISN'T PLOTTING
+
+# ggplot(data = speakerE10, aes(x = stars, y = speaker.p, col = degree)) +
+#   geom_line() +
+#   facet_wrap(~scale) +
+#   ylab("Percent yes") +
+#   geom_linerange(aes(ymin = speaker.p - cil, 
+#                      ymax = speaker.p + cih))
+#   ggtitle("Literal listener compatibility judgments")
 ```
 
 ```{r}
@@ -222,6 +225,21 @@ ggplot(data = listenerE11, aes(x = stars, y = listener.p, fill = scale)) +
 
 
 # Model
+Our model adopts a Bayesian framework to formalize the Gricean account of scalar implicature. 
+In particular, RSA adopts a "language understanding as social cognition" perspective which is captured in listener and speaker agents reasoning about one another. We focus on the problem of a listener inferring the meaning of a speaker's utterance. Let $u$ be an observed utterance by our speaker with an intended meaning $m$. We assume that the listener has access to a space of possible meanings $M$ and some model relating meanings $m \in M$ to $u$. 
+
+Upon hearing an utterance $u$ the Listener agent evaluates all candidate word meanings, computing their posterior probabilities $p(m | u)$. This quantity is proportional to the product of the prior probability $p(m)$ of a particular meaning and the likelihood $p(u | m)$.
+
+$$p(m | u) = \frac{p(u | m)p(m)}{p(u)}$$
+$$= \frac{p(u | m)p(m)}{\sum_{m \in M}p(u | m)}$$
+
+The prior $p(m)$ represents the listener's expectations about plausible meanings (star ratings), *independent* of the utterance $u$. To avoid biasing the data we assume priors over meanings are uniform, however future investigations may want to experiment with different priors, either through inferring them or empircal means.
+
+The likelihood $p(u | m)$ assumes that speakers choose words to maximize informatitivy in context. We quantified the informativeness of a word by its surprisal minus a cost. Cost, in this case is operationalized as a salience measure - more salient items should have a larger impact on implicature generation, than less salient alternatives.
+$$p(u | m) = \frac{e^{-\alpha(-log(p(m|u)) - cost(u))}}{\sum_{m \in M}e^{-\alpha(-log(p(m|u)) - cost(u))}}$$
+
+The posterior $p(m | u)$ reflects the listener's degree of beleif that $m$ is the intended meaning of the speaker, given her utterance $u$.
+
 Using literal semantics data from experiments 1a and 3a we can simulate the role alternatievs play in scalar implicature. In particular, we can vary the number of scalar items present during implicature generation. In the following analyses we focus on three sceneriors 1) Entailment only sclaes (good, excellent), 2) Negative Alternatives (horrible, bad, good, excellent) 3) Symmetric scale (horrible, bad, okay, good, excellent).
 
 
@@ -235,15 +253,15 @@ Using literal semantics data from experiments 1a and 3a we can simulate the role
 
 
 ## Model fitting and comparison
-
+Figure XX shows plots model / human correlation for our three simulations. Alpha was tuned separately for each of these runs...
 
 
 # General Discussion
-
+By varying the type of scale representations available to our Bayesian model we tested the effects of scalar alternatives in scalar implicature. Model fit with human judgements was significantly improved by the inclusion of alternatives beyond the typical "strong" and "weak" scalar items. In fact, we found that both neutral and negative valenced scalar items contribute to human-like implicature generation within our framework.
 
 # Acknowledgements
 
-Thanks to NSF BCS #XYZ. Thanks to Michael Franke, Judith Degen, and Noah Goodman.
+Thanks to NSF BCS XYZ. Thanks to Michael Franke, Judith Degen, and Noah Goodman.
 
 # References 
 
