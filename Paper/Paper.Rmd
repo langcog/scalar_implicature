@@ -10,7 +10,7 @@ author-information:
 
 abstract: 
 
-    Succesful communication regularly requires listeners to make pragmatic inferences - enrichments beyond the literal meaning of a speaker's utterance. In the canonical "some, but not all" scalar implicature, listeners enrich the meaning of "some" to "some, but not all" when interpreting a sentence such as "She ate some of the cookies." A Gricean account of this phenomena assumes the presence of "salient alternatives" with varying degrees of informatitivy. "Some," in the example above, is enriched to "some, but not all" in the presence of the stronger alternative "all." While intuitive, empirical evidence for the presence of such alternatives is limited. Our current work explores the role different scale representations may play in scalar implicature. Using a Bayesian model of implicature generation we simulate various scale representations that might be available to a listener, comparing model predictions to human judgment. Results indicate that implicature generation likely requires "full" scale representations, including negative valenced alternatives, rather than the typical entailment only scales assumed in most research to date.
+    Succesful communication regularly requires listeners to make pragmatic inferences - enrichments beyond the literal meaning of a speaker's utterance. In the frequently cited "some, but not all" scalar implicature, listeners enrich the meaning of "some" to "some, but not all" when interpreting a sentence such as "She ate some of the cookies." A Gricean account of this phenomena assumes the presence of "salient alternatives" with varying degrees of informatitivy. "Some," in the example above, is enriched to "some, but not all" in the presence of the stronger alternative "all." While intuitive, empirical evidence for the presence of such alternatives is limited. Our current work explores the role different scale representations may play in scalar implicature. Using a Bayesian model of implicature generation we simulate various scale representations that might be available to a listener, comparing model predictions to human judgments. Results indicate that humans may rely on "fuller" scale representations, including negative and neutral valenced alternatives, rather than the typical entailment only scales assumed in most research to date.
     
 keywords:
     "pragmatics; scalar implicature; bayesian modeling"
@@ -26,6 +26,74 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", f
 
 ```{r, libraries}
 library(ggplot2)
+library(knitr)
+library(rjson)
+library(dplyr)
+library(tidyr)
+library(gridExtra)
+library(jsonlite)
+```
+
+
+```{r helpers}
+normedVec <- function(vec) vec / sum(vec)
+```
+
+```{r RSA}
+
+```
+
+```{r, exp_data}
+scales <- c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+
+# Alternatives (Study e9)
+alternativesData <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/e9_alternativeCounts.csv", stringsAsFactors = FALSE)
+
+# Priors
+# ------
+unifPriors = data.frame(stars = seq(1, 5), prior.p = rep(0.2, 5))
+empPriors = read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/emp_priors.csv")
+yelpPriors <- data.frame(stars=1:5,
+                         prior.p =
+                           c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
+# Cost / rewards
+# --------------
+emptyCosts5 <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
+                            cost = rep(0.0, 5), stringsAsFactors = FALSE)
+emptyCosts4 <- data.frame(degree = c("low2", "low1","hi2", "hi1"),
+                            cost = rep(0.0, 4), stringsAsFactors = FALSE)
+emptyCosts2 <- data.frame(degree = c("low", "hi"),
+                            cost = rep(0.0, 2), stringsAsFactors = FALSE)
+salienceCosts5 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences5.csv")
+salienceCosts4 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences4.csv")
+salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/saliences2.csv")
+for (s in scales) {
+  salienceCosts5[salienceCosts5$scale == s, ]$cost <-
+    -1 * normedVec(salienceCosts5[salienceCosts5$scale == s, ]$cost)
+}
+
+# Speaker
+# -------
+speakerE8 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
+speakerE12 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
+speakerE10 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
+
+# Listener
+# --------
+listenerE6 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
+listenerE11 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv")
+
+costs <- salienceCosts2
+priors <- unifPriors
+data <- left_join(speakerE8, costs) %>%
+  left_join(., priors) %>%
+  rowwise %>%
+  select(scale, degree, stars, speaker.p, prior.p, cost) %>%
+  group_by(scale)
 ```
 
 # Introduction
@@ -36,19 +104,19 @@ Humpty Dumpty Quote...
 \textbf{Succesful communication regularly requires listeners to make inferences that go beyond the semantic content of a speaker's utterance.} "Scalar implicatures" are a hallmark of such pragamtic enrichment. For example, listeners routinely enrich the meaning of the scalar item "some" to "some, but not all" in sentences like "Bob ate some of the cookies." (citations) A Gricean account of this phenomena assumes listeners reason about the intended meaning of a speaker while incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives (Grice, 1975). Continuing with the prior example, within this framework a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* to use "some" when "all" could have been used.
 
 [Scalar implicature in particular, what are the alternatives?]\newline
-\textbf{The presence of ``salient" alternatives is critical to standard accounts of scalar implicature (Grice)}. Previous research indicates implicature generation is affected by the set of alternatives available, both in adults (Degen, Franke) and is possibly the source of difficulty in computing implicatures for children (Barner). Degen found ... Similarily, Franke demonstrated... (the importance of a strong negative valenced term such as "none" adopting a Bayesian model of implicature generation. Model performance improved significantly when "none" was included...) Despite these signals, little empirical evidence points directly to the impact of scale representaion in scalar implicature. The current work investigates the role different scale representaitons play in scalar implicature.
+\textbf{The presence of ``salient" alternatives is critical to standard accounts of scalar implicature (Grice)}. Recent studies indicate implicature generation is affected by the set of alternatives available to listeners, both in adults (Degen, Franke) and is possibly the source of difficulty in computing implicatures for children (Barner). Degen found ... Similarily, Franke demonstrated... (the importance of a strong negative valenced term such as "none" adopting a Bayesian model of implicature generation. Model performance improved significantly when "none" was included...) Despite these signals, little empirical evidence points directly to the impact of scale representaion in scalar implicature. The current work investigates the role different scale representaitons play in scalar implicature.
 
 [RSA as a way of studying implicature]\newline
-\textbf{Measuring the degree to which alternatives may be present during implicature generation is a difficult task}. Issues of introspection aside, simply querying a participant about the apparent saliency of particular alternatives is problematic because the alternatives are made salient in the query itself. To circumvent this issue, we adopted a computational model of implicature generation. Adopting a computational framework allowed us to simulate the effects of various scalar alternatives sets on implicature generation, comparing model predictions to human judgments.
+\textbf{Measuring the degree to which alternatives may be present during implicature generation is a difficult task}. Issues of introspection aside, simply querying a participant about the saliency of particular alternatives is problematic because the alternatives must be made salient during the actual query. To circumvent this issue, we adopted a computational model of implicature generation. Adopting a computational framework allowed us to simulate the effects of various scalar alternative sets on implicature generation, comparing model predictions to human judgments.
   
 [How RSA works]\newline
 \textbf{Rational Speech-act theory (RSA) is a Bayesian framework for modeling scalar implicature.} How it works... Previous work using RSA has accurately modeled human judgments in both ad-hoc (Frank & Goodman, 2012) and embedded implicature settings (Stuhmuller & Goodman ...).... 
 
 [Using the scalar diversity approach to get beyond the some/all implicature]\newline
-\textbf{Recent experimental investigations of scalar implicature have focused almost exclusively on a small subset of possible scales, most notably focusing on "some/all".} This lack "Scalar Diversity" (van Tiel, 2013) not only presents a problem in terms of generalization of findings, but within our current computational framework, presents a problem of data sparsity. We adopt a "Scalar Diversity" approach in our experimental design in order to incorporate multiple scalar items from a range of grammatical classes. In particular, we use a food review paradigm to quantify what would otherwise be ambiguous semantics as distirbutions over star-ratings.
+\textbf{Recent experimental investigations of scalar implicature have focused almost exclusively on a small subset of possible scales, most notably "some/all".} This lack "Scalar Diversity" (van Tiel, 2013) makes generalization across different scalar types problematic.  We adopt a "Scalar Diversity" approach in our experimental design in order to incorporate multiple scalar items from a range of grammatical classes. In particular, we use a food review paradigm to quantify what would otherwise be ambiguous semantics as distirbutions over star-ratings.
 
 [Outline of the rest of the paper]\newline
-\textbf{In the following paper we present three experiments and three model simulations based on the experimental data.} We used a food review paradigm in which linguistic `meaning' for a given scalar item was quantified as a distribution over star-ratings. Quantifying both literal semantic content and pragmatic judgments in this way provided an important interface to RSA, especially for scalar items with ambigous literal semantics (items such as "memorable/unforgettable" or "palatable/delicious). In addition to quantifying literal semantics and pragmatic judgments in Experiments 1a,b and Experiments 3a,b, Experiment 2 used a modified cloze task, based on van Tiel (2013, Experiment 2???), to generate a set of plausible alternatives to the scalar items used in Experiments 1a,b. Alternatives generated in Experiment 2 supplmented the original stimuli from Experiments 1a,b in Experiments 3a,b. Using the literal semantic data from Experiments 1a and 3a we modeled pragmatic enrichment using RSA and compared model predictions to human judgment data from Experiments 1b and 3b. Results indicated that model performance was significantly improved with the incorporation of negative valenced scalar items. Indeed, peak model performance occurs for simulations with the ``fullest" scale representations. This result suggests that more "fully specified" scale representations may be active for human participants while making pragmatic judgments.
+\textbf{In the following paper we present three experiments and three model simulations based on the experimental data.} We used a food review paradigm in which linguistic `meaning' for a given scalar item was quantified as a distribution over star-ratings. Quantifying both literal semantic content and pragmatic judgments as distributions over stars, provided an important interface to RSA, especially for scalar items with ambigous literal semantics (items such as "memorable/unforgettable" or "palatable/delicious). In addition to quantifying literal semantics and pragmatic judgments in Experiments 1a,b and Experiments 3a,b, Experiment 2 used a modified cloze task, based on van Tiel (2013, Experiment 2???), to generate a set of plausible alternatives to the scalar items used in Experiments 1a,b. This data served two purposes. First, since participants were asked to freely generate alternatives this data gives a measure of scalar "saliency" simply the as a proportion of items generated for a given scalar pair. Second, alternatives generated in Experiment 2 supplemented the original stimuli from Experiments 1a,b in Experiments 3a,b.  Using the literal semantic data from Experiments 1a and 3a we modeled pragmatic enrichment using RSA and compared model predictions to human judgment data from Experiments 1b and 3b. Results indicated that model performance was significantly improved with the incorporation of negative valenced scalar items. Indeed, peak model performance occurs for simulations with the ``fullest" scale representations. This result suggests that more "fully specified" scale representations may be active for human participants while making pragmatic judgments.
 
 # Experiments - Literal listener and Pragmatic Listener tasks
 
@@ -72,9 +140,28 @@ On each trial of the pragmatic listener task (study 1b), participants were prese
 
 ## Results and Discussion
 
+```{r}
+# Literal listener: Entailment (e8)
+ggplot(data = speakerE8, aes(x = stars, y = speaker.p, col=degree)) +
+  geom_line() +
+  facet_wrap(~scale) +
+  ylab("Percent yes") +
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih))
+  ggtitle("Literal listener compatibility judgments")
+```
+
+```{r}
+# Pragmatic listener: Entailment (e6)
+ggplot(data = listenerE6, aes(x = stars, y = listener.p, fill = scale)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~scale + degree) +
+  ylab("Percent making this star judgment") +
+  ggtitle("Pragamtic listener judgments")
+```
+
+
 # Experiment 2: What are the alternatives?
-
-
 
 In Experiment 2 we asked participants to generate plausible alternatives for the scalar items presented in Experiment 1.
 
@@ -86,9 +173,20 @@ Participants were presented a target scalar term embedded in a sentence such as,
 
 ## Results and Discussion
 
+```{r}
+# Alternatives just good excellent
+plotData <- subset(alternativesData, scale == "good_excellent")
+removeRows <- which(plotData$alt == "good" | plotData$alt == "excellent")
+plotData <- plotData[-removeRows, ]
+ggplot(data = plotData, aes(x = reorder(alt, -n), y = n)) +
+  geom_bar(stat="identity") + ylim(0, 35) + labs(x = "alternative", y = "counts") +
+  ggtitle(paste("Salient alternatives for ", "Good, Excellent")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
 # Experiment 3a,b: Full scales - incorporating negative alternatives
 
-Experiment 3a,b was conducted to approximate literal listener semantic distributions (study a) and assess pragamtic judgments (study b) for both positive and negative valenced scalar items (see appendix b for the complete list of items used).
+Experiment 3a,b were conducted to approximate literal listener semantic distributions (study a) and assess pragamtic judgments (study b) for both positive and negative valenced scalar items (see appendix b for the complete list of items used).
 
 ## Participants
 
@@ -102,9 +200,36 @@ Fifty particpants were recruited for Experiment 3b (Pragmatic Listener task). Da
 
 ## Results and Discussion
 
+```{r}
+# Literal listener: Negative alts (e10)
+ggplot(data = speakerE10, aes(x = stars, y = speaker.p, col=degree)) +
+  geom_line() +
+  facet_wrap(~scale) +
+  ylab("Percent yes") +
+  geom_linerange(aes(ymin = speaker.p - cil, 
+                     ymax = speaker.p + cih))
+  ggtitle("Literal listener compatibility judgments")
+```
+
+```{r}
+# Pragmatic listener: Negative alts (e11)
+ggplot(data = listenerE11, aes(x = stars, y = listener.p, fill = scale)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~scale + degree) +
+  ylab("Percent making this star judgment") +
+  ggtitle("Pragamtic listener judgments")
+```
 
 
 # Model
+Using literal semantics data from experiments 1a and 3a we can simulate the role alternatievs play in scalar implicature. In particular, we can vary the number of scalar items present during implicature generation. In the following analyses we focus on three sceneriors 1) Entailment only sclaes (good, excellent), 2) Negative Alternatives (horrible, bad, good, excellent) 3) Symmetric scale (horrible, bad, okay, good, excellent).
+
+
+## Entailment only
+
+## Negative alternatives
+
+## Symmetric scale
 
 ## Details
 
