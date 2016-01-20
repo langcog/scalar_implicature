@@ -216,9 +216,9 @@ speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/
 listener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
 listener2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv", stringsAsFactors = FALSE)
 
-costs <- salienceCosts2
+costs <- salienceCosts5
 priors <- unifPriors
-data <- left_join(speakerL08, costs) %>%
+data <- left_join(speakerL12, costs) %>%
   left_join(., priors) %>%
   rowwise %>%
   select(scale, degree, stars, speaker.p, prior.p, cost) %>%
@@ -402,5 +402,5 @@ modelRunData$corE11 <- ifelse(modelRunData$numAlts == 5, symmetricE11cor,
 modelRunData$alphas <- ifelse(modelRunData$numAlts == 5, symmetricScalerun[[3]],
                              ifelse(modelRunData$numAlts == 4, negAltsRun[[3]], entailmentRun[[3]]))
 
-# write.csv(modelRunData, "model_data/allModelRuns.csv")
+# write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
 ```
