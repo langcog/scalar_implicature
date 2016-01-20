@@ -179,12 +179,37 @@ yelpPriors <- data.frame(stars=1:5,
                            c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
 # Cost / rewards
 # --------------
-emptyCosts5 <- data.frame(degree = c("low2", "low1", "mid", "hi2", "hi1"),
-                            cost = rep(0.0, 5), stringsAsFactors = FALSE)
+emptyCosts5 <- data.frame(scale = c(rep("good_excellent", 5),
+                                    rep("liked_loved", 5),
+                                    rep("memorable_unforgettable", 5),
+                                    rep("palatable_delicious", 5),
+                                    rep("some_all", 5)),
+                          degree = rep(c("hi1", "hi2", "mid", "low1", "low2"), 5),
+                          newCount = rep(0.0, 25),
+                          stringsAsFactors = FALSE)
+emptyCosts4 <- data.frame(scale = c(rep("good_excellent", 4),
+                                    rep("liked_loved", 4),
+                                    rep("memorable_unforgettable", 4),
+                                    rep("palatable_delicious", 4),
+                                    rep("some_all", 4)),
+                          degree = rep(c("hi1", "hi2", "low1", "low2"), 5),
+                          newCount = rep(0.0, 20),
+                          stringsAsFactors = FALSE)
+emptyCosts2 <- data.frame(scale = c(rep("good_excellent", 2),
+                                    rep("liked_loved", 2),
+                                    rep("memorable_unforgettable", 2),
+                                    rep("palatable_delicious", 2),
+                                    rep("some_all", 2)),
+                          degree = rep(c("hi", "low"), 5),
+                          newCount = rep(0.0, 10),
+                          stringsAsFactors = FALSE)
+
+# degree = c("low2", "low1", "mid", "hi2", "hi1"),
+#                             newCount = rep(0.0, 5), stringsAsFactors = FALSE)
 emptyCosts4 <- data.frame(degree = c("low2", "low1","hi2", "hi1"),
-                            cost = rep(0.0, 4), stringsAsFactors = FALSE)
+                            newCount = rep(0.0, 4), stringsAsFactors = FALSE)
 emptyCosts2 <- data.frame(degree = c("low", "hi"),
-                            cost = rep(0.0, 2), stringsAsFactors = FALSE)
+                            newCount = rep(0.0, 2), stringsAsFactors = FALSE)
 salienceCosts5 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences5.csv")
 salienceCosts4 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences4.csv")
 salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences2.csv")
@@ -215,7 +240,12 @@ listener2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L
 salienceCosts5 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences5.csv")
 NUM_ALTERNATIVES_E9 <- 180
 normNegSalienceCosts <- function(saliences) {
-  saliences$cost <- c(rep(NA, nrow(saliences)))
+  # Add cost column
+  saliences$cost <- c(rep(0, nrow(saliences)))
+  
+  # Check if we've passed emptyCost
+  if (all(saliences$newCount == 0)) return(saliences[, c("scale", "degree", "cost")])
+  
   for (s in scales) {
     saliences[saliences$scale == s, ]$cost <-
       (-1 * saliences[saliences$scale == s, ]$newCount) / NUM_ALTERNATIVES_E9
@@ -338,8 +368,8 @@ Symmetric scale analysis
 
 completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
   results <- list() ## Will return this
-  
   newCosts <- normNegSalienceCosts(costs)
+  
   data <- left_join(speaker, newCosts) %>%
     left_join(., priors) %>%
     rowwise %>%
@@ -366,8 +396,9 @@ completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
 }
 ```
 
-Entailment / Neg alts / Symmetric scale
+Run complte analyses and output to csv
 ```{r}
+# Run analyses
 symmetricScalerun <- completeModelRun(speakerL12, listener, unifPriors, salienceCosts5, numAlts = 5)
 symmetricScalerun[[4]]
 negAltsRun <- completeModelRun(speakerL10, listener, unifPriors, salienceCosts4, numAlts = 4)
@@ -375,7 +406,7 @@ negAltsRun[[4]]
 entailmentRun <- completeModelRun(speakerL08, listener, unifPriors, salienceCosts2, numAlts = 2)
 entailmentRun[[4]]
 
-######WORKING HERE!!!!!!
+
 
 listener2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv", stringsAsFactors = FALSE)
 symmetricData <- symmetricScalerun[[1]]
@@ -412,5 +443,5 @@ modelRunData$corE11 <- ifelse(modelRunData$numAlts == 5, symmetricE11cor,
 modelRunData$alphas <- ifelse(modelRunData$numAlts == 5, symmetricScalerun[[3]],
                              ifelse(modelRunData$numAlts == 4, negAltsRun[[3]], entailmentRun[[3]]))
 
-# write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
+#write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
 ```
