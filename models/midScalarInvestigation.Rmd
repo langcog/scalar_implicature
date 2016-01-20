@@ -104,7 +104,7 @@ d = d %>%
                                              "good_excellent", "memorable_unforgettable"))))) %>%
   group_by(scale, alt) %>%
   summarise(n = n())
-
+# write.csv(d, "e9_alternativeCounts.csv")
 # Plot findings of salient alternatives for each scale
 # -------------------------------------------------------
 scales = unique(d$scale)
@@ -181,7 +181,8 @@ top.4 <- data.frame(c("excellent", "good", "okay", "bad", "terrible"),
 ```
 
 ```{r}
-d <- fromJSON("../analysis/edited_alts.json", simplifyDataFrame=T) %>% as.data.frame(., stingasFactors = FALSE)
+d <- fromJSON("../analysis/edited_alts.json", simplifyDataFrame = TRUE) %>%
+  as.data.frame(., stingasFactors = FALSE)
 
 scales <- c("good_excellent",
             "liked_loved",
@@ -223,29 +224,120 @@ saliences <- data.frame(scale = c(rep(scales[1], 5),
                                   rep(scales[4], 5),
                                   rep(scales[5], 5)),
                         degree = rep(degrees, 5),
-#                                   rep(degrees[2], 5),
-#                                   rep(degrees[3], 5),
-#                                   rep(degrees[4], 5),
-#                                   rep(degrees[5], 5)),
                         salienceCost = rep(NA, 5^2),
                         stringsAsFactors = FALSE)
 
-# subset(altCounts, scale == "good_excellent" & Var1 == "amazing")$percent
-# mapply(saliences$scale, saliences$degree, FUN = function(s, d) {
-#   subset(altCounts, scale == s & degree == d)$percent
-# })
-
-# Saliency
-
-# good_excellent
+# Manual coding salience costs
 saliences[saliences$scale == "good_excellent",]$salienceCost <- c(1, 1, 0.022, 0.189, 0.089)
 saliences[saliences$scale == "liked_loved",]$salienceCost <- c(1, 1, 0.0056, 0.25, 0.28)
 saliences[saliences$scale == "palatable_delicious",]$salienceCost <- c(1, 1, 0.011, 0.089, 0.133)
 saliences[saliences$scale == "memorable_unforgettable",]$salienceCost <- c(1, 1, 0.0389, 0.0722, 0.022)
 saliences[saliences$scale == "some_all",]$salienceCost <- c(1, 0.1278, 1, 0.09444, 0.2167)
-write.csv(saliences, file="saliences.csv")
+# write.csv(saliences, file="saliences.csv")
+```
 
-currScale = "some_all"
-subset(altCounts, scale == currScale & Var1 %in% topAlts[, currScale])
+Saliences as counts for primary scalars and participant responses
+```{r}
+d <- fromJSON("../analysis/edited_alts.json", simplifyDataFrame = TRUE) %>%
+  as.data.frame(., stingasFactors = FALSE)
+scales <- c("good_excellent",
+            "liked_loved",
+            "palatable_delicious",
+            "memorable_unforgettable",
+            "some_all")
+degrees <- c("hi1", "hi2", "mid", "low1", "low2")
+
+# Populate counts
+altCounts <- data.frame(Var1 = c(), Freq = c(), NewFreq = c(), percent = c())
+for (s in scales) {
+  scaleHeads <- strsplit(s, "_")[[1]]
+  s1 <- scaleHeads[1]
+  s2 <- scaleHeads[2]
+  combinedDf <- rbind(as.data.frame(table(d[, s1])), as.data.frame(table(d[, s2]))) %>%
+    aggregate(Freq ~ Var1 ,data = ., FUN = sum) %>%
+    mutate(scale = s,
+           NewFreq = ifelse((Var1 == s1 | Var1 == s2), Freq + 90, Freq))
+  
+  altCounts <- rbind(altCounts, combinedDf)
+}
+#Adding 'palatable' to altCounts!!!
+altCounts <- rbind(altCounts, data.frame(Var1 = "palatable", Freq = 0, scale = "palatable_delicious", NewFreq = 90))
+
+# Populate saliences data for output
+saliences <- data.frame(scale = c(), degree = c(), count = c(), newCount = c())
+# good_excellent
+saliences <- rbind(saliences,
+      data.frame(scale = rep("good_excellent", 5), degree = degrees,
+                 count = c(subset(altCounts, scale == "good_excellent" & Var1 == "excellent")$Freq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "good")$Freq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "okay")$Freq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "bad")$Freq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "horrible")$Freq),
+                 newCount = c(subset(altCounts, scale == "good_excellent" & Var1 == "excellent")$NewFreq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "good")$NewFreq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "okay")$NewFreq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "bad")$NewFreq,
+                           subset(altCounts, scale == "good_excellent" & Var1 == "horrible")$NewFreq),
+                 stringsAsFactors = FALSE))
+# liked_loved
+saliences <- rbind(saliences,
+      data.frame(scale = rep("liked_loved", 5), degree = degrees,
+                 count = c(subset(altCounts, scale == "liked_loved" & Var1 == "loved")$Freq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "liked")$Freq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "indifferent")$Freq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "disliked")$Freq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "hated")$Freq),
+                 newCount = c(subset(altCounts, scale == "liked_loved" & Var1 == "loved")$NewFreq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "liked")$NewFreq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "indifferent")$NewFreq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "disliked")$NewFreq,
+                           subset(altCounts, scale == "liked_loved" & Var1 == "hated")$NewFreq),
+                 stringsAsFactors = FALSE))
+# memorable_unforgettable
+saliences <- rbind(saliences,
+      data.frame(scale = rep("memorable_unforgettable", 5), degree = degrees,
+                 count = c(subset(altCounts, scale == "memorable_unforgettable" & Var1 == "unforgettable")$Freq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "memorable")$Freq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "ordinary")$Freq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "bland")$Freq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "forgettable")$Freq),
+                 newCount = c(subset(altCounts, scale == "memorable_unforgettable" & Var1 == "unforgettable")$NewFreq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "memorable")$NewFreq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "ordinary")$NewFreq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "bland")$NewFreq,
+                           subset(altCounts, scale == "memorable_unforgettable" & Var1 == "forgettable")$NewFreq),
+                 stringsAsFactors = FALSE))
+
+# palatable_delicious
+saliences <- rbind(saliences,
+      data.frame(scale = rep("palatable_delicious", 5), degree = degrees,
+                 count = c(subset(altCounts, scale == "palatable_delicious" & Var1 == "delicious")$Freq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "palatable")$Freq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "mediocre")$Freq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "gross")$Freq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "disgusting")$Freq),
+                 newCount = c(subset(altCounts, scale == "palatable_delicious" & Var1 == "delicious")$NewFreq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "palatable")$NewFreq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "mediocre")$NewFreq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "gross")$NewFreq,
+                           subset(altCounts, scale == "palatable_delicious" & Var1 == "disgusting")$NewFreq),
+                 stringsAsFactors = FALSE))
+
+# some_all
+saliences <- rbind(saliences,
+      data.frame(scale = rep("some_all", 5), degree = degrees,
+                 count = c(subset(altCounts, scale == "some_all" & Var1 == "all")$Freq,
+                           subset(altCounts, scale == "some_all" & Var1 == "most")$Freq,
+                           subset(altCounts, scale == "some_all" & Var1 == "some")$Freq,
+                           subset(altCounts, scale == "some_all" & Var1 == "little")$Freq,
+                           subset(altCounts, scale == "some_all" & Var1 == "none")$Freq),
+                 newCount = c(subset(altCounts, scale == "some_all" & Var1 == "all")$NewFreq,
+                           subset(altCounts, scale == "some_all" & Var1 == "most")$NewFreq,
+                           subset(altCounts, scale == "some_all" & Var1 == "some")$NewFreq,
+                           subset(altCounts, scale == "some_all" & Var1 == "little")$NewFreq,
+                           subset(altCounts, scale == "some_all" & Var1 == "none")$NewFreq),
+                 stringsAsFactors = FALSE))
+
+# write.csv(saliences, "model_data/saliences5.csv")
 ```
 
