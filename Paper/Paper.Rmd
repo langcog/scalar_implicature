@@ -65,22 +65,84 @@ speakerE8 <- read.csv(paste(path, "model_data/L0_e8.csv", sep = ""), stringsAsFa
 # Experiments E6, E11: Pragmatic listener
 # ---------------------------------------
 listenerE6 <- read.csv(paste(path, "model_data/L1_e6.csv", sep = ""), stringsAsFactors = FALSE)
-listenerE11 <- read.csv(paste(path, "model_data/L1_e6.csv", sep = ""), stringsAsFactors = FALSE)
+listenerE11 <- read.csv(paste(path, "model_data/L1_e11.csv", sep = ""), stringsAsFactors = FALSE)
 ```
 
+```{r}
+speakers <- bind_rows(speakerE12 %>% mutate(expt = "4"), 
+                      speakerE10 %>% mutate(expt = "3a"), 
+                      speakerE8 %>% mutate(expt = "1a"))
+# ggplot(speakers, 
+#        aes(x = stars, y = speaker.p, col = degree, lty = expt)) + 
+#   geom_line() + 
+#   facet_grid(.~ scale) + 
+#   theme_bw()
+```
+
+```{r}
+listeners <- bind_rows(listenerE6 %>% mutate(expt = "1b"), 
+                      listenerE11 %>% mutate(expt = "3b"))
+zeros <- expand.grid(degree = c("low","hi"), 
+            scale = unique(listeners$scale), 
+            stars = 1:5, 
+            expt = c("1b","3b"))
+
+zlisteners <- full_join(listeners, zeros) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p))
+
+# ggplot(zlisteners, 
+#        aes(x = stars, y = listener.p, col = degree, lty = expt)) + 
+#   geom_line() + 
+#   facet_grid(. ~ scale) + 
+#   theme_bw()
+```
 # Introduction
 
 Humpty Dumpty Quote...
 
-Successful communication regularly requires listeners to make inferences that go beyond the literal semantic content of a speaker's utterance. "Scalar implicature" is a hallmark of such pragmatic enrichment. For example, listeners routinely enrich the meaning of the scalar item "some" to "some, but not all" in sentences like "Bob ate some of the cookies." (citations) A Gricean account of this phenomena assumes listeners reason about the intended meaning of a speaker while incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives (Grice, 1975). Continuing with the cookie example, a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* to use "some" when "all" could have been used.
+Successful communication regularly requires listeners to make inferences that go beyond the literal semantic content of a speaker's utterance. "Scalar implicature" is a hallmark of such pragmatic enrichment. For example, listeners routinely enrich the meaning of the scalar item "some" to "some, but not all" in sentences like "Bob ate some of the cookies" (van Tiel, 2014). A Gricean account of this phenomena assumes listeners reason about the intended meaning of a speaker while incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives (Grice, 1975). Under the Gricean account, a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* for the speaker to use "some" when "all" could have been used.
 
-The presence of ``salient" alternatives is critical to standard accounts of scalar implicature (Grice). Recent studies indicate implicature generation is affected by the set of alternatives (hereafter 'scale representations') available to listeners, both in adults (Degen, Franke) and is possibly a source of difficulty in computing implicatures for children (Barner). [Degen found ... Similarly, Franke demonstrated... (the importance of a strong negative valenced term such as "none" adopting a Bayesian model of implicature generation. Model performance improved significantly when "none" was included...)] Despite these signals, little empirical evidence points directly to the impact of scale representation in scalar implicature. The current work investigates the role different scale representations may play in scalar implicature.
+The presence of ``salient" alternatives is critical to the standard Gricean account of scalar implicature (Grice, 1975). Recent experimental evidence appears to support this. Using a gumball paradigm, Degen & Tanenhaus (2014) demonstrated that the scalar item *some* was judged less appropriate (natural) for small sets of items when exact numbers were seen as viable alternatives. This finding points to the impact a particular alternative set can have on judgments regarding scalar appropriateness. Using a fundamentally differnt approach, Franke (2014) formalized the Gricean account of implicature using a Bayesian model, modeling graded typicality judgments and scalar implicature. Results supported 'none', 'one' and 'all' as the most serious (salient) alternatives to "some."
 
-While the notion of a set of alternatives is fairly intuitive in the context of scalar items (it's part of how their defined), measuring alternatives is not. Issues of introspection aside, simply querying a participant about the saliency of a particular alternative is problematic because the alternative must be made salient during the actual query. To avoid this issue we adopt a computational model, formalizing implicature generation as Bayesian inference. Using empirical measures we simulate the effects of different alternatives sets on model predictions. Model predictions are compared to human judgment data.
+Taken together, each of the previous studies signal the importance of scale representation (set of available alternatives) in scalar implicature. However, like many recent investigations which have focused only on a small subset of scalar items, both Degen & Tanehaus (2014) and Franke (2014) focus exclusively on the scalar family "some/all." This lack "Scalar Diversity" (van Tiel, 2014) makes generalization across different scalar families problematic. van Tiel (2014), found substantial variation in the rate of upper-bounded construals among over 40 different scalar pairs. This finding suggests that implicature may differ widely between different scales. We adopt a "Scalar Diversity" approach in our experimental design in order to extend our investigation beyond "some/all" scalar items. In the following set of studies we examine implicature for "some/all" and five additional scalar families from a range of grammatical classes (see Figure 5 for a complete set of scalar items used). The set of scalar items for this study were chosen from among the 40 used in van Tiel (2014).
 
-Bayesian models of pragmatic enrichment have accurately predicted human judgments in ad-hoc (Frank & Goodman, 2012) and embedded (Stulhumuller & Goodman, 2014) implicature settings. Our current model follows both these studies and is based on Rational Speech-act theory (RSA). RSA frames language understanding as a special case of social cognition (Stulhumuller & Goodman, 2014), in which listeners and speakers reason about one-another. In the following set of experiments, we outline a literal semantics task (Experiments 1a, 3a and 4) as well as pragmatic judgment task (1b, 3b). Data from the literal semantics task are used to approximate information a Speaker might assume when reasoning about a Listener who interprets semantics literally (without pragmatic enrichment). Likewise, pragmatic judgments  are used to compare model posterior predictions and assess quality of fit.
+Consider a scalar item other than "some" -  in the context of a scalar item such as "good", the idea of set of lexical alternatives certainly xfeels intuitive ("bad", "excellent", etc.). But measuring the extent to which these alternatives are salient is not so clear. Nor is how to measure their impact on pragmatic intepretations of the scalar item "good." In an experimental setting, querying a participant about the saliency of a particular alternative is problematic because the alternative must be made salient during the query. In the spirit of Franke (2014) and Degen & Tanenhaus (2014), we pair a computational model of implicature with empirical measurments of linguistic material. This combination allows us to simulate the effect of various scale representations on implicature. In particular, we adopt a Bayesian model of implicature and a food-review paradigm to empirically quantify literal semantics and pragmatic judgments for our scalar stimuli.
 
-The heart of this investigation is concerned with populating our computational framework with empirical data. In particular we use experimental tools to measure otherwise ambigous literal semantics, to generate a set of plausible alternatives, and to obtain human pragmatic judgments for model comparison. Recent experimental investigations of scalar implicature have focused almost exclusively on a small subset of possible scales, most notably "some/all". This lack "Scalar Diversity" (van Tiel, 2013) makes generalization across different scalar families problematic. We adopt a "Scalar Diversity" approach in our experimental design in order to incorporate multiple scalar items from a range of grammatical classes (see Figure 5 for a complete set of scalar items used). In particular, we use a food review paradigm to quantify literal semantics and pragmatic judgments as distributions over star-ratings.
+Bayesian models of pragmatic enrichment have accurately predicted human judgments in ad-hoc (Frank & Goodman, 2012) and embedded (Stulhumuller & Goodman, 2014) implicature settings. Our current model follows both these studies and is based on Rational Speech-act theory (RSA). RSA frames language understanding as a special case of social cognition (Stulhumuller & Goodman, 2014), in which listeners and speakers reason about one-another. In this framework, a listener uses Bayesiain inference to interpret the intended meaning $m$ of a speaker who has made an utterance $u$. We will make the model specifications explicit later in the paper.
+
+In the following study we investigate the role of scale representation on scalar implicature. To do so we combine a computational framework with empirical measurements to simulate the type of scale representations that might be available to a listener. In the following sections we outline the specifics of the model and the particular components for which we need to to make empirical measurements. We then outline a series of experiments meant to a) quantify literal semantics for otherwise ambiguous scalar items, b) measure pragmatic judgments and c) generate a set of plausible alternatives for our set of scalar pairs taken from van Tiel (2014). In particular, we adopt a food review paradigm throughout our empirical data gathering, quantifying linguistic meaning (both literal semantics and pragmatic judgments) as distributions over star ratings. Finally, we simulate the impact of three different scale representations, "entailment", "mid" and "symmetric" on implicature generation, comparing model predictions with pragmatic judgments captured empirically. Results indicate that humans may employ more "fully specified" scale representatinos, relying on the presence of multiple alternatives during pragmatic enrichment.
+
+-----
+
+# Modeling implicature: Rational Speech-act theory
+We adopt a Bayesian model of scalar implicature known as Rational Speech-act theory (RSA). In particular, RSA frames language understanding as a special case of social cognition (Frank & Goodman, 2012; Stuhmuller & Goodman, 2014) in which listener and speaker agents reason about one another. We focus on the problem of a listener inferring the meaning of a speaker's utterance. Let $u$ be an observed utterance made by our speaker with an intended meaning $m$. We assume that the listener has access to a space of possible meanings $M$ and some model relating meanings $m \in M$ to $u$. 
+
+Upon hearing an utterance $u$ the Listener agent evaluates all candidate word meanings, computing their posterior probabilities $p_{L1}(m | u)$. This quantity is proportional to the product of the prior probability $p(m)$ of a particular meaning and the likelihood $p(u | m)$.
+
+$$p_{L1}(m | u) = \frac{p(u | m)p(m)}{p(u)}$$
+$$= \frac{p(u | m)p(m)}{\sum_{m \in M}p(u | m)}$$
+
+The **prior** $\mathbf{p(m)}$ represents the listener's expectations about plausible meanings (star ratings), *independent* of the utterance $u$. To avoid biasing the data we assume priors over meanings are uniform, however future investigations may want to experiment with different priors, either by inferring them or using empirical measures
+
+$\mathbf{p(u | m)}$ quantifies the **likelihood** that a speaker would make a particular utterance $u$ given an intended meaning $m$. Our model assumes that speakers choose words to maximize the utility of an utterance in context. Utility is operationalized as the informativity of a particular utterance (suprisal) minus a cost. In particular, the speaker chooses an utterance in order to maximize the utility of a listener who interprets her utterance literally $p_{L0}(m|u)$. $L_0$ denotes a literal listener interpretation.
+$$p(u | m) = \frac{e^{-\alpha(-log(p_{L0}(m|u)) - cost(u))}}{\sum_{m \in M}e^{-\alpha(-log(p_{L0}(m|u)) - cost(u))}}$$
+
+The **posterior** $\mathbf{p_{L1}(m | u)}$ quantifies a listener's pragmatic enrichment of an utterance $u$ as degree of belief that $m$ is the intended meaning of the speaker, given an utterance $u$. $L_1$ denotes a pragmatic listener interpration.
+
+## Populating the model: Measuring literal semantics and pragmatic judgments
+In order to simulate the role of scale representation on implicature we pair a computational framework with empirical data. In particular we use experimental tools to populate three components of the model. First, to measure otherwise ambigous literal semantics $\mathbf{p_{L0}(m|u)}$ (our "Scalar Diversity"" approach). Second, to generate a set of plausible alternatives to the original scalar pairs taken from van Tiel (2014). Lastly, to obtain human pragmatic judgments for model comparison $\mathbf{p_{L1}(m|u)}$.
+
+Starting with the first component, consider the scalar items  "some" and "all." Both are convenient for modeling in a computational framework like the one we've proposed above. Their literal semantics $\mathbf{p_{L0}}$ are easily quantified over sets.
+
+$$\text{\textit{some of the A's are B's.}}$$
+$$[[some]] = \{<A, B> : |A \cap B| \geq 1 \}$$
+
+$$\text{\textit{all of the A's are B's.}}$$
+$$[[all]] = \{<A, B> : \frac{|A \cap B|}{|A|} == 1 \}$$
+
+The same cannot be said for items such as "good / excellent", "memorable / unforgettable" or "liked / loved."
+
+In the following set of studies we adopt a food-review paradigm to measure literal semantics and pragmatic judgments empirically. In order to capture graded typicality judgments as in Degen & Tanenhaus (2014) we use a compatiblity measure dependent variable, pairing scalar items with star-ratings in our literal listener task (Experiments 1a, 3a and 4). Data from these experiments is used to approximate the literal listener semantics for a given scalar item $u$ as a distribution over star-ratings $m \in \text{\{1 - 5 stars\}}$. Similarly, pragmatic judgment data from Experiments 1b and 3b serve as our primary points of comparison with model predictions $\mathbf{p_{L1}(m|u)}$, again quantifying judgments as distributions over star-ratings. In the following section we take the read through our experiments.
 
 ```{r stimuli_exp1, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows a trial from Experiment 1a with the target scalar \`liked\'. Participants responses to the binary dependent variable are used to quantify literal semantics. The right panel shows a trial from Experiment 1b with the target scalar \`liked\'. Participants were asked to generate the star rating they think the speaker likely intended, given the target scalar (in this case 'liked')."}
 
@@ -88,11 +150,9 @@ The heart of this investigation is concerned with populating our computational f
 grid::grid.raster(png::readPNG("~/Desktop/Projects/scalar_implicature/Paper/figs/exp1_stimuli.png"))
 ```
 
-In the following paper we investigate the role of scale representation in scalar implicature. We use a food review paradigm in which 'meaning' for a given scalar item was quantified as a distribution over star-ratings. Quantifying both literal semantic content and pragmatic judgments as distributions over stars provides an important interface to our model, especially for scalar items with ambigous literal semantics (e.g. items such as "liked/loved" or "memorable/unforgettable"). In addition to quantifying literal semantics and pragmatic judgments in Experiments 1a,b and Experiments 3a,b, Experiment 2 used a modified cloze task, based on van Tiel (2013, Experiment 2???), to generate a set of plausible alternatives to the scalar items used in Experiments 1a,b. We extend the set of alternatives measured in Experiments 3a,b and 4 using data from Experimeng 2. Additionally, by looking at the relative frequencies of alternatives generated in Experiment 2 we were able to compute a saliency measure for each alternative. Using the literal semantic data from Experiments 1a, 3a and 4, we modeled pragmatic enrichment using RSA and compared model predictions to human judgments obtained in Experiments 1b and 3b. Model performance was significantly improved with the incorporation of alternatives. This result suggests that more ``fully specified" scale representations may be active for human participants while making pragmatic judgments for scalar items.
-
 # Experiment 1a,b: Entailment scales
 
-Experiment 1a and 1b were conducted to approximate literal listener semantic distributions (1a) and pragmatic judgments (1b) for entailment only scales (e.g. "liked/loved", "good/excellent", etc).
+Experiment 1a and 1b were conducted to approximate literal listener semantic distributions (1a) and pragmatic judgments (1b) for five pairs of scalar items taken from van Tiel (2014) (see figure 5 for stimuli). Each pair consists of a "weaker" scalar term (e.g. "some") and a stronger scalar term (e.g. "all"). We are calling these "entialment scales"", because they encode the assumption that a listener need only have a the stronger alternative present to generate an enriched interpretation of the weaker term.
 
 ## Methods
 
@@ -204,24 +264,7 @@ The procedure of Experiment 4 follow the same form as Experiments 1a and 3a with
 ## Results and Discussion
 Distributional differences.
 
-# Model
-We adopt a Bayesian model of scalar implicature. In particular, RSA frames language understanding as a special case of social cognition (Stuhmuller & Goodman, 2014) in which listener and speaker agents reason about one another. We focus on the problem of a listener inferring the meaning of a speaker's utterance. Let $u$ be an observed utterance by our speaker with an intended meaning $m$. We assume that the listener has access to a space of possible meanings $M$ and some model relating meanings $m \in M$ to $u$. 
-
-Upon hearing an utterance $u$ the Listener agent evaluates all candidate word meanings, computing their posterior probabilities $p(m | u)$. This quantity is proportional to the product of the prior probability $p(m)$ of a particular meaning and the likelihood $p(u | m)$.
-
-$$p(m | u) = \frac{p(u | m)p(m)}{p(u)}$$
-$$= \frac{p(u | m)p(m)}{\sum_{m \in M}p(u | m)}$$
-
-The prior $p(m)$ represents the listener's expectations about plausible meanings (star ratings), *independent* of the utterance $u$. To avoid biasing the data we assume priors over meanings are uniform, however future investigations may want to experiment with different priors, either by inferring them or using empirical measures
-
-The likelihood $p(u | m)$ assumes that speakers choose words to maximize informativity in context. We quantified the informativeness of a word by its surprisal minus a cost. Cost, in this case is operationalized as a salience measure - more salient items should have a larger impact on implicature generation than less salient alternatives.
-$$p(u | m) = \frac{e^{-\alpha(-log(p(m|u)) - cost(u))}}{\sum_{m \in M}e^{-\alpha(-log(p(m|u)) - cost(u))}}$$
-
-The posterior $p(m | u)$ reflects the listener's degree of belief that $m$ is the intended meaning of the speaker, given her utterance $u$.
-
-Using literal semantics data from experiments 1a and 3a and 4, we can simulate the role alternatives play in scalar implicature. In particular, we can vary the number of scalar items present during implicature generation. In the following analyses we focus on three scenarios 1) Entailment only scales (good, excellent), 2) Negative Alternatives (horrible, bad, good, excellent) 3) Symmetric scale (horrible, bad, okay, good, excellent). Table 1 contains the set of scalar items used for each simulation.
-
-## Model fitting and comparison
+# Temp section Model was here
 
 ### Results
 Table here
@@ -282,8 +325,4 @@ Thanks to NSF BCS XYZ. Thanks to Michael Franke, Judith Degen, and Noah Goodman.
 \setlength{\leftskip}{0.125in}
 \noindent
 
-
-the role various scale representations might play in scalar implicature. In Experiment 1a,b we gather data for Entailment only scalar items such as "some/all," "good/excellent," etc. In Experiment 1a we quantify literal semantics for scalar items as compatibility distributions over star-ratings (Literal listener task). In Experiment 1b, we ask participants to make judgments about speaker intentions by generating star-ratings in response to reviews (Pragmatic listener task). In Experiment 2, we ask participants to generate plausible alternatives to the scalar items used in Experiments 1a,b. Experiments 3a,b are identical to 1a,b with the addition of scalar items from Experiment 2. In this we explore fuller scale descriptions, gathering both literal semantics and pragmatic judgments for fuller scale descriptions such as "none/some/most/all" or "horrible/bad/good/excellent."
-
-In three experiments we 
-Our "Scalar Diversity" approach involves a food review paradigm we employed throughout our three experiments. In both Literal Listener (1a, 3a) and Pragmatic Listener (1b, 3b) tasks, participants are shown one sentence prompts containing a target scalar term along with a star-rating. In individual trials, star-ratings were either pre-populated (in literal listener tasks) or used as the dependent variable (pragmatic listener tasks). This design allowed us to quantify literal semantics for individual scalar terms as compatibility distributions over star-ratings (literal listener tasks 1a and 3a). Similarly, we quantified pragmatic judgments by prompting participants with a target scalar term and asking them to generate a star-rating.
+use a food review paradigm in which 'meaning' for a given scalar item was quantified as a distribution over star-ratings. Quantifying both literal semantic content and pragmatic judgments as distributions over stars provides an important interface to our model, especially for scalar items with ambigous literal semantics (e.g. items such as "liked/loved" or "memorable/unforgettable"). In addition to quantifying literal semantics and pragmatic judgments in Experiments 1a,b and Experiments 3a,b, Experiment 2 used a modified cloze task, based on van Tiel (2013, Experiment 2???), to generate a set of plausible alternatives to the scalar items used in Experiments 1a,b. We extend the set of alternatives measured in Experiments 3a,b and 4 using data from Experimeng 2. Additionally, by looking at the relative frequencies of alternatives generated in Experiment 2 we were able to compute a saliency measure for each alternative. Using the literal semantic data from Experiments 1a, 3a and 4, we modeled pragmatic enrichment using RSA and compared model predictions to human judgments obtained in Experiments 1b and 3b. Model performance was significantly improved with the incorporation of alternatives. This result suggests that more ``fully specified" scale representations may be active for human participants while making pragmatic judgments for scalar items.
