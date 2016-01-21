@@ -275,13 +275,15 @@ following section we take the read through our experiments.
 scales}\label{experiment-1ab-entailment-scales}
 
 Experiment 1a and 1b were conducted to approximate literal listener
-semantic distributions (1a) and pragmatic judgments (1b) for five pairs
-of scalar items taken from van Tiel (2014) (see figure 5 for stimuli).
-Each pair consists of a ``weaker'' scalar term (e.g. ``some'') and a
-stronger scalar term (e.g. ``all''). We are calling these ``entialment
+semantic distributions \(p_{L0}(m|u)\) (Exerpiment 1a) and pragmatic
+judgments \(p_{L1}(m|u)\) (Experiment 1b) for five pairs of scalar items
+taken from van Tiel (2014) (see figure 5 for stimuli). Each pair
+consists of a ``weaker'' scalar term (e.g. ``some'') and a stronger
+scalar term (e.g. ``all''). We are calling these ``entialment
 scales''``, because they encode the assumption that a listener need only
 have a the stronger alternative present to generate an enriched
-interpretation of the weaker term.
+interpretation of the weaker term. The grey colored items in Table 1
+denote the original''entailment" items used in Experiments 1a,b.
 
 \subsection{Methods}\label{methods}
 
@@ -289,12 +291,12 @@ interpretation of the weaker term.
 
 Participants for both tasks were recruited on Amazon Mechanical Turk and
 paid \$0.20 for their participation. Thirty participants were recruited
-for Experiment 1a. Data for N participants was thrown out after
-participants either failed to pass two training trials or were not
-native English speakers, leaving a total sample of N. Fifty participants
-were recruited for experiment 1b. Data for N participants was thrown out
-after participants either failed to pass two training trials or were not
-native English speakers, leaving a total sample of N.
+for Experiment 1a. Data for two participants was thrown out during
+analysis because there were not native English speakers, leaving a total
+sample of 28 participants. Fifty participants were recruited for
+experiment 1b. Data for 7 participants was thrown out after participants
+either failed to pass two training trials or were not native English
+speakers, leaving a total sample of 43 participants.
 
 \subsubsection{Design and procedure}\label{design-and-procedure}
 
@@ -303,23 +305,27 @@ Experiment 1a. Participants were presented with a target scalar item and
 a star-rating (between 1-5 stars) and asked to judge the compatibility
 of the scalar item and star-rating. Compatibility was assessed through a
 binary ``yes/no'' response to a question of the form ``Do you think that
-the person \_\_\_ed the food?" where a target scalar was presented in
-the ``\_\_\_ed." Each participant was presented all scalar item and
-star-rating combinations with randomization.
+the person thought the food was \_\_\_\_?" where a target scalar was
+presented in the ``\_\_\_\_." Each participant was presented all scalar
+item and star-rating combinations with randomization.
 
 The right panel of Figure 1 shows a screen shot of a trial from
 Experiment 1b. On each trial, participants were presented with a
 one-sentence prompt containing a target scalar item such as ``Someone
-said they \_\_\_ed the food." They were then asked to generate a
-star-rating according to what they think the reviewer likely gave. Each
-participant was presented all scalar items with randomization.
+said they thought the food was \_\_\_\_\_.'' Participants were then
+asked to generate a star-rating according to what they thought the
+reviewer likely gave. Each participant was presented all scalar items
+with randomization.
 
 \subsection{Results and Discussion}\label{results-and-discussion}
 
-The left panel of figure two shows literal semantics for each of the
-scalar terms ``liked'' and ``loved'' as distributions over star-ratings.
-
-Chi-squared test? Null results, not really important here anyway\ldots{}
+Figure 2 plots literal listner \(p_{L0}(m|u)\) distributions obtained in
+Experiments 1a, 3a and 4. Data from 1a is (\ldots{}). We see clear
+variation between semantic judgments between scalar families in all the
+Experiments. For example, compatibility judgments for ``memorable'' and
+``forgettable'' are more similar than those for ``good / excellent'' or
+``liked / loved''. We will address distributional similarity across the
+studies in later sections.
 
 \begin{CodeChunk}
 \begin{figure*}[t]
@@ -335,38 +341,41 @@ Chi-squared test? Null results, not really important here anyway\ldots{}
 \section{Experiment 2: What are the
 alternatives?}\label{experiment-2-what-are-the-alternatives}
 
-In Experiment 2 we asked participants to generate plausible alternatives
-for the scalar items presented in Experiment 1.
+In Experiment 1 we obtained literal semantic compatibility and pragmatic
+judgments for five pairs of scalar terms. We would like to extend the
+scale descriptions for each of these pairs to include other plausible
+alternatives. We chose to take an empirical approach rather than assign
+alternatives arbitrarily. We adopted a modified cloze task, inspired by
+Experiment 2 in van Tiel (2014) and asked participants to generate
+alternatives for us.
 
 \subsection{Methods}\label{methods-1}
 
 \subsubsection{Participants}\label{participants-1}
 
-Using Amazon's Mechanical Turk, N workers were paid \$0.20 to
-participate. n workers were dropped from the analysis because they
-either failed to pass training trials or were not native English
-speakers. The final sample was N workers, all of whom were naive to the
-purpose of the experiment.
+Using Amazon's Mechanical Turk, 30 workers were paid \$0.20 to
+participate. All participants were native English speakers and naive to
+the purpose of the experiment.
 
 \subsubsection{Design and procedure}\label{design-and-procedure-1}
 
-Participants were presented a target scalar term embedded in a sentence
-such as, ``In a recent restaurant review someone said they thought they
-\emph{----}ed the food.'' Participants were then asked to generate
-plausible alternatives by responding to the question, ``If they'd felt
-differently about the food, what other words could they have used
-instead of \emph{----}?'' and asked to generate three alternatives.
+Participants were presented a target scalar term from our original
+entailment set embedded in a sentence such as, ``In a recent restaurant
+review someone said they thought they the food was \_\_\_\_" with a
+target scalar presented in the ``\_\_\_\_." Participants were then asked
+to generate plausible alternatives by responding to the question, ``If
+they'd felt differently about the food, what other words could they have
+used instead of \_\_\_\_\_?'' and asked to generate three unique
+alternatives.
 
 \subsection{Results and Discussion}\label{results-and-discussion-1}
 
 Figure 3 plots the combined counts of alternatives generated for the
 scalar items ``liked'' and ``loved.'' Alternative distributions for the
 other scalar pairs (e.g.. ``good/excellent'',
-``memorable/unforgettable'') were similarly long-tailed. In Experiments
-3a,b we took the top two alternatives generated for each scalar item to
-enrich the entailment only scales from Experiments 1a,b. In experiment 4
-we further enriched the scales from Experiments 3a,b with a neutral
-valence scalar chosen from the alternative sets.
+``memorable/unforgettable'') were similarly long-tailed, however the
+size and content of the alternate sets were diverse. (SOMETHING MORE
+MORE FORMAL HERE???)
 
 \begin{CodeChunk}
 \begin{figure*}[t]
@@ -382,24 +391,29 @@ valence scalar chosen from the alternative sets.
 \section{Experiment 3a,b: Incorporating top
 alternatives}\label{experiment-3ab-incorporating-top-alternatives}
 
-Experiment 3a,b are identical to Experiments 1a,b except the set of
-target scalar was expanded to include the top two alternatives generated
-for each scalar family. The orange colored items in table 1 denote
-additional scalar items added in Experiments 3a,b.
+In Exerpiment 1a,b we measured literal semantics and pragmatic judgments
+for Entailment scales. In Exerpiment 2, we asked participants to
+generate plausible alternatives to these items. In Experiments 3a,b we
+use the same experimental design for both literal semantics and
+pragmatic judgment tasks, however we now expand the set of scalar items
+to inlclude the original Entailment pairs from Experiments 1a,b with the
+top two alternatives generated for each scalar family by participants in
+Experiment 2. The orange colored items in table 1 denote additional
+scalar items added in Experiments 3a,b.
 
 \subsection{Participants}\label{participants-2}
 
 Participants for both studies were recruited on Amazon Mechanical Turk
 and paid \$0.20 for their participation. Thirty participants were
-recruited for Experiment 3a (Literal Listener task). Data for N
+recruited for Experiment 3a (Literal Listener task). Data for six
 participants was thrown out after participants either failed to pass two
 training trials or were not native English speakers, leaving a total
-sample of N.
+sample of 24 participants.
 
 Fifty participants were recruited for Experiment 3b (Pragmatic Listener
-task). Data for N participants was thrown out after participants either
-failed to pass two training trials or were not native English speakers,
-leaving a total sample of N.
+task). Data for five participants was thrown out after participants
+either failed to pass two training trials or were not native English
+speakers, leaving a total sample of 45 participants.
 
 \subsection{Procedure}\label{procedure}
 
@@ -408,24 +422,48 @@ The procedure of Experiments 3a,b follow the same form as Experiments
 
 \subsection{Results and Discussion}\label{results-and-discussion-2}
 
-Distributional differences.
+Run glmer() here:
+
+To test whether literal listener compatibility judgments differed
+between Experiment 1a and 3a we ran a mixed effects model, regressing
+responses to the binary compatibility measure on scale, degree, and
+Experiment with random effects by subject. Results indicate (\ldots{})
+
+Run elmer() here:
+
+To test whether pragmatic judgments differed between Experiments 1b and
+3b we ran a mixed effects model, regressing star-rating selections on
+scale, scalar item and Exerpiment with random effects by subject.
+Results indicate.
+
+While conducting our analysis we realized that our literal semantic
+distributions for each scalar family was roughly split between two
+negative valenced items and two positively valenced items while more
+neutral alternatives appeared to be left out. (This pattern was true of
+all the scalar families, except for ``some ~all'' in which the top two
+alternatives were positive valenced ``most'' and negative valenced
+``none''.) In Experiment 4 we explore the addition of a neutrally
+valenced scalar alternative for each scalar family.
 
 \section{Experiment 4: Symmetric
 scales}\label{experiment-4-symmetric-scales}
 
-Experiment 4a is identical to Experiments 1a and 3a except the set of
-target scalar was expanded to include a neutral valence scalar item for
-each scalar family. The purple colored items in Table 1 denote
+In Experiment 4, we continue to extend the alternative sets, each by one
+additional scalar item. While we simply took the top two alternatives
+generated in Experiment 2 for the additional alternatives in Experiments
+3a,b, in this case we chose a subjectively ``neutral'' valenced scalar
+item from among the alternatives generated in Experiment 2. The idea was
+to simulate a ``full'' set of alternatievs with negative, neutral and
+positive valenced items. The purple colored items in Table 1 denote
 additional scalar items added in Experiments 4.
 
 \subsection{Participants}\label{participants-3}
 
-Participants for both studies were recruited on Amazon Mechanical Turk
-and paid \$0.20 for their participation. Thirty participants were
-recruited for Experiment 4 (Literal Listener task). Data for N
-participants was thrown out after participants either failed to pass two
-training trials or were not native English speakers, leaving a total
-sample of N.
+Thirty participants were recruited on Amazon Mechanical Turk and paid
+\$0.20 for their participation. There were no data exclusions due to
+training failures or native language requirements, leaving a total
+sample of thirty participants, all native English speakers, naive to the
+purpose of the experiment.
 
 \subsection{Procedure}\label{procedure-1}
 
@@ -434,16 +472,36 @@ The procedure of Experiment 4 follow the same form as Experiments 1a and
 
 \subsection{Results and Discussion}\label{results-and-discussion-3}
 
-Distributional differences.
+Distributions for neturally valenced scalar did appear fairly gaussian,
+occupying a literal semantic previously unoccupied by the other
+alternatives.
 
-\section{Temp section Model was here}\label{temp-section-model-was-here}
+Run glmer() here:
 
-\subsubsection{Results}\label{results}
+To test whether literal listener compatibility judgments differed
+between Experiment 1a and 3a we ran a mixed effects model, regressing
+responses to the binary compatibility measure on scale, degree, and
+Experiment with random effects by subject. Results indicate (\ldots{})
 
-Table here
+Run elmer() here:
 
-Figure 4 plots model / human correlation for our three simulations.
-Alpha was tuned separately for each of these runs\ldots{}
+To test whether pragmatic judgments differed between Experiments 1b and
+3b we ran a mixed effects model, regressing star-rating selections on
+scale, scalar item and Exerpiment with random effects by subject.
+Results indicate.
+
+\section{Model Runs}\label{model-runs}
+
+Using literal semantic data from Experiments 1a, 3a and 4 we conducted
+three simulations with our model. Each simulation used the specific
+literal semantic data to specify the scale representation avaiable to
+our model. The ``entailment'' model used only the original pair of
+scalar items pulled from van Tiel (2014). These data were measured in
+Experiment 1a. The ``mid'' model used the extended the original set of
+alternatives with the top two alternatives generated in Experiment 2.
+These data were measured in Exerpiment 3a. The ``full'' model included
+the full set of alternatives, including a neutral valenced alternatives.
+These data were measured in Experiment 4.
 
 \begin{CodeChunk}
 \begin{figure*}[t]
