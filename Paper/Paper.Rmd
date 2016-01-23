@@ -21,7 +21,7 @@ output: cogsci2016::cogsci_paper
 ```{r global_options, include=FALSE}
 rm(list=ls())
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", fig.path='figs/',
-                      echo=F, warning=F, cache=F, message=F, sanitize = T)
+                      echo=F, warning=F, cache=TRUE, message=F, sanitize = T)
 ```
 
 ```{r, libraries}
@@ -38,7 +38,6 @@ library(grid)
 
 
 ```{r helpers}
-path <- "~/Desktop/Projects/scalar_implicature/models/"
 normedVec <- function(vec) vec / sum(vec)
 ```
 
@@ -52,20 +51,20 @@ scales <- c("good_excellent",
             "some_all")
 # Experiment E9: Alternatives
 # ---------------------------
-alternativesData <- read.csv(paste(path, "model_data/e9_alternativeCounts.csv", sep = ""),
+alternativesData <- read.csv("../models/model_data/e9_alternativeCounts.csv",
                              stringsAsFactors = FALSE)
-allModelRunData <- read.csv(paste(path, "model_data/allModelRuns.csv", sep = ""),
+allModelRunData <- read.csv("../models/model_data/allModelRuns.csv",
                      stringsAsFactors = FALSE)
 
 # Experiments E8, E10, E12: Literal listener
 # ------------------------------------------
-speakerE12 <- read.csv(paste(path, "model_data/L0_e12.csv", sep  = ""), stringsAsFactors = FALSE)
-speakerE10 <- read.csv(paste(path, "model_data/L0_e10.csv", sep = ""), stringsAsFactors = FALSE)
-speakerE8 <- read.csv(paste(path, "model_data/L0_e8.csv", sep = ""), stringsAsFactors = FALSE)
+speakerE12 <- read.csv("../models/model_data/L0_e12.csv", stringsAsFactors = FALSE)
+speakerE10 <- read.csv("../models/model_data/L0_e10.csv", stringsAsFactors = FALSE)
+speakerE8 <- read.csv("../models/model_data/L0_e8.csv", stringsAsFactors = FALSE)
 # Experiments E6, E11: Pragmatic listener
 # ---------------------------------------
-listenerE6 <- read.csv(paste(path, "model_data/L1_e6.csv", sep = ""), stringsAsFactors = FALSE)
-listenerE11 <- read.csv(paste(path, "model_data/L1_e11.csv", sep = ""), stringsAsFactors = FALSE)
+listenerE6 <- read.csv("../models/model_data/L1_e6.csv", stringsAsFactors = FALSE)
+listenerE11 <- read.csv("../models/model_data/L1_e11.csv", stringsAsFactors = FALSE)
 ```
 
 ```{r}
@@ -136,7 +135,7 @@ In the following set of studies we adopt a food-review paradigm to measure liter
 ```{r stimuli_exp1, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows a trial from Experiment 1a with the target scalar \`liked\'. Participants responses to the binary dependent variable are used to quantify literal semantics. The right panel shows a trial from Experiment 1b with the target scalar \`liked\'. Participants were asked to generate the star rating they think the speaker likely intended, given the target scalar (in this case 'liked')."}
 
 # Screen shots of literal listener and pragmatic listener conditions
-grid::grid.raster(png::readPNG("~/Desktop/Projects/scalar_implicature/Paper/figs/exp1_stimuli.png"))
+grid::grid.raster(png::readPNG("figs/exp1_stimuli.png"))
 ```
 
 # Experiment 1a,b: Entailment scales
@@ -337,7 +336,7 @@ By varying the type of scale representations available to our Bayesian model we 
 ```{r allScalesTable, fig.env = "figure", fig.pos = "h", fig.width=3.5, fig.height=2.5, fig.align='center', set.cap.width=T, num.cols.cap=1, fig.cap = "This table shows the stimuli used in Experiments 1a,b, 3a,b and 4. Colors denote the additions made in each experiment. For example, in Experiment 1a we measured literal semantics for \'liked/loved\'. In Experiment 3a,b we extended this group to \'textit{hated/disliked/liked/loved\'. In Experiment 4 we extended this grou to \'hated/disliked/felt indifferent about/liked/loved\'."}
 
 # Scale stimuli
-grid::grid.raster(png::readPNG("~/Desktop/Projects/scalar_implicature/Paper/figs/alternativeSets.png"))
+grid::grid.raster(png::readPNG("figs/alternativeSets.png"))
 ```
 
 # Acknowledgements
