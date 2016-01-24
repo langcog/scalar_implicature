@@ -1,0 +1,9 @@
+base
+ggplot2
+knitr
+rjson
+dplyr
+tidyr
+gridExtra
+jsonlite
+png

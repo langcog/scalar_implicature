@@ -33,7 +33,7 @@ library(gridExtra)
 library(jsonlite)
 library(png)
 library(grid)
-library(langcog)
+# library(langcog)
 ```
 
 
@@ -87,7 +87,7 @@ zlisteners <- full_join(listeners, zeros) %>%
 ```
 # Introduction
 
-Successful communication requires listeners to make pragmatic inferences that go beyond the literal semantic content of speakers' utterances. For example, listeners  commonly enrich the meaning of the scalar item "some" to "some but not all" in sentences like "Bob ate some of the cookies" [@grice1975;@horn1984;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understnading pragmatic inferences more generally. A Gricean account of this phenomena assumes listeners reason about the meaning the speaker intended by incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* for the speaker to use "some" when "all" could have been used.
+Successful communication requires listeners to make pragmatic inferences that go beyond the literal semantic content of speakers' utterances. For example, listeners  commonly enrich the meaning of the scalar item "some" to "some but not all" in sentences like "Bob ate some of the cookies" [@grice1975;@horn1984;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomena assumes listeners reason about the meaning the speaker intended by incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* for the speaker to use "some" when "all" could have been used.
 
 But what are the alternatives that should be considered in this computation more generally? Under classic accounts of implicature, listeners consider only those words whose meaning would entail the word that is actually sent [@horn1972], and these alternatives enter into conventionalized or semi-conventionalized scales [@levinson2000]. For example, because "all" entails "some," and hence is a "stronger" meaning, "all" should be considered as an alternative to "some" in implicatures. Similar scales exist for non-quantifier scales, e.g. "love" entails "like" (and hence "I liked the movie" implicates that I didn't love it).
 
@@ -95,7 +95,7 @@ Recent empirical evidence has called into question whether entailment scales are
 
 By formalizing pragmatic reasoning, computational models can help provide more direct evidence about the role that alternatives play. The "rational speech act" model (RSA) is one recent framework for understanding inferences about meaning in context [@frank2012;@goodman2013]. RSA models frame language understanding as a special case of social cognition, in which listeners and speakers reason recursively about one another's goals. In the case of scalar implicature, a listener makes a probabilistic inference about what the speaker's most likely communicative goal was, given that she picked the quantifier "some" rather than the stronger quantifier "all." In turn, the speaker reasons about what message would best convey her intended meaning to the listener, given that he is reasoning in this way. This recursion is grounded in a "literal" listener who reasons only according to the basic truth-functional semantics of the language. 
 
-@franke2014 used an RSA-style model to assess what alternatives a speaker would need to consider in order to produce the typicality/felicity ratings reported by @degen2015 and @vantiel2014. In order to do this, @franke2014's model assigned weights to a set of alternative numerical expressions. Surprisingly, along with weighting "one" highly (a conclusion that was suppored by the empirical work),the best-fitting model assigned substantial weight to "none" as an alternative. This finding was especially surprising considering the emphasis of standard theories on scalar items that stand in entailment relationships with one another (e.g. "one" entails "some" even if it is not classically considered to be part of the scale scale).
+@franke2014 used an RSA-style model to assess what alternatives a speaker would need to consider in order to produce the typicality/felicity ratings reported by @degen2015 and @vantiel2014. In order to do this, @franke2014's model assigned weights to a set of alternative numerical expressions. Surprisingly, along with weighting "one" highly (a conclusion that was suppored by the empirical work), the best-fitting model assigned substantial weight to "none" as an alternative. This finding was especially surprising considering the emphasis of standard theories on scalar items that stand in entailment relationships with one another (e.g. "one" entails "some" even if it is not classically considered to be part of the scale).
 
 In our current work, we pick up where these previous studies left off,  considering the set of alternatives for implicature using the RSA model. To gain empirical traction on this issue, however, we broaden the set of scales we consider. Our inspiration for this move comes from work by @vantiel2014b, who examined a phenomenon that they dubbed "scalar diversity," namely the substantial difference in the strength of scalar implicature across a variety of scalar pairs (e.g. "liked/loved," or "palatable/delicious."). Making use of some of this diversity allows us to investigate the ways that different alternative sets give rise to implicatures of different strengths across scales. 
 
@@ -117,7 +117,7 @@ $$ p_{S_1} (u \mid m) \propto p_{L_0} (m \mid u)$$
 
 \noindent where $L_0$ refers to a listener who only considers the truth-functional semantics of the utterance (that is, which meanings the utterance can refer to). 
 
-This model of the pragmatic speaker is consistent with a speaker who choses words to maximize the utility of an utterance in context [@frank2012], where utility is operationalized as the informativity of a particular utterance (surprisal) minus a cost:
+This model of the pragmatic speaker is consistent with a speaker who chooses words to maximize the utility of an utterance in context [@frank2012], where utility is operationalized as the informativity of a particular utterance (surprisal) minus a cost:
 
 $$p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))},$$
 
@@ -151,7 +151,7 @@ In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT)
 
 Figure \ref{fig:stimuli_exp1}, left, shows the experimental setup. Participants were presented with a target scalar item and a star rating (1--5 stars) and asked to judge the compatibility of the scalar item and star-rating. Compatibility was assessed through a binary "yes/no" response to a question of the form "Do you think that the person thought the food was \____?" where a target scalar was presented in the blank. Each participant saw all scalar item and star rating combinations for their particular condition (see Figure \ref{fig:allScalesTable}), in a random oder.
 
-The two-alternatives condition included only the scalar pairs from @vantiel2014. The four-alternatives condition included the two scalar items plus the top two alternatives generated for each scalar family by participants in Experiment 2. The five-alternatives condition included the four previous items plus one more "neutral" item chosen from those alternatives generated in Experiment 2. 
+The two-alternatives condition included only the scalar pairs from @vantiel2014. The four-alternatives condition included the two scalar items plus the top two alternatives generated for each scalar family by participants in Experiment 2. The five-alternatives condition included the four previous items plus one more "neutral" item chosen from those alternatives generated in Experiment 2. See Figure 1 for the complete list of alternatives used in each condition. 
 
 ## Results and Discussion
 
@@ -171,7 +171,7 @@ ggplot(speakers,
                                  title = "Experiment")) + 
   xlab("Star Rating") +
   ylab("Proportion Judgments") + 
-  scale_colour_solarized() + 
+  # scale_colour_solarized() + 
   theme_bw() + 
   theme(legend.position = "bottom",
         legend.margin = unit(.02,"in"),
@@ -183,7 +183,7 @@ Figure 2 plots literal listener $p_{L0}(m|u)$ distributions for the three condit
 
 # Experiment 2: Alternative Elicitation
 
-To elicit empirical alternatives for the scales we used in Experiment 1, we adopted a modified cloze task inspired by Experiment 2 of @vantiel2014.
+To elicit empirical alternatives for the scales we used in Experiment 1, we adopted a modified cloze task inspired by Experiment 3 of @vantiel2014.
 
 ## Methods
 
@@ -193,7 +193,7 @@ We recruited 30 workers on AMT. All participants were native English speakers an
 
 ### Design and procedure
 
-Participants were presented a target scalar term from our original entailment set embedded in a sentence such as, "In a recent restaurant review someone said they thought they the food was \____," with a target scalar presented in the "\____." Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \_____?" They were prompted to generate three unique alternatives.
+Participants were presented a target scalar term from our original entailment set embedded in a sentence such as, "In a recent restaurant review someone said they thought they the food was \____," with a target scalar presented in the blank. Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \_____?" They were prompted to generate three unique alternatives.
 
 ## Results and Discussion
 
