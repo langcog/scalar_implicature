@@ -49,6 +49,7 @@ norm.post = function(rating, degree, m, alpha, useprior) {
 New Prior incorporation
 ```{r}
 speaker.inf3 = function(d, alpha, cost = 0) {
+  if (d == 0) return(0)
   exp(-1 * alpha * (-log(d) - cost))
   # exp(alpha * (log(d) - cost))
 }
@@ -60,9 +61,10 @@ speaker.lhd3 = function(currRating, currDegree, m, alpha, costs, allDegrees) {
   # normalize over other words
   normalize <- sum(unlist(sapply(seq(allDegrees), FUN = 
                             function(i) {
-                              speaker.inf(m[[allDegrees[i]]][currRating], alpha,
+                              speaker.inf3(m[[allDegrees[i]]][currRating], alpha,
                                           subset(costs, degree == allDegrees[i])$cost)}
                           )))
+  if (normalize == 0) return(0)
   return(numerator / normalize)
   # return(numerator)
 }
@@ -206,10 +208,10 @@ emptyCosts2 <- data.frame(scale = c(rep("good_excellent", 2),
 
 # degree = c("low2", "low1", "mid", "hi2", "hi1"),
 #                             newCount = rep(0.0, 5), stringsAsFactors = FALSE)
-emptyCosts4 <- data.frame(degree = c("low2", "low1","hi2", "hi1"),
-                            newCount = rep(0.0, 4), stringsAsFactors = FALSE)
-emptyCosts2 <- data.frame(degree = c("low", "hi"),
-                            newCount = rep(0.0, 2), stringsAsFactors = FALSE)
+# emptyCosts4 <- data.frame(degree = c("low2", "low1","hi2", "hi1"),
+#                             newCount = rep(0.0, 4), stringsAsFactors = FALSE)
+# emptyCosts2 <- data.frame(degree = c("low", "hi"),
+#                             newCount = rep(0.0, 2), stringsAsFactors = FALSE)
 salienceCosts5 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences5.csv")
 salienceCosts4 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences4.csv")
 salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/saliences2.csv")
@@ -230,6 +232,7 @@ salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_d
 speakerL12 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
 speakerL10 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
 speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
+speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8Compliance.csv")
 # Listener
 # --------
 listener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e6.csv")
@@ -396,14 +399,14 @@ completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
 }
 ```
 
-Run complte analyses and output to csv
+Run complete analyses and output to csv
 ```{r}
 # Run analyses
-symmetricScalerun <- completeModelRun(speakerL12, listener, unifPriors, salienceCosts5, numAlts = 5)
+symmetricScalerun <- completeModelRun(speakerL12, listener, unifPriors, emptyCosts5, numAlts = 5)
 symmetricScalerun[[4]]
-negAltsRun <- completeModelRun(speakerL10, listener, unifPriors, salienceCosts4, numAlts = 4)
+negAltsRun <- completeModelRun(speakerL10, listener, unifPriors, emptyCosts4, numAlts = 4)
 negAltsRun[[4]]
-entailmentRun <- completeModelRun(speakerL08, listener, unifPriors, salienceCosts2, numAlts = 2)
+entailmentRun <- completeModelRun(speakerL08, listener, unifPriors, emptyCosts2, numAlts = 2)
 entailmentRun[[4]]
 
 
@@ -443,5 +446,5 @@ modelRunData$corE11 <- ifelse(modelRunData$numAlts == 5, symmetricE11cor,
 modelRunData$alphas <- ifelse(modelRunData$numAlts == 5, symmetricScalerun[[3]],
                              ifelse(modelRunData$numAlts == 4, negAltsRun[[3]], entailmentRun[[3]]))
 
-#write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
+# write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
 ```
