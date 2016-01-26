@@ -51,7 +51,7 @@ e10 <- readLiteralListenerData("../production-results/e10/")
 e12 <- readLiteralListenerData("../production-results/e12/")
 ```
 
-## Data cleaning and combine
+## Data org / cleaning
 ```{r}
 # workerid as factor
 e8$workerid <- as.factor(e8$workerid)
@@ -62,32 +62,120 @@ e12$workerid <- as.factor(e12$workerid)
 e12$exp <- "e12"
 
 # compliance checks here
+getCompliantWorkerIds <- function(df, exp) {
+  if (exp == "e8") {
+    compliant <- df %>% 
+      filter(tolower(language) == "english") %>%
+      filter(grepl("training1", scale)) %>%
+      group_by(workerid) %>%
+      summarise(compliant = judgment[scale == "training1" & degree == "hi"] == 1 & 
+                  judgment[scale == "training1" & degree == "low"] == 0)
+  } else {
+    compliant <- df %>% 
+      filter(tolower(language) == "english") %>%
+      filter(grepl("training", scale)) %>%
+      group_by(workerid) %>%
+      summarise(compliant = (judgment[scale == "training1" & degree == "hi2"] == 1) && 
+              (judgment[scale == "training1" & degree == "low1"] == 1))
+  }
+  # return compliant ids
+  compliant
+}
 
+# Append compliance booleans
+e8CompliantIds <- getCompliantWorkerIds(e8, "e8")
+e8 <- left_join(e8, e8CompliantIds)
+e10CompliantIds <- getCompliantWorkerIds(e10, "e10")
+e10 <- left_join(e10, e10CompliantIds)
+e12CompliantIds <- getCompliantWorkerIds(e12, "e12")
+e12 <- left_join(e12, e12CompliantIds)
 ```
 
-## Predictor factoring
+# Populate literal listener combined data
 ```{r}
-allL0Listener <- rbind(e8, e10, e12)
-allL0Listener$exp <- as.factor(allL0Listener$exp)
-allL0Listener$judgment <- as.numeric(allL0Listener$judgment)
-levels(allL0Listener$stars) <- c("5", "1", "2", "3", "4")
+# filter out compliance and training
+allL0Listener <- rbind(e8, e10, e12) %>%
+  subset(scale != "training1" & scale != "training2") %>%
+  filter(compliant == TRUE)
+  
+allL0Listener$exp <- as.factor(allL0Listener$exp) ## exp. is factor
+allL0Listener$judgment <- as.numeric(allL0Listener$judgment) ## judgment is numeric
+levels(allL0Listener$stars) <- c("5", "1", "2", "3", "4") ## re-arrange stars
 str(allL0Listener)
+```
+
+## Add inidivual words
+```{r}
+lookupScalar <- function(degree, scale, exp) {
+  # some_all
+  if (scale == "some_all") {
+    if (exp == "e12") {
+      if (degree == "hi1") return("all")
+      if (degree == "hi2") return("most")
+      if (degree == "mid") return("some")
+      if (degree == "low1") return("little")
+      if (degree == "low2") return("none")
+    } else if (exp == "e10") {
+      if (degree == "hi1") return("all")
+      if (degree == "hi2") return("most")
+      if (degree == "low1") return("some")
+      if (degree == "low2") return("none")
+    } else { ## must be exp 8
+      if (degree == "hi") return("all")
+      if (degree == "low") return("some")
+    }
+  # liked_loved
+  } else if (scale == "liked_loved") {
+    if (degree == "hi1" | degree == "hi") return("loved")
+    if (degree == "hi2" | degree == "low") return("liked")
+    if (degree == "mid") return("indifferent")
+    if (degree == "low1") return("disliked")
+    if (degree == "low2") return("hated")
+  # good_excellent
+  } else if (scale == "good_excellent") {
+    if (degree == "hi1" | degree == "hi") return("excellent")
+    if (degree == "hi2" | degree == "low") return("good")
+    if (degree == "mid") return("okay")
+    if (degree == "low1") return("bad")
+    if (degree == "low2") return("horrible")
+  # paltable_delicious
+  } else if (scale == "palatable_delicious") {
+    if (degree == "hi1" | degree == "hi") return("delicious")
+    if (degree == "hi2" | degree == "low") return("palatable")
+    if (degree == "mid") return("mediocre")
+    if (degree == "low1") return("gross")
+    if (degree == "low2") return("disgusting")
+  # memorable_unforgettable
+  } else if (scale == "memorable_unforgettable") {
+    if (degree == "hi1" | degree == "hi") return("unforgettable")
+    if (degree == "hi2" | degree == "low") return("memorable")
+    if (degree == "mid") return("ordinary")
+    if (degree == "low1") return("bland")
+    if (degree == "low2") return("forgettable")
+  }
+  NA
+}
+
+allL0Listener$word <- as.factor(with(allL0Listener, mapply(lookupScalar, degree, scale, exp)))
 ```
 
 ## glmer()
 ```{r}
+# fix contrasts so we're comparing most disparate experimetns (e8 and e12)
+contrasts(allL0Listener$exp) <- cbind("e10" = c(1, 0, 0), "e8" = c(0, 0, 1))
+
 # glmer WITHOUT experiment and with random effect for subjects
-glm1 <- glmer(judgment ~ scale + degree + stars + (1 | workerid), data = allL0Listener)
+glm1 <- glmer(judgment ~ scale + word + stars + (1 | workerid), data = allL0Listener)
 # glmer WITH experiment and with random effect for subjects
-glm2 <- glmer(judgment ~ exp + scale + degree + stars + (1 | workerid), data = allL0Listener)
+glm2 <- glmer(judgment ~ exp + word + scale +  stars + (1 | workerid), data = allL0Listener)
 ```
 
-## Visulaziations
+## Visulaziations?
 ```{r}
-ggplot(allL0Listener, aes(x=stars, y=judgment, col=degree)) + 
-  geom_point(alpha = 0.5) +
-  geom_jitter(width = 0.1, height = 0.1) +
-  facet_wrap(~scale + exp)
+# ggplot(allL0Listener, aes(x=stars, y=judgment, col=degree)) + 
+#   geom_point(alpha = 0.5) +
+#   geom_jitter(width = 0.1, height = 0.1) +
+#   facet_wrap(~scale + exp)
 ```
 
 ## Model Comaprisons
@@ -96,29 +184,3 @@ summary(glm2)
 anova(glm1, glm2)
 ```
 Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. However, it does look like there might be a significant difference
-
-Inidivual words
-```{r}
-if (scale == "some_all") {
-  if (exp == "10") {
-    if (degree == "hi1") {
-      d$word <- "most"
-    } else if (degree == "low1") {
-      d$word <- "some"
-    } else 
-  }
-}
-
-if (scale == "some_all") {
-  switch(degree, "hi2" = "all", "hi1" = "most", "low1" = "some")
-}
-a <- data.frame(scale = rep("some_all", 4), degree = c("hi2", "hi1", "low1", "low2"), stringsAsFactors = FALSE)
-
-for (d in a$degree) {
-  print(d)
-  a$word <- switch(d, "hi2" = "all", "hi1" = "most", "low1" = "some", "low2" = "none")  
-}
-
-a
-```
-
