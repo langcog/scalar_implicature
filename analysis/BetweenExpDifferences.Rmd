@@ -25,8 +25,8 @@ library(lmerTest)
 
 ## Get all L0 listener data
 ```{r}
-
 # readLiteralListenerData()
+# -------------------------
 # filesPath :: path to directory with .json files ("../production-results/e8/")
 readLiteralListenerData <- function(filesPath) {
   files <- dir(filesPath, pattern = "*.json")
@@ -184,3 +184,43 @@ summary(glm2)
 anova(glm1, glm2)
 ```
 Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. However, it does look like there might be a significant difference
+
+# Pragmatic listener data
+```{r}
+# readPragmaticListenerData()
+# -------------------------
+# filesPath :: path to directory with .json files ("../production-results/e8/")
+readPragmaticListenerData <- function(filesPath) {
+  files <- dir(filesPath, pattern = "*.json")
+  dRaw <- data.frame()  
+  
+  if (grepl("e6", filesPath)) {
+    for (f in files) {
+      jf <- paste(filesPath, f, sep="")
+      jd <- fromJSON(paste(readLines(jf), collapse=""))
+      id <- data.frame(workerid = jd$WorkerId, 
+                       scale = jd$answer$scale,
+                       degree = jd$answer$degree,
+                       stars = as.numeric(jd$answer$judgment),
+                       language = jd$answer$language)
+      dRaw <- bind_rows(dRaw, id)
+    }
+  } else if (grepl("e11", filesPath)) {
+    for (f in files) {
+    jf <- paste(filesPath, f, sep="")
+    jd <- fromJSON(paste(readLines(jf), collapse=""))
+    id <- data.frame(workerid = jd$WorkerId, 
+                     scale = jd$answer$data$scale,
+                     degree = jd$answer$data$degree,
+                     stars = as.numeric(jd$answer$data$judgment),
+                     language = jd$answer$data$language)
+    dRaw <- bind_rows(dRaw, id)
+    }
+  } else stop("Must enter 'e6' or 'e11' for exp")
+  
+  dRaw
+}
+e6 <- readPragmaticListenerData("../production-results/e6/")
+e11 <- readPragmaticListenerData("../production-results/e11/")
+```
+
