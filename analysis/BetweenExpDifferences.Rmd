@@ -1,0 +1,124 @@
+---
+title: "BetweenExpDifferences"
+author: "Ben Peloquin"
+date: "January 25, 2016"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_depth: 2
+---
+
+```{r}
+rm(list = ls())
+setwd("/Users/benpeloquin/Desktop/Projects/scalar_implicature/analysis")
+library(rjson)
+library(jsonlite)
+library(tidyr)
+library(dplyr)
+library(lme4)
+library(lmerTest)
+```
+
+# Literal Listener Data
+
+## Get all L0 listener data
+```{r}
+
+# readLiteralListenerData()
+# filesPath :: path to directory with .json files ("../production-results/e8/")
+readLiteralListenerData <- function(filesPath) {
+  files <- dir(filesPath, pattern = "*.json")
+  dRaw <- data.frame()  
+  
+  for (f in files) {
+    jf <- paste(filesPath, f, sep="")
+    jd <- fromJSON(paste(readLines(jf), collapse=""))
+    id <- data.frame(workerid = jd$WorkerId,
+                     scale = jd$answers$data$scale,
+                     degree = jd$answers$data$degree,
+                     stars = jd$answers$data$manipulation_level,
+                     judgment = as.numeric(jd$answers$data$judgment),
+                     language = jd$answers$data$language)
+    dRaw <- bind_rows(dRaw, id)
+  }
+  dRaw
+}
+
+e8 <- readLiteralListenerData("../production-results/e8/")
+e10 <- readLiteralListenerData("../production-results/e10/")
+e12 <- readLiteralListenerData("../production-results/e12/")
+```
+
+## Data cleaning and combine
+```{r}
+# workerid as factor
+e8$workerid <- as.factor(e8$workerid)
+e8$exp <- "e8"
+e10$workerid <- as.factor(e10$workerid)
+e10$exp <- "e10"
+e12$workerid <- as.factor(e12$workerid)
+e12$exp <- "e12"
+
+# compliance checks here
+
+```
+
+## Predictor factoring
+```{r}
+allL0Listener <- rbind(e8, e10, e12)
+allL0Listener$exp <- as.factor(allL0Listener$exp)
+allL0Listener$judgment <- as.numeric(allL0Listener$judgment)
+levels(allL0Listener$stars) <- c("5", "1", "2", "3", "4")
+str(allL0Listener)
+```
+
+## glmer()
+```{r}
+# glmer WITHOUT experiment and with random effect for subjects
+glm1 <- glmer(judgment ~ scale + degree + stars + (1 | workerid), data = allL0Listener)
+# glmer WITH experiment and with random effect for subjects
+glm2 <- glmer(judgment ~ exp + scale + degree + stars + (1 | workerid), data = allL0Listener)
+```
+
+## Visulaziations
+```{r}
+ggplot(allL0Listener, aes(x=stars, y=judgment, col=degree)) + 
+  geom_point(alpha = 0.5) +
+  geom_jitter(width = 0.1, height = 0.1) +
+  facet_wrap(~scale + exp)
+```
+
+## Model Comaprisons
+```{r}
+summary(glm2)
+anova(glm1, glm2)
+```
+Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. However, it does look like there might be a significant difference
+
+Inidivual words
+```{r}
+if (scale == "some_all") {
+  if (exp == "10") {
+    if (degree == "hi1") {
+      d$word <- "most"
+    } else if (degree == "low1") {
+      d$word <- "some"
+    } else 
+  }
+}
+
+if (scale == "some_all") {
+  switch(degree, "hi2" = "all", "hi1" = "most", "low1" = "some")
+}
+a <- data.frame(scale = rep("some_all", 4), degree = c("hi2", "hi1", "low1", "low2"), stringsAsFactors = FALSE)
+
+for (d in a$degree) {
+  print(d)
+  a$word <- switch(d, "hi2" = "all", "hi1" = "most", "low1" = "some", "low2" = "none")  
+}
+
+a
+```
+
