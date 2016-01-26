@@ -21,9 +21,9 @@ library(lme4)
 library(lmerTest)
 ```
 
-# Literal Listener Data
 
-## Get all L0 listener data
+# Functionality
+## read in literal listener data fn()
 ```{r}
 # readLiteralListenerData()
 # -------------------------
@@ -45,23 +45,51 @@ readLiteralListenerData <- function(filesPath) {
   }
   dRaw
 }
-
-e8 <- readLiteralListenerData("../production-results/e8/")
-e10 <- readLiteralListenerData("../production-results/e10/")
-e12 <- readLiteralListenerData("../production-results/e12/")
 ```
 
-## Data org / cleaning
+## read in Pragmatic listener data
 ```{r}
-# workerid as factor
-e8$workerid <- as.factor(e8$workerid)
-e8$exp <- "e8"
-e10$workerid <- as.factor(e10$workerid)
-e10$exp <- "e10"
-e12$workerid <- as.factor(e12$workerid)
-e12$exp <- "e12"
+# readPragmaticListenerData()
+# -------------------------
+# filesPath :: path to directory with .json files ("../production-results/e8/")
+readPragmaticListenerData <- function(filesPath) {
+  files <- dir(filesPath, pattern = "*.json")
+  dRaw <- data.frame()  
+  
+  if (grepl("e6", filesPath)) {
+    for (f in files) {
+      jf <- paste(filesPath, f, sep="")
+      jd <- fromJSON(paste(readLines(jf), collapse=""))
+      id <- data.frame(workerid = jd$WorkerId, 
+                       scale = jd$answer$scale,
+                       degree = jd$answer$degree,
+                       stars = as.numeric(jd$answer$judgment),
+                       language = jd$answer$language)
+      dRaw <- bind_rows(dRaw, id)
+    }
+  } else if (grepl("e11", filesPath)) {
+    for (f in files) {
+    jf <- paste(filesPath, f, sep="")
+    jd <- fromJSON(paste(readLines(jf), collapse=""))
+    id <- data.frame(workerid = jd$WorkerId, 
+                     scale = jd$answer$data$scale,
+                     degree = jd$answer$data$degree,
+                     stars = as.numeric(jd$answer$data$judgment),
+                     language = jd$answer$data$language)
+    dRaw <- bind_rows(dRaw, id)
+    }
+  } else stop("Must enter 'e6' or 'e11' for exp")
+  
+  dRaw
+}
+```
 
-# compliance checks here
+## get compliant worker ids
+```{r}
+# getCompliantWorkerIds()
+# -----------------------
+# df  :: data frame for exp
+# exp :: experiment id 
 getCompliantWorkerIds <- function(df, exp) {
   if (exp == "e8") {
     compliant <- df %>% 
@@ -70,42 +98,40 @@ getCompliantWorkerIds <- function(df, exp) {
       group_by(workerid) %>%
       summarise(compliant = judgment[scale == "training1" & degree == "hi"] == 1 & 
                   judgment[scale == "training1" & degree == "low"] == 0)
-  } else {
+  } else if (exp == "e10" | exp == "e12") {
     compliant <- df %>% 
       filter(tolower(language) == "english") %>%
       filter(grepl("training", scale)) %>%
       group_by(workerid) %>%
       summarise(compliant = (judgment[scale == "training1" & degree == "hi2"] == 1) && 
               (judgment[scale == "training1" & degree == "low1"] == 1))
-  }
+  } else if (exp == "e6") {
+    compliant <- df %>%
+      filter(tolower(language) == "english") %>%
+      filter(grepl("training1", scale)) %>%
+      group_by(workerid) %>%
+      summarise(compliant = stars[scale == "training1" & degree == "hi"] >= 4 &
+                  stars[scale == "training1" & degree == "low"] <= 2)
+  } else if (exp == "e11") {
+    compliant <- df %>%
+      filter(tolower(language) == "english") %>%
+      filter(grepl("training1", scale)) %>%
+      group_by(workerid) %>%
+      summarise(compliant = stars[scale == "training1" & degree == "hi2"] >= 4 &
+                  stars[scale == "training1" & degree == "low1"] <= 2)
+  } else stop("Entered a bad experiment id (e6, e8, e10, e11, e12")
   # return compliant ids
   compliant
 }
-
-# Append compliance booleans
-e8CompliantIds <- getCompliantWorkerIds(e8, "e8")
-e8 <- left_join(e8, e8CompliantIds)
-e10CompliantIds <- getCompliantWorkerIds(e10, "e10")
-e10 <- left_join(e10, e10CompliantIds)
-e12CompliantIds <- getCompliantWorkerIds(e12, "e12")
-e12 <- left_join(e12, e12CompliantIds)
 ```
 
-# Populate literal listener combined data
+## get individual scalar items
 ```{r}
-# filter out compliance and training
-allL0Listener <- rbind(e8, e10, e12) %>%
-  subset(scale != "training1" & scale != "training2") %>%
-  filter(compliant == TRUE)
-  
-allL0Listener$exp <- as.factor(allL0Listener$exp) ## exp. is factor
-allL0Listener$judgment <- as.numeric(allL0Listener$judgment) ## judgment is numeric
-levels(allL0Listener$stars) <- c("5", "1", "2", "3", "4") ## re-arrange stars
-str(allL0Listener)
-```
-
-## Add inidivual words
-```{r}
+# lookupScalar()
+# --------------
+# degree :: scale degree ("hi", "low", "hi2" "h1", etc)
+# scale  :: "some_all", "good_excellent"...
+# exp    :: exp ide (e12, e8)
 lookupScalar <- function(degree, scale, exp) {
   # some_all
   if (scale == "some_all") {
@@ -155,7 +181,52 @@ lookupScalar <- function(degree, scale, exp) {
   }
   NA
 }
+```
 
+# Literal Listener Data
+
+## Get all L0 listener data
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+e8 <- readLiteralListenerData("../production-results/e8/")
+e10 <- readLiteralListenerData("../production-results/e10/")
+e12 <- readLiteralListenerData("../production-results/e12/")
+```
+
+## Data org / cleaning / compliance checks
+```{r}
+# workerid as factor
+e8$workerid <- as.factor(e8$workerid)
+e8$exp <- "e8"
+e10$workerid <- as.factor(e10$workerid)
+e10$exp <- "e10"
+e12$workerid <- as.factor(e12$workerid)
+e12$exp <- "e12"
+
+# Append compliance booleans
+e8CompliantIds <- getCompliantWorkerIds(e8, "e8")
+e8 <- left_join(e8, e8CompliantIds)
+e10CompliantIds <- getCompliantWorkerIds(e10, "e10")
+e10 <- left_join(e10, e10CompliantIds)
+e12CompliantIds <- getCompliantWorkerIds(e12, "e12")
+e12 <- left_join(e12, e12CompliantIds)
+```
+
+## Populate literal listener combined data
+```{r}
+# filter out compliance and training
+allL0Listener <- rbind(e8, e10, e12) %>%
+  subset(scale != "training1" & scale != "training2") %>%
+  filter(compliant == TRUE)
+## exp :: factor
+allL0Listener$exp <- as.factor(allL0Listener$exp)
+## judgment :: numeric
+allL0Listener$judgment <- as.numeric(allL0Listener$judgment) 
+allL0Listener$stars <- as.numeric(as.character(allL0Listener$stars)) / 20
+str(allL0Listener)
+```
+
+### Add inidivual words
+```{r}
 allL0Listener$word <- as.factor(with(allL0Listener, mapply(lookupScalar, degree, scale, exp)))
 ```
 
@@ -165,9 +236,9 @@ allL0Listener$word <- as.factor(with(allL0Listener, mapply(lookupScalar, degree,
 contrasts(allL0Listener$exp) <- cbind("e10" = c(1, 0, 0), "e8" = c(0, 0, 1))
 
 # glmer WITHOUT experiment and with random effect for subjects
-glm1 <- glmer(judgment ~ scale + word + stars + (1 | workerid), data = allL0Listener)
+glm1 <- glmer(judgment ~ scale + stars + (1 | word) + (1 | workerid), data = allL0Listener)
 # glmer WITH experiment and with random effect for subjects
-glm2 <- glmer(judgment ~ exp + word + scale +  stars + (1 | workerid), data = allL0Listener)
+glm2 <- glmer(judgment ~ exp + scale +  stars + (1 | word) +  (1 | workerid), data = allL0Listener)
 ```
 
 ## Visulaziations?
@@ -183,44 +254,58 @@ glm2 <- glmer(judgment ~ exp + word + scale +  stars + (1 | workerid), data = al
 summary(glm2)
 anova(glm1, glm2)
 ```
-Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. However, it does look like there might be a significant difference
+Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. Also, exp is not a significant predictor in the ME model.
 
 # Pragmatic listener data
-```{r}
-# readPragmaticListenerData()
-# -------------------------
-# filesPath :: path to directory with .json files ("../production-results/e8/")
-readPragmaticListenerData <- function(filesPath) {
-  files <- dir(filesPath, pattern = "*.json")
-  dRaw <- data.frame()  
-  
-  if (grepl("e6", filesPath)) {
-    for (f in files) {
-      jf <- paste(filesPath, f, sep="")
-      jd <- fromJSON(paste(readLines(jf), collapse=""))
-      id <- data.frame(workerid = jd$WorkerId, 
-                       scale = jd$answer$scale,
-                       degree = jd$answer$degree,
-                       stars = as.numeric(jd$answer$judgment),
-                       language = jd$answer$language)
-      dRaw <- bind_rows(dRaw, id)
-    }
-  } else if (grepl("e11", filesPath)) {
-    for (f in files) {
-    jf <- paste(filesPath, f, sep="")
-    jd <- fromJSON(paste(readLines(jf), collapse=""))
-    id <- data.frame(workerid = jd$WorkerId, 
-                     scale = jd$answer$data$scale,
-                     degree = jd$answer$data$degree,
-                     stars = as.numeric(jd$answer$data$judgment),
-                     language = jd$answer$data$language)
-    dRaw <- bind_rows(dRaw, id)
-    }
-  } else stop("Must enter 'e6' or 'e11' for exp")
-  
-  dRaw
-}
+
+## Get all L1 listener data
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 e6 <- readPragmaticListenerData("../production-results/e6/")
 e11 <- readPragmaticListenerData("../production-results/e11/")
 ```
 
+## Data org / cleaning / compliance checks
+```{r}
+# workerid as factor
+e6$workerid <- as.factor(e6$workerid)
+e6$exp <- "e6"
+e11$workerid <- as.factor(e11$workerid)
+e11$exp <- "e11"
+
+# Append compliance booleans
+e6CompliantIds <- getCompliantWorkerIds(e6, "e6")
+e6 <- left_join(e6, e6CompliantIds)
+e11CompliantIds <- getCompliantWorkerIds(e11, "e11")
+e11 <- left_join(e11, e11CompliantIds)
+```
+
+## Populate pragmatic listener combined data
+```{r}
+# filter out compliance and training
+allL1Listener <- rbind(e6, e11) %>%
+  subset(scale != "training1" & scale != "training2") %>%
+  filter(compliant == TRUE)
+## exp :: factor
+allL1Listener$exp <- as.factor(allL1Listener$exp)
+str(allL1Listener)
+```
+
+### Add inidivual words
+```{r}
+allL1Listener$word <- as.factor(with(allL1Listener, mapply(lookupScalar, degree, scale, exp)))
+```
+
+## glmer()
+```{r}
+# glmer WITHOUT experiment and with random effect for subjects
+glm1 <- lmer(stars ~ scale + (1 | word) + (1 | workerid), data = allL1Listener)
+# glmer WITH experiment and with random effect for subjects
+glm2 <- lmer(stars ~ exp + scale + (1 | word) +  (1 | workerid), data = allL1Listener)
+```
+
+## Model Comaprisons
+```{r}
+summary(glm2)
+anova(glm1, glm2)
+```
+Looks like we dont' see a significant improvement in model fit when we include the fixed effect for experiment. Also, exp is not a significant predictor in the ME model.
