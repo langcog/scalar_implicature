@@ -38,6 +38,60 @@ library(grid)
 
 
 ```{r helpers}
+# lookupScalar()
+# --------------
+# degree :: scale degree ("hi", "low", "hi2" "h1", etc)
+# scale  :: "some_all", "good_excellent"...
+# exp    :: exp ide (e12, e8)
+lookupScalar <- function(degree, scale, exp) {
+  if (scale == "some_all") {
+    if (exp == "e12") {
+      if (degree == "hi1") return("all")
+      if (degree == "hi2") return("most")
+      if (degree == "mid") return("some")
+      if (degree == "low1") return("little")
+      if (degree == "low2") return("none")
+    } else if (exp == "e10" | exp == "e11") {
+      if (degree == "hi1") return("all")
+      if (degree == "hi2") return("most")
+      if (degree == "low1") return("some")
+      if (degree == "low2") return("none")
+    } else { ## must be exp 8
+      if (degree == "hi") return("all")
+      if (degree == "low") return("some")
+    }
+  # liked_loved
+  } else if (scale == "liked_loved") {
+    if (degree == "hi1" | degree == "hi") return("loved")
+    if (degree == "hi2" | degree == "low") return("liked")
+    if (degree == "mid") return("indifferent")
+    if (degree == "low1") return("disliked")
+    if (degree == "low2") return("hated")
+  # good_excellent
+  } else if (scale == "good_excellent") {
+    if (degree == "hi1" | degree == "hi") return("excellent")
+    if (degree == "hi2" | degree == "low") return("good")
+    if (degree == "mid") return("okay")
+    if (degree == "low1") return("bad")
+    if (degree == "low2") return("horrible")
+  # paltable_delicious
+  } else if (scale == "palatable_delicious") {
+    if (degree == "hi1" | degree == "hi") return("delicious")
+    if (degree == "hi2" | degree == "low") return("palatable")
+    if (degree == "mid") return("mediocre")
+    if (degree == "low1") return("gross")
+    if (degree == "low2") return("disgusting")
+  # memorable_unforgettable
+  } else if (scale == "memorable_unforgettable") {
+    if (degree == "hi1" | degree == "hi") return("unforgettable")
+    if (degree == "hi2" | degree == "low") return("memorable")
+    if (degree == "mid") return("ordinary")
+    if (degree == "low1") return("bland")
+    if (degree == "low2") return("forgettable")
+  }
+  NA
+}
+
 normedVec <- function(vec) vec / sum(vec)
 ```
 
@@ -60,32 +114,17 @@ allModelRunData <- read.csv("../models/model_data/allModelRuns.csv",
 # ------------------------------------------
 speakerE12 <- read.csv("../models/model_data/L0_e12.csv", stringsAsFactors = FALSE)
 speakerE10 <- read.csv("../models/model_data/L0_e10.csv", stringsAsFactors = FALSE)
-speakerE8 <- read.csv("../models/model_data/L0_e8.csv", stringsAsFactors = FALSE)
+# speakerE8 <- read.csv("../models/model_data/L0_e8.csv", stringsAsFactors = FALSE)
+speakerE8 <- read.csv("../models/model_data/L0_e8Compliance.csv", stringsAsFactors = FALSE)
 # Experiments E6, E11: Pragmatic listener
 # ---------------------------------------
 listenerE6 <- read.csv("../models/model_data/L1_e6.csv", stringsAsFactors = FALSE)
 listenerE11 <- read.csv("../models/model_data/L1_e11.csv", stringsAsFactors = FALSE)
 ```
 
-```{r}
-listeners <- bind_rows(listenerE6 %>% mutate(expt = "1b"), 
-                      listenerE11 %>% mutate(expt = "3b"))
-zeros <- expand.grid(degree = c("low","hi"), 
-            scale = unique(listeners$scale), 
-            stars = 1:5, 
-            expt = c("1b","3b"))
-
-zlisteners <- full_join(listeners, zeros) %>%
-  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p))
-
-# ggplot(zlisteners, 
-#        aes(x = stars, y = listener.p, col = degree, lty = expt)) + 
-#   geom_line() + 
-#   facet_grid(. ~ scale) + 
-#   theme_bw()
 # Humpty Dumpty Quote...
-```
 # Introduction
+
 
 Successful communication requires listeners to make pragmatic inferences that go beyond the literal semantic content of speakers' utterances. For example, listeners  commonly enrich the meaning of the scalar item "some" to "some but not all" in sentences like "Bob ate some of the cookies" [@grice1975;@horn1984;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomena assumes listeners reason about the meaning the speaker intended by incorporating knowledge about a) alternative scalar items a speaker could have used (such as "all") and b) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Bob did not eat "all" the cookies because it would have been *underinformative* for the speaker to use "some" when "all" could have been used.
 
@@ -149,34 +188,48 @@ In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT)
 
 ### Design and procedure
 
-Figure \ref{fig:stimuli_exp1}, left, shows the experimental setup. Participants were presented with a target scalar item and a star rating (1--5 stars) and asked to judge the compatibility of the scalar item and star-rating. Compatibility was assessed through a binary "yes/no" response to a question of the form "Do you think that the person thought the food was \____?" where a target scalar was presented in the blank. Each participant saw all scalar item and star rating combinations for their particular condition (see Figure \ref{fig:allScalesTable}), in a random oder.
+Figure \ref{fig:stimuli_exp1}, left, shows the experimental setup. Participants were presented with a target scalar item and a star rating (1--5 stars) and asked to judge the compatibility of the scalar item and star rating. Compatibility was assessed through a binary "yes/no" response to a question of the form "Do you think that the person thought the food was \____?" where a target scalar was presented in the blank. Each participant saw all scalar item and star rating combinations for their particular condition (see Figure \ref{fig:allScalesTable}), in a random oder.
 
 The two-alternatives condition included only the scalar pairs from @vantiel2014. The four-alternatives condition included the two scalar items plus the top two alternatives generated for each scalar family by participants in Experiment 2. The five-alternatives condition included the four previous items plus one more "neutral" item chosen from those alternatives generated in Experiment 2. See Figure 1 for the complete list of alternatives used in each condition. 
 
 ## Results and Discussion
 
-```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=3, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgements from Experiments 1a, 3a, and 4. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items).  Each panel shows one scalar pair."}
+```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=5, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgements from Experiments 1a, 3a, and 4. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items).  Each panel shows one scalar pair."}
 
-speakers <- bind_rows(speakerE12 %>% mutate(expt = "4"), 
-                      speakerE10 %>% mutate(expt = "3a"), 
-                      speakerE8 %>% mutate(expt = "1a"))
+speakers <- bind_rows(speakerE12 %>% mutate(expt = "e12"), 
+                      speakerE10 %>% mutate(expt = "e10"), 
+                      speakerE8 %>% mutate(expt = "e8"))
+speakers$scale <- as.factor(speakers$scale)
 
+speakers$word <- as.factor(with(speakers, mapply(lookupScalar, degree, scale, expt)))
+speakers$wordPlots <- factor(speakers$word, levels=c("excellent", "good", "okay", "bad", "horrible",
+                           "loved", "liked", "indifferent", "disliked", "hated",
+                           "unforgettable", "memorable", "ordinary", "bland", "forgettable",
+                           "delicious", "palatable", "mediocre", "gross", "disgusting",
+                           "all", "most", "some", "little", "none"))
+
+# change col = word and facet_grid(.~scale)
 ggplot(speakers, 
-       aes(x = stars, y = speaker.p, col = degree, lty = expt)) + 
+       aes(x = stars, y = speaker.p, col = scale, lty = expt)) + 
   geom_line() + 
-  facet_grid(.~ scale) + 
+  # facet_grid(.~ scale) + 
+  facet_wrap(~wordPlots) +
   guides(colour = guide_legend(direction = "horizontal", nrow = 1, 
                                title = "Scalar Item"), 
          linetype = guide_legend(direction = "horizontal", nrow = 1, 
                                  title = "Experiment")) + 
-  xlab("Star Rating") +
-  ylab("Proportion Judgments") + 
+  xlab("star rating") +
+  ylab("Proportion compatible") + 
+  ggtitle("Scalar item literal semantic compatibility\nwith star ratings") +
   # scale_colour_solarized() + 
-  theme_bw() + 
-  theme(legend.position = "bottom",
+  theme_bw() +
+  theme(strip.text.x = element_text(size = 8),
+        legend.position = "bottom",
         legend.margin = unit(.02,"in"),
         legend.key = element_blank(), 
-        legend.key.size = unit(.1, "in"))
+        legend.key.size = unit(.1, "in"),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 6))
 ```
 
 Figure 2 plots literal listener $p_{L0}(m|u)$ distributions for the three conditions. Several trends are visible. First, in each scale, the alternatives spanned the star scale, such that there were alternatives that were highly compatible with both the lowest and highest numbers of stars. Second, there was clear variability between scalar families. For example, compatibility judgments for the top items in the "memorable / unforgettable" scale were more similar than those for "good / excellent" or "liked / loved." Finally, there was substantial consistency in ratings for items that were repeated across experiments, suggesting that this paradigm elicited stable judgments from participants. 
@@ -197,7 +250,6 @@ Participants were presented a target scalar term from our original entailment se
 
 ## Results and Discussion
 
-
 ```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Caption goes here"}
 
 # Subset alternatives for demo
@@ -209,9 +261,16 @@ plotData <- alternativesData %>%
 ggplot(data = plotData, aes(x = reorder(alt, -n), y = n)) +
   geom_bar(stat="identity") + 
   ylim(0, 52) + 
-  labs(x = "alternative", y = "counts") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) + 
-  ylab("Proportion of responses")
+  labs(x = "Alternatives", y = "Counts") +
+  # theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) + 
+  theme_bw() +
+  theme(strip.text.x = element_text(size = 8),
+        legend.position = "bottom",
+        legend.margin = unit(.02,"in"),
+        legend.key = element_blank(), 
+        legend.key.size = unit(.1, "in"),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5, size = 6),
+        axis.text.y = element_text(size = 10))
 ```
 
 Figure \ref{fig:exp2_altsPlot} an example alternative set for the scalar items "liked" and "loved" (combined). Alternative distributions for the other scalar pairs (e.g.. "good/excellent", "memorable/unforgettable") were similarly long-tailed.
@@ -237,6 +296,47 @@ Participants were presented with a one-sentence prompt containing a target scala
 # Model Results
 
 Using literal semantic data from Experiment 1 we conducted three simulations with our model. Each simulation used the specific literal semantic data to specify the scale representation available to our model. The "entailment" model used only the original pair of scalar items pulled from van Tiel (2014). These data were measured in Experiment 1a. The "Top two" model extended the original set of alternatives with the top two alternatives generated in Experiment 2. These data were measured in Experiment 3a. The "Full" model included the full set of alternatives, including a neutral valenced alternative. These data were measured in Experiment 4.
+
+```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=3, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair."}
+# Get zero's in data frame
+baseDf <- data.frame(degree = rep(c("hi", "low", "hi1", "hi2", "low1", "low2"), 25),
+                     scale = c(rep("good_excellent", 6 * 5),
+                               rep("liked_loved", 6 * 5),
+                               rep("memorable_unforgettable", 6 * 5),
+                               rep("palatable_delicious", 6 * 5),
+                               rep("some_all", 6 * 5)),
+                     stars = rep(1:5, 30),
+                     combine = rep(TRUE, 150))
+listeners <- bind_rows(listenerE6 %>% mutate(expt = "e6"), 
+                      listenerE11 %>% mutate(expt = "e11"))
+listeners <- left_join(baseDf, listeners) %>%
+  mutate(listener.p = ifelse(is.na(listener.p), 0, listener.p),
+         expt = ifelse(degree == "hi" | degree == "low", "e6", "e11"))
+listeners$word <- as.factor(with(listeners, mapply(lookupScalar, degree, scale, expt)))
+listeners$plotThis <- with(listeners, ifelse(scale == "some_all" &
+                               (degree == "hi" | degree == "low" | degree == "hi1" | degree == "low1"),
+                               TRUE, ifelse(scale != "some_all" & (
+                                 degree == "hi" | degree == "low" | degree == "hi1" | degree == "hi2"),
+                                 TRUE, FALSE)))
+listeners$scalarType <- with(listeners, ifelse(degree == "hi" | degree == "hi1", "stronger", "weaker"))
+                               
+# Plot pragmatic listener data here
+ggplot(subset(listeners, plotThis == TRUE),
+       aes(x = stars, y = listener.p, col = scalarType, lty = expt)) + 
+  geom_line() + 
+  facet_grid(.~ scale) + 
+  ggtitle("Pragmatic listener judgments") +
+  ylab("Proportion of stars selected") +
+  xlab("Star rating") +
+  theme_bw() +
+  theme(strip.text.x = element_text(size = 6),
+        legend.position = "bottom",
+        legend.margin = unit(.02,"in"),
+        legend.key = element_blank(), 
+        legend.key.size = unit(.1, "in"),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8))
+```
 
 ```{r performancePlots, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
 # Tuned model run data
