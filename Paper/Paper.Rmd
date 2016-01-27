@@ -9,7 +9,7 @@ author-information:
     \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
 abstract: 
-    Succesful communication regularly requires listeners to make pragmatic inferences - enrichments beyond the literal meaning of a speaker's utterance. For example, when interpreting a sentence such as "Bob ate some of the cookies," listeners routinely infer that Bob did not eat all of them. A Gricean account of this phenomena assumes the presence of alternatives (like "all of the cookies") with varying degrees of informativity, but it remains an open question precisely what these alternatives are. We use a computational model of pragmatic inference to test out hypotheses about how well different sets of alternatives allow us to predict scalar implicature performance across a range of different scales. Our findings suggest that human comprehenders likely consider a much broader set of alternatives beyond those entailed by the initial description.  
+    Succesful communication regularly requires listeners to make pragmatic inferences - enrichments beyond the literal meaning of a speaker's utterance. For example, when interpreting a sentence such as "Alice ate some of the cookies," listeners routinely infer that Alice did not eat all of them. A Gricean account of this phenomena assumes the presence of alternatives (like "all of the cookies") with varying degrees of informativity, but it remains an open question precisely what these alternatives are. We use a computational model of pragmatic inference to test hypotheses about how well different sets of alternatives allow us to predict scalar implicature performance across a range of different scales. Our findings suggest that human comprehenders likely consider a much broader set of alternatives beyond those entailed by the initial description.  
     
 keywords:
     "pragmatics; scalar implicature; bayesian modeling"
@@ -24,15 +24,17 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", f
 ```
 
 ```{r, libraries}
-library(ggplot2)
-library(knitr)
-library(rjson)
 library(dplyr)
-library(tidyr)
+library(ggplot2)
+library(grid)
 library(gridExtra)
 library(jsonlite)
+library(lme4)
+library(lmerTest)
+library(knitr)
 library(png)
-library(grid)
+library(rjson)
+library(tidyr)
 library(xtable)
 # library(langcog)
 ```
@@ -113,10 +115,8 @@ allModelRunData <- read.csv("../models/model_data/allModelRuns.csv",
 
 # Non-summarized data
 # -------------------
-allLiteralListener <- read.csv("../models/model_data/RawLiteralListenerCombined.csv", 
-                               stringsAsFactors = FALSE)
-allPragmaticListener <- read.csv("../models/model_data/RawPragmaticListenerCombined.csv", 
-                               stringsAsFactors = FALSE)
+allLiteralListener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/RawLiteralListenerCombined.csv")
+allPragmaticListener <- read.csv("~/Desktop/Projects/scalar_implicature/models//model_data/RawPragmaticListenerCombined.csv")
 
 # Model run data
 # --------------
@@ -136,9 +136,9 @@ listenerE11 <- read.csv("../models/model_data/L1_e11.csv", stringsAsFactors = FA
 
 # Introduction
 
-How much of what we mean comes from the words that go unsaid? As listeners, the ability to enrich a speaker's meaning in context is an indispensable component of successful communication.  For example, listeners  commonly enrich the meaning of the scalar item *some* to *some but not all* in sentences like "Alice ate some of the cookies" [@grice1975;@horn1984;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomena assumes listeners reason about the meaning the speaker intended by incorporating knowledge about a) alternative scalar items a speaker could have used (such as *all*) and b) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Alice did not eat *all* the cookies because it would have been *underinformative* for the speaker to use *some* when *all* could have been used.
+How much of what we mean comes from the words that go unsaid? As listeners, our ability to make precise inferences about a speaker's intended meaning in context is an indispensable component of successful communication. For example, listeners  commonly enrich the meaning of the scalar item *some* to *some but not all* in sentences like "Alice ate some of the cookies" [@grice1975;@horn1984;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomena assumes listeners reason about the meaning the speaker intended by incorporating knowledge about a) alternative scalar items a speaker could have used (such as *all*) and b) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Alice did not eat *all* the cookies because it would have been underinformative for the speaker to use *some* when *all* could have been used.
 
-But how much of the meaning of *some* comes from the alternatives that weren't chosen? Put differently, what are the alternatives that should be considered in this computation more generally? Under classic accounts of implicature, listeners consider only those words whose meaning would entail the word that is actually sent [@horn1972], and these alternatives enter into conventionalized or semi-conventionalized scales [@levinson2000]. For example, because *all* entails *some*, and hence is a "stronger" meaning, *all* should be considered as an alternative to *some* in implicatures. Similar scales exist for non-quantifier scales, e.g. *loved* entails *liked* (and hence "I liked the movie" implicates that I didn't love it).
+But what are the alternatives that should be considered in this computation more generally? Under classic accounts of implicature, listeners consider only those words whose meaning would entail the word that is actually sent [@horn1972], and these alternatives enter into conventionalized or semi-conventionalized scales [@levinson2000]. For example, because *all* entails *some*, and hence is a "stronger" meaning, *all* should be considered as an alternative to *some* in implicatures. Similar scales exist for non-quantifier scales, e.g. *loved* entails *liked* (and hence "I liked the movie" implicates that I didn't love it).
 
 Recent empirical evidence has called into question whether entailment scales are all that is necessary for understanding scalar implicature. For example, @degen2015  demonstrated that the scalar item *some* was judged less appropriate when exact numbers were seen as viable alternatives. And in a different paradigm, @vantiel2014 found converging evidence that *some* was judged to be atypical for small quantities. These data provide indirect evidence about a broader set of alternatives: since *some* is logically true of sets with one or two members, these authors argued that the presence of salient alternatives (the words *one* and *two*) reduced the felicity of *some* via a pragmatic inference. 
 
@@ -158,7 +158,7 @@ In the standard RSA model, the pragmatic listener (denoted $L_1$), makes a Bayes
 
 $$p_{L1}(m \mid u) \propto p_{S_1} (u \mid m) p(m)$$
 
-\noindent In other words, the probability of a particular meaning given an utterance is proportional to the speaker's proability of using that particular utterance to express that meaning, weighted by a prior over meanings. This prior represents the listener's _a priori_ expectations about plausible meanings, independent of the utterance. Because our experiments take place in a context in which listeners should have very little expectation about which meanings speakers want to convey, for simplicity we assume a uniform prior $p(m) \propto 1$. 
+\noindent In other words, the probability of a particular meaning given an utterance is proportional to the speaker's probability of using that particular utterance to express that meaning, weighted by a prior over meanings. This prior represents the listener's _a priori_ expectations about plausible meanings, independent of the utterance. Because our experiments take place in a context in which listeners should have very little expectation about which meanings speakers want to convey, for simplicity we assume a uniform prior $p(m) \propto 1$. 
 
 The pragmatic speaker in turn considers the probability that a literal listener would interpret her utterance correctly:
 
@@ -168,11 +168,11 @@ $$ p_{S_1} (u \mid m) \propto p_{L_0} (m \mid u)$$
 
 This model of the pragmatic speaker is consistent with a speaker who chooses words to maximize the utility of an utterance in context [@frank2012], where utility is operationalized as the informativity of a particular utterance (surprisal) minus a cost:
 
-$$p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))},$$
+$$p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}$$
 
 \noindent where $C(u)$ is the cost of a particular utterance, $-log(p_{L_0})$ represents the _surprisal_ for the literal listener (the information content of the utterance), and ($\alpha$ is a parameter in a standard choice rule. If $\alpha=0$, speakers choose randomly and as $\alpha \rightarrow \infty$, they greedily choose the highest probability alternative. In our simulations below, we treat $\alpha$ as a free parameter and fit it to the data. 
 
-To instantiate our signaling game with a tractable message set $M$, in our studies we adopt a food-review paradigm: we assume that speakers and listeners are trying to communicate the number of stars in an onine restaurant review (where $m \in \{1, 2, 3, 4, 5\}$). We then use experiments to measure three components of the model. First, to measure literal semantics ${p_{L_0} (m \mid u)}$ (we ask experiment participants to judge whether a message is applicable to a particular meaning (Experiment 1). Second, to generate a set of plausible alternative messages in $U$, we elicit alternatives directly (Experiment 2). Lastly, to obtain human $L_1$ pragmatic judgments, we ask participants to interpret a speaker's utterances (Experiment 3). 
+To instantiate our signaling game with a tractable message set $M$, in our studies we adopt a food-review paradigm: we assume that speakers and listeners are trying to communicate the number of stars in an online restaurant review (where $m \in \{1, 2, 3, 4, 5\}$). We then use experiments to measure three components of the model. First, to measure literal semantics ${p_{L_0} (m \mid u)}$ (we ask experiment participants to judge whether a message is applicable to a particular meaning (Experiment 1). Second, to generate a set of plausible alternative messages in $U$, we elicit alternatives directly (Experiment 2). Lastly, to obtain human $L_1$ pragmatic judgments, we ask participants to interpret a speaker's utterances (Experiment 3). 
 
 # Experiment 1: Literal listener task
 
@@ -193,18 +193,23 @@ Experiment 1 was conducted to approximate literal listener semantic distribution
 ## Methods
 
 ### Participants
+```{r}
+exp1a <- subset(allLiteralListener, exp == "e8")
+exp1b <- subset(allLiteralListener, exp == "e10")
+exp1c <- subset(allLiteralListener, exp == "e12")
+```
 
-In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT). In the two-alternative condition, two participants were excluded because they reported having a native language other than English for a final sample of 28 participants. In the four-alternative condition,  six participants were excluded for either failing to pass two training trials a non-English native language, leaving a total sample of 24 participants. In the five-alternative condition, there were no data exclusions due to training failures or native language requirements, leaving a total sample of 30 participants.
+In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT). In the two-alternative condition, `r 30 - length(unique(exp1a$workerid))` participants were excluded \footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,1c} for either failing to pass two training trails or were not native English speakers, leaving a total sample of `r length(unique(exp1a$workerid))` participants. In the four-alternative condition,  `r 30 - length(unique(exp1b$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1b$workerid))` participants. In the five-alternative condition, `r 30 - length(unique(exp1c$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1c$workerid))`.
 
 ### Design and procedure
 
-Figure \ref{fig:stimuli_exp1}, left, shows the experimental setup. Participants were presented with a target scalar item and a star rating (1--5 stars) and asked to judge the compatibility of the scalar item and star rating. Compatibility was assessed through a binary "yes/no" response to a question of the form "Do you think that the person thought the food was \____?" where a target scalar was presented in the blank. Each participant saw all scalar item and star rating combinations for their particular condition (see Figure \ref{fig:allScalesTable}), in a random oder.
+Figure \ref{fig:stimuli_exp1}, left, shows the experimental setup. Participants were presented with a target scalar item and a star rating (1--5 stars) and asked to judge the compatibility of the scalar item and star rating. Compatibility was assessed through a binary "yes/no" response to a question of the form "Do you think that the person thought the food was \____?" where a target scalar was presented in the blank. Each participant saw all scalar item and star rating combinations for their particular condition, in a random order.
 
-The two-alternatives condition included only the scalar pairs from @vantiel2014. The four-alternatives condition included the two scalar items plus the top two alternatives generated for each scalar family by participants in Experiment 2. The five-alternatives condition included the four previous items plus one more "neutral" item chosen from those alternatives generated in Experiment 2. See Figure 1 for the complete list of alternatives used in each condition. 
+The two-alternatives condition included only the scalar pairs from @vantiel2014. The four-alternatives condition included the two scalar items plus the top two alternatives generated for each scalar family by participants in Experiment 2. The five-alternatives condition included the four previous items plus one more "neutral" item chosen from those alternatives generated in Experiment 2. See Figure \ref{fig:allScalesTable} for the complete list of alternatives used in each condition. 
 
 ## Results and Discussion
 
-```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=5, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgements from Experiments 1a, 3a, and 4. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items).  Each panel shows one scalar pair."}
+```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=5, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgements from Experiments 1a,b,c. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items)."}
 
 speakers <- bind_rows(speakerE12 %>% mutate(expt = "e12"), 
                       speakerE10 %>% mutate(expt = "e10"), 
@@ -212,15 +217,18 @@ speakers <- bind_rows(speakerE12 %>% mutate(expt = "e12"),
 speakers$scale <- as.factor(speakers$scale)
 
 speakers$word <- as.factor(with(speakers, mapply(lookupScalar, degree, scale, expt)))
-speakers$wordPlots <- factor(speakers$word, levels=c("excellent", "good", "okay", "bad", "horrible",
-                           "loved", "liked", "indifferent", "disliked", "hated",
-                           "unforgettable", "memorable", "ordinary", "bland", "forgettable",
-                           "delicious", "palatable", "mediocre", "gross", "disgusting",
-                           "all", "most", "some", "little", "none"))
+speakers$wordPlots <- factor(speakers$word, levels=c("horrible", "bad", "okay", "good", "excellent",
+  "hated", "disliked", "indifferent", "liked", "loved",
+  "forgettable", "bland", "ordinary", "memorable", "unforgettable",
+  "disgusting", "gross", "mediocre", "palatable", "delicious",
+  "none", "little", "some", "most", "all"))
 
+# for plotting
+speakers$study <- ifelse(speakers$expt == "e8", "1a",
+                                 ifelse(speakers$expt == "e10", "1b", "1c"))
 # change col = word and facet_grid(.~scale)
 ggplot(speakers, 
-       aes(x = stars, y = speaker.p, col = scale, lty = expt)) + 
+       aes(x = stars, y = speaker.p, col = scale, lty = study)) + 
   geom_line() + 
   # facet_grid(.~ scale) + 
   facet_wrap(~wordPlots) +
@@ -229,20 +237,35 @@ ggplot(speakers,
          linetype = guide_legend(direction = "horizontal", nrow = 1, 
                                  title = "Experiment")) + 
   xlab("star rating") +
-  ylab("Proportion compatible") + 
-  ggtitle("Scalar item literal semantic compatibility\nwith star ratings") +
+  ylab("proportion compatible ('yes' responses)") + 
+  # ggtitle("Scalar item literal semantic compatibility\nwith star ratings") +
   # scale_colour_solarized() + 
   theme_bw() +
-  theme(strip.text.x = element_text(size = 8),
+  theme(strip.text.x = element_text(size = 6),
         legend.position = "bottom",
         legend.margin = unit(.02,"in"),
         legend.key = element_blank(), 
         legend.key.size = unit(.1, "in"),
-        axis.text.x = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        axis.text.x = element_text(size = 7),
         axis.text.y = element_text(size = 6))
 ```
 
-Figure 2 plots literal listener $p_{L0}(m|u)$ distributions for the three conditions. Several trends are visible. First, in each scale, the alternatives spanned the star scale, such that there were alternatives that were highly compatible with both the lowest and highest numbers of stars. Second, there was clear variability between scalar families. For example, compatibility judgments for the top items in the *memorable / unforgettable* scale were more similar than those for *good / excellent* or *liked / loved.* Finally, there was substantial consistency in ratings for items that were repeated across experiments, suggesting that this paradigm elicited stable judgments from participants. 
+Figure \ref{fig:exp2Plots} plots literal listener $p_{L0}(m|u)$ scalar item distributions for the three conditions. Each row plots a unique scalar family with items ordered horizontally by valence. Several trends are visible. First, in each scale, the alternatives spanned the star scale, such that there were alternatives that were highly compatible with both the lowest and highest numbers of stars. Second, there was clear variability between scalar families. For example, compatibility judgments for the top items in the *memorable / unforgettable* scale were more similar than those for *good / excellent* or *liked / loved.* Finally, there was substantial consistency in ratings for items that were repeated across experiments, suggesting that this paradigm elicited stable judgments from participants. 
+```{r literalListener_ME_models, echo = FALSE, warning = FALSE, message = FALSE}
+# fix contrasts so we're comparing most disparate experimetns (e8 and e12)
+contrasts(allLiteralListener$exp) <- cbind("e10" = c(1, 0, 0), "e8" = c(0, 0, 1))
+
+# glmer WITHOUT experiment and with random effect for subjects
+glm1 <- glmer(judgment ~ scale + stars + (1 | word) + (1 | workerid),
+              family=  "binomial", data = allLiteralListener)
+# glmer WITH experiment and with random effect for subjects
+glm2 <- glmer(judgment ~ exp + scale +  stars + (1 | word) +  (1 | workerid),
+              family = "binomial", data = allLiteralListener)
+sumGlm2 <- summary(glm2)
+anovaResults <- anova(glm1, glm2)
+```
+To test whether there were between experiment differences in acceptability judgments, we ran a mixed effects model, regressing acceptability judgements on scale, number of stars and experiment type, with by subject and by word random effects. Results indicate no significant differences between Experiment 1a and 1c $b =$`r round(sumGlm2$coefficients[3], 2)`, $Z =$ `r round(sumGlm2$coefficients[19], 2)`, $p =$ `r round(sumGlm2$coefficients[27], 2)` or between 1b and 1c $b =$ `r round(sumGlm2$coefficients[2], 2)`, $Z =$ `r round(sumGlm2$coefficients[18], 2)` $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of our experiment predictor did not significantly improve model fit when compared to a model without the experiment type variable using ANOVA $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`.
 
 # Experiment 2: Alternative Elicitation
 
@@ -260,7 +283,7 @@ Participants were presented a target scalar term from our original entailment se
 
 ## Results and Discussion
 
-```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=3, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair."}
+```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=3, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair. We are only showing scalar items used for model comparison (items used in Experiments 1a / 3a) for simplicity,"}
 # Get zero's in data frame
 baseDf <- data.frame(degree = rep(c("hi", "low", "hi1", "hi2", "low1", "low2"), 25),
                      scale = c(rep("good_excellent", 6 * 5),
@@ -288,9 +311,9 @@ ggplot(subset(listeners, plotThis == TRUE),
        aes(x = stars, y = listener.p, col = scalarType, lty = expt)) + 
   geom_line() + 
   facet_grid(.~ scale) + 
-  ggtitle("Pragmatic listener judgments") +
-  ylab("Proportion of stars selected") +
-  xlab("Star rating") +
+  # ggtitle("Pragmatic listener judgments") +
+  ylab("proportion of selection") +
+  xlab("star rating") +
   theme_bw() +
   theme(strip.text.x = element_text(size = 6),
         legend.position = "bottom",
@@ -301,7 +324,7 @@ ggplot(subset(listeners, plotThis == TRUE),
         legend.text = element_text(size = 8))
 ```
 
-```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Caption goes here"}
+```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Combined counts for participant generated alternatives for 'liked \ loved' scale. Participants were shown a target scalar (either liked or loved) and asked to give three alternatives."}
 
 # Subset alternatives for demo
 plotData <- alternativesData %>%
@@ -324,7 +347,7 @@ ggplot(data = plotData, aes(x = reorder(alt, -n), y = n)) +
         axis.text.y = element_text(size = 10))
 ```
 
-Figure \ref{fig:exp2_altsPlot} an example alternative set for the scalar items *liked* and *loved* (combined). Alternative distributions for the other scalar pairs (e.g.. *good/excellent*, *memorable/unforgettable*) were similarly long-tailed.
+Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for the scalar items *liked* and *loved* (combined). Alternative distributions for the other scalar pairs (e.g.. *good/excellent*, *memorable/unforgettable*) were similarly long-tailed.
 
 # Experiment 3: Pragmatic Listener
 
@@ -332,23 +355,36 @@ Experiment 3 was conducted to measure pragmatic judgments $p_{L_1}(m \mid u)$ fo
 
 ## Participants
 
-We recruited 100 participants from AMT, 50 for each condition. Data for 7 participants in the two-alternative condition were excluded after participants either failed to pass two training trials or reported a non-English native language, leaving a total sample of 43 participants. In the four-alternative condition, data from five participants was thrown out after participants either failed to pass two training trials or were not native English speakers, leaving a total sample of 45 participants.
+```{r, allPragStudySubsets, echo = FALSE, messgae = FALSE, warning = FALSE}
+exp3a <- subset(allPragmaticListener, exp == "e6")
+exp3b <- subset(allPragmaticListener, exp == "e11")
+```
+
+We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - length(unique(exp3a$workerid))` participants in the two-alternative condition were excluded after participants either failed to pass two training trials or reported a non-English native language, leaving a total sample of `r length(unique(exp3a$workerid))` participants. In the four-alternative condition, data from `r 50 - length(unique(exp3b$workerid))` participants was thrown out after participants either failed to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp3b$workerid))` participants.
 
 ## Procedure
 
-Participants were presented with a one-sentence prompt containing a target scalar item such as "Someone said they thought the food was \_____." Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. The experimental setup is shown in Figure \ref{fig:expt1_stimuli}, right. 
+Participants were presented with a one-sentence prompt containing a target scalar item such as "Someone said they thought the food was \_____." Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. The experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right. 
 
 ## Results and Discussion
+```{r pragmaticListener_ME_models, echo = FALSE, warning = FALSE, message = FALSE}
+# glmer WITHOUT experiment and with random effect for subjects
+glm1 <- lmer(stars ~ scale + (1 | word) + (1 | workerid), data = allPragmaticListener)
+# glmer WITH experiment and with random effect for subjects
+glm2 <- lmer(stars ~ exp + scale + (1 | word) +  (1 | workerid), data = allPragmaticListener)
+sumGlm2 <- summary(glm2)
+anovaResults <- anova(glm1, glm2)
+```
 
+Figure \ref{fig:exp2Plots} plots pragmatic listener judgments distributions for "weak" / "strong" scalar pairs (ie *good*/*excellent*). We only include the original entailment pairs in this figure for simplicity. Several trends are visible. First, in each scale participants generated implicatures and were less likely to assign high star-ratings to weaker scalar terms, despite literal semantic compatibility. Second, the "size" of the difference between judgments between "strong" and "weak" scalar items varied by scale, confirming results found by Tiel (2014).
 
+To test whether there were between experiment differences in pragmatic judgments, we ran a mixed effects model, regressing pragmatic judgements on scale and experiment with subject and word level random effects. Results indicate there were no significant differences between Experiment 3a and 3b for $b =$ `r round(sumGlm2$coefficients[2], 2)`, $t($ `r round(sumGlm2$coefficients[14], 2)` $) =$ `r round(sumGlm2$coefficients[20], 2)`, $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of our experiment predictor did not significantly improve model fit when compared to a model without the experiment variable using ANOVA $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`.
 
 # Model Results
 
 Using literal semantic data from Experiment 1 we conducted three simulations with our model. Each simulation used the specific literal semantic data to specify the scale representation available to our model. The "entailment" model used only the original pair of scalar items pulled from van Tiel (2014). These data were measured in Experiment 1a. The "Top two" model extended the original set of alternatives with the top two alternatives generated in Experiment 2. These data were measured in Experiment 3a. The "Full" model included the full set of alternatives, including a neutral valenced alternative. These data were measured in Experiment 4.
 
-
-
-```{r xtable, results = "asis", fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
+```{r xtable, results = "asis", fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
 # Tuned model run data
 plotData <- allModelRunData %>%
   mutate(study = ifelse(numAlts == 5, "Full", 
@@ -400,8 +436,7 @@ fullRepresentationFit <- qplot(stars, pragChoice, col=degree, shape = pragStudy,
 
 # General Discussion
 
-By varying the type of scale representations available to our Bayesian model we investigated the effects of alternatives on scalar implicature. Model fit with human judgement was significantly improved by the inclusion of alternatives beyond the typical "strong" and "weak" scalar items. In fact, we found that both neutral and negative valence scalar items contribute to human-like implicature generation within our framework. 
-
+By varying the type of scale representations available to our Bayesian model we investigated the effects of alternatives on scalar implicature. Model fit with human judgement was significantly improved by the inclusion of alternatives beyond the typical "strong" and "weak" scalar items. In fact, we found that both neutral and negative valence scalar items contribute to human-like implicature generation within our framework.
 
 # Acknowledgements
 

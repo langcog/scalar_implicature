@@ -7,5 +7,7 @@ tidyr
 gridExtra
 jsonlite
 png
-pander
 xtable
+Matrix
+lme4
+lmerTest

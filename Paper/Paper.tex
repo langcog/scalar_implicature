@@ -60,14 +60,14 @@
 \begin{abstract}
 Succesful communication regularly requires listeners to make pragmatic
 inferences - enrichments beyond the literal meaning of a speaker's
-utterance. For example, when interpreting a sentence such as ``Bob ate
-some of the cookies,'' listeners routinely infer that Bob did not eat
+utterance. For example, when interpreting a sentence such as ``Alice ate
+some of the cookies,'' listeners routinely infer that Alice did not eat
 all of them. A Gricean account of this phenomena assumes the presence of
 alternatives (like ``all of the cookies'') with varying degrees of
 informativity, but it remains an open question precisely what these
 alternatives are. We use a computational model of pragmatic inference to
-test out hypotheses about how well different sets of alternatives allow
-us to predict scalar implicature performance across a range of different
+test hypotheses about how well different sets of alternatives allow us
+to predict scalar implicature performance across a range of different
 scales. Our findings suggest that human comprehenders likely consider a
 much broader set of alternatives beyond those entailed by the initial
 description.
@@ -79,34 +79,32 @@ pragmatics; scalar implicature; bayesian modeling
 \section{Introduction}\label{introduction}
 
 How much of what we mean comes from the words that go unsaid? As
-listeners, the ability to enrich a speaker's meaning in context is an
-indispensable component of successful communication. For example,
-listeners commonly enrich the meaning of the scalar item \emph{some} to
-\emph{some but not all} in sentences like ``Alice ate some of the
-cookies'' (Grice, 1975; Horn, 1984; Levinson, 2000). These inferences,
-called \emph{scalar implicatures}, have been an important test case for
-understanding pragmatic inferences more generally. A Gricean account of
-this phenomena assumes listeners reason about the meaning the speaker
-intended by incorporating knowledge about a) alternative scalar items a
-speaker could have used (such as \emph{all}) and b) the relative
-informativity of using such alternatives (Grice, 1975). According to
-this account, a listener will infer that the speaker must have intended
-that Alice did not eat \emph{all} the cookies because it would have been
-\emph{underinformative} for the speaker to use \emph{some} when
-\emph{all} could have been used.
+listeners, our ability to make precise inferences about a speaker's
+intended meaning in context is an indispensable component of successful
+communication. For example, listeners commonly enrich the meaning of the
+scalar item \emph{some} to \emph{some but not all} in sentences like
+``Alice ate some of the cookies'' (Grice, 1975; Horn, 1984; Levinson,
+2000). These inferences, called \emph{scalar implicatures}, have been an
+important test case for understanding pragmatic inferences more
+generally. A Gricean account of this phenomena assumes listeners reason
+about the meaning the speaker intended by incorporating knowledge about
+a) alternative scalar items a speaker could have used (such as
+\emph{all}) and b) the relative informativity of using such alternatives
+(Grice, 1975). According to this account, a listener will infer that the
+speaker must have intended that Alice did not eat \emph{all} the cookies
+because it would have been underinformative for the speaker to use
+\emph{some} when \emph{all} could have been used.
 
-But how much of the meaning of \emph{some} comes from the alternatives
-that weren't chosen? Put differently, what are the alternatives that
-should be considered in this computation more generally? Under classic
-accounts of implicature, listeners consider only those words whose
-meaning would entail the word that is actually sent (Horn, 1972), and
-these alternatives enter into conventionalized or semi-conventionalized
-scales (Levinson, 2000). For example, because \emph{all} entails
-\emph{some}, and hence is a ``stronger'' meaning, \emph{all} should be
-considered as an alternative to \emph{some} in implicatures. Similar
-scales exist for non-quantifier scales, e.g. \emph{loved} entails
-\emph{liked} (and hence ``I liked the movie'' implicates that I didn't
-love it).
+But what are the alternatives that should be considered in this
+computation more generally? Under classic accounts of implicature,
+listeners consider only those words whose meaning would entail the word
+that is actually sent (Horn, 1972), and these alternatives enter into
+conventionalized or semi-conventionalized scales (Levinson, 2000). For
+example, because \emph{all} entails \emph{some}, and hence is a
+``stronger'' meaning, \emph{all} should be considered as an alternative
+to \emph{some} in implicatures. Similar scales exist for non-quantifier
+scales, e.g. \emph{loved} entails \emph{liked} (and hence ``I liked the
+movie'' implicates that I didn't love it).
 
 Recent empirical evidence has called into question whether entailment
 scales are all that is necessary for understanding scalar implicature.
@@ -193,7 +191,7 @@ makes a Bayesian inference:
 \[p_{L1}(m \mid u) \propto p_{S_1} (u \mid m) p(m)\]
 
 \noindent In other words, the probability of a particular meaning given
-an utterance is proportional to the speaker's proability of using that
+an utterance is proportional to the speaker's probability of using that
 particular utterance to express that meaning, weighted by a prior over
 meanings. This prior represents the listener's \emph{a priori}
 expectations about plausible meanings, independent of the utterance.
@@ -215,7 +213,7 @@ chooses words to maximize the utility of an utterance in context (Frank
 \& Goodman, 2012), where utility is operationalized as the informativity
 of a particular utterance (surprisal) minus a cost:
 
-\[p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))},\]
+\[p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}\]
 
 \noindent where \(C(u)\) is the cost of a particular utterance,
 \(-log(p_{L_0})\) represents the \emph{surprisal} for the literal
@@ -227,7 +225,7 @@ highest probability alternative. In our simulations below, we treat
 
 To instantiate our signaling game with a tractable message set \(M\), in
 our studies we adopt a food-review paradigm: we assume that speakers and
-listeners are trying to communicate the number of stars in an onine
+listeners are trying to communicate the number of stars in an online
 restaurant review (where \(m \in \{1, 2, 3, 4, 5\}\)). We then use
 experiments to measure three components of the model. First, to measure
 literal semantics \({p_{L_0} (m \mid u)}\) (we ask experiment
@@ -276,14 +274,17 @@ fit.\footnote{Note that alternatives in the four- and five-alternatives conditio
 \subsubsection{Participants}\label{participants}
 
 In each condition we recruited 30 participants from Amazon Mechanical
-Turk (AMT). In the two-alternative condition, two participants were
-excluded because they reported having a native language other than
-English for a final sample of 28 participants. In the four-alternative
-condition, six participants were excluded for either failing to pass two
-training trials a non-English native language, leaving a total sample of
-24 participants. In the five-alternative condition, there were no data
-exclusions due to training failures or native language requirements,
-leaving a total sample of 30 participants.
+Turk (AMT). In the two-alternative condition, 16 participants were
+excluded
+\footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,1c}
+for either failing to pass two training trails or were not native
+English speakers, leaving a total sample of 14 participants. In the
+four-alternative condition, 7 participants were excluded for either
+failing to pass two training trials or were not native English speakers,
+leaving a total sample of 23 participants. In the five-alternative
+condition, 3 participants were excluded for either failing to pass two
+training trials or were not native English speakers, leaving a total
+sample of 27.
 
 \subsubsection{Design and procedure}\label{design-and-procedure}
 
@@ -318,17 +319,29 @@ list of alternatives used in each condition.
 \end{figure*}
 \end{CodeChunk}
 
-Figure 2 plots literal listener \(p_{L0}(m|u)\) distributions for the
-three conditions. Several trends are visible. First, in each scale, the
-alternatives spanned the star scale, such that there were alternatives
-that were highly compatible with both the lowest and highest numbers of
-stars. Second, there was clear variability between scalar families. For
-example, compatibility judgments for the top items in the
-\emph{memorable / unforgettable} scale were more similar than those for
-\emph{good / excellent} or \emph{liked / loved.} Finally, there was
-substantial consistency in ratings for items that were repeated across
-experiments, suggesting that this paradigm elicited stable judgments
-from participants.
+Figure \ref{fig:exp2Plots} plots literal listener \(p_{L0}(m|u)\) scalar
+item distributions for the three conditions. Each row plots a unique
+scalar family with items ordered horizontally by valence. Several trends
+are visible. First, in each scale, the alternatives spanned the star
+scale, such that there were alternatives that were highly compatible
+with both the lowest and highest numbers of stars. Second, there was
+clear variability between scalar families. For example, compatibility
+judgments for the top items in the \emph{memorable / unforgettable}
+scale were more similar than those for \emph{good / excellent} or
+\emph{liked / loved.} Finally, there was substantial consistency in
+ratings for items that were repeated across experiments, suggesting that
+this paradigm elicited stable judgments from participants.
+
+To test whether there were between experiment differences in
+acceptability judgments, we ran a mixed effects model, regressing
+acceptability judgements on scale, number of stars and experiment type,
+with by subject and by word random effects. Results indicate no
+significant differences between Experiment 1a and 1c \(b =\)-0.05,
+\(Z =\) -0.53, \(p =\) 0.59 or between 1b and 1c \(b =\) -0.04, \(Z =\)
+-0.52 \(p =\) 0.6 and the addition of our experiment predictor did not
+significantly improve model fit when compared to a model without the
+experiment type variable using ANOVA \(\chi^2(\) 2 \() =\) 0.43, \(p =\)
+0.81.
 
 \section{Experiment 2: Alternative
 Elicitation}\label{experiment-2-alternative-elicitation}
@@ -364,7 +377,7 @@ unique alternatives.
 
 }
 
-\caption[Pragmatic listener judgements for our entailment scalar items]{Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair.}\label{fig:exp2Plots}
+\caption[Pragmatic listener judgements for our entailment scalar items]{Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair. We are only showing scalar items used for model comparison (items used in Experiments 1a / 3a) for simplicity,}\label{fig:exp2Plots}
 \end{figure*}
 \end{CodeChunk}
 
@@ -375,12 +388,12 @@ unique alternatives.
 
 }
 
-\caption[Caption goes here]{Caption goes here}\label{fig:exp2_altsPlot_likedLoved}
+\caption[Combined counts for participant generated alternatives for 'liked  loved' scale]{Combined counts for participant generated alternatives for 'liked  loved' scale. Participants were shown a target scalar (either liked or loved) and asked to give three alternatives.}\label{fig:exp2_altsPlot_likedLoved}
 \end{figure}
 \end{CodeChunk}
 
-Figure \ref{fig:exp2_altsPlot} an example alternative set for the scalar
-items \emph{liked} and \emph{loved} (combined). Alternative
+Figure \ref{fig:exp2_altsPlot_likedLoved} an example alternative set for
+the scalar items \emph{liked} and \emph{loved} (combined). Alternative
 distributions for the other scalar pairs (e.g.. \emph{good/excellent},
 \emph{memorable/unforgettable}) were similarly long-tailed.
 
@@ -403,13 +416,12 @@ human judgments to compare with model predictions.
 \subsection{Participants}\label{participants-2}
 
 We recruited 100 participants from AMT, 50 for each condition. Data for
-7 participants in the two-alternative condition were excluded after
+9 participants in the two-alternative condition were excluded after
 participants either failed to pass two training trials or reported a
-non-English native language, leaving a total sample of 43 participants.
-In the four-alternative condition, data from five participants was
-thrown out after participants either failed to pass two training trials
-or were not native English speakers, leaving a total sample of 45
-participants.
+non-English native language, leaving a total sample of 41 participants.
+In the four-alternative condition, data from 7 participants was thrown
+out after participants either failed to pass two training trials or were
+not native English speakers, leaving a total sample of 43 participants.
 
 \subsection{Procedure}\label{procedure}
 
@@ -418,9 +430,19 @@ target scalar item such as ``Someone said they thought the food was
 \_\_\_\_\_.'' Participants were then asked to generate a star rating
 representing the rating they thought the reviewer likely gave. Each
 participant was presented with all scalar items in a random order. The
-experimental setup is shown in Figure \ref{fig:expt1_stimuli}, right.
+experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right.
 
 \subsection{Results and Discussion}\label{results-and-discussion-2}
+
+To test whether there were between experiment differences in pragmatic
+judgments, we ran a mixed effects model, regressing pragmatic judgements
+on scale and experiment with subject and word level random effects.
+Results indicate there were no significant differences between
+Experiment 3a and 3b for \(b =\) 0.05, \(t(\) 150.4 \() =\) 1.04,
+\(p =\) 0.3 and the addition of our experiment predictor did not
+significantly improve model fit when compared to a model without the
+experiment variable using ANOVA \(\chi^2(\) 1 \() =\) 1.13, \(p =\)
+0.29.
 
 \section{Model Results}\label{model-results}
 
@@ -435,8 +457,8 @@ These data were measured in Experiment 3a. The ``Full'' model included
 the full set of alternatives, including a neutral valenced alternative.
 These data were measured in Experiment 4.
 
-\% latex table generated in R 3.2.3 by xtable 1.8-0 package \% Tue Jan
-26 20:47:20 2016
+\% latex table generated in R 3.2.3 by xtable 1.8-0 package \% Wed Jan
+27 09:40:50 2016
 
 \begin{table}[ht]
 \centering
