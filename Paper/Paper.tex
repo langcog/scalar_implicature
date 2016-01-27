@@ -202,7 +202,7 @@ to convey, for simplicity we assume a uniform prior \(p(m) \propto 1\).
 The pragmatic speaker in turn considers the probability that a literal
 listener would interpret her utterance correctly:
 
-\[ p_{S_1} (u \mid m) \propto p_{L_0} (m \mid u)\]
+\[ p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)\]
 
 \noindent where \(L_0\) refers to a listener who only considers the
 truth-functional semantics of the utterance (that is, which meanings the
@@ -213,7 +213,7 @@ chooses words to maximize the utility of an utterance in context (Frank
 \& Goodman, 2012), where utility is operationalized as the informativity
 of a particular utterance (surprisal) minus a cost:
 
-\[p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}\]
+\[p_{S_1}(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}\]
 
 \noindent where \(C(u)\) is the cost of a particular utterance,
 \(-log(p_{L_0})\) represents the \emph{surprisal} for the literal
@@ -276,7 +276,7 @@ fit.\footnote{Note that alternatives in the four- and five-alternatives conditio
 In each condition we recruited 30 participants from Amazon Mechanical
 Turk (AMT). In the two-alternative condition, 16 participants were
 excluded
-\footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,1c}
+\footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,c}
 for either failing to pass two training trails or were not native
 English speakers, leaving a total sample of 14 participants. In the
 four-alternative condition, 7 participants were excluded for either
@@ -365,8 +365,8 @@ review someone said they thought they the food was \_\_\_\_," with a
 target scalar presented in the blank. Participants were then asked to
 generate plausible alternatives by responding to the question, ``If
 they'd felt differently about the food, what other words could they have
-used instead of \_\_\_\_\_?'' They were prompted to generate three
-unique alternatives.
+used instead of \_\_\_\_?" They were prompted to generate three unique
+alternatives.
 
 \subsection{Results and Discussion}\label{results-and-discussion-1}
 
@@ -404,25 +404,25 @@ Listener}\label{experiment-3-pragmatic-listener}
 Experiment 3 was conducted to measure pragmatic judgments
 \(p_{L_1}(m \mid u)\) for five pairs of scalar items taken from Tiel
 (2014). We include two conditions in Experiment 3. In the
-two-alternative entailment condition, participants made judgments for
-items included in the entailment scales. In the four-alternative
-condition, participants made pragmatic judgments for the entialment
-items and also the top two alternatives elicited for each scale in
-Experiment 2. Running two pragmatic judgment conditions allowed us to
-rule out the potential effects of having a larger set of alternatives
-during the pragmatic judgment elicitation and also provided two sets of
-human judgments to compare with model predictions.
+two-alternative condition, participants made judgments for items
+included in the entailment scales. In the four-alternative condition,
+participants made judgments for the entialment items and also the top
+two alternatives elicited for each scale in Experiment 2. Running two
+pragmatic judgment conditions allowed us to rule out the potential
+effects of having a larger set of alternatives during the pragmatic
+judgment elicitation and also provided two sets of human judgments to
+compare with model predictions.
 \footnote{Note that alternatives in the four-alternative condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
 
 \subsection{Participants}\label{participants-2}
 
 We recruited 100 participants from AMT, 50 for each condition. Data for
-9 participants in the two-alternative condition were excluded after
-participants either failed to pass two training trials or reported a
-non-English native language, leaving a total sample of 41 participants.
-In the four-alternative condition, data from 7 participants was thrown
-out after participants either failed to pass two training trials or were
-not native English speakers, leaving a total sample of 43 participants.
+9 participants was excluded after participants either failed to pass two
+training trials or were non-native English speakers, leaving a total
+sample of 41 participants. In the four-alternative condition, data from
+7 participants was excluded after participants either failed to pass two
+training trials or were not native English speakers, leaving a total
+sample of 43 participants.
 
 \subsection{Procedure}\label{procedure}
 
@@ -449,15 +449,14 @@ To test whether there were between experiment differences in pragmatic
 judgments, we ran a mixed effects model, regressing pragmatic judgements
 on scale and experiment with subject and word level random effects.
 Results indicate there were no significant differences between
-Experiment 3a and 3b for \(b =\) 0.05, \(t(\) 150.4 \() =\) 1.04,
-\(p =\) 0.3 and the addition of our experiment predictor did not
-significantly improve model fit when compared to a model without the
-experiment variable using ANOVA \(\chi^2(\) 1 \() =\) 1.13, \(p =\)
-0.29.
+Experiment 3a and 3b for \(b =\) 0.05, \(t(\) 150 \() =\) 1.04, \(p =\)
+0.3 and the addition of our experiment predictor did not significantly
+improve model fit when compared to a model without the experiment
+variable using ANOVA \(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
 
 \section{Model Results}\label{model-results}
 
-Using literal semantic data from Experiment 1 we conducted three
+Using literal semantic data from Experiments 1a,b,c we conducted three
 simulations with our model. Each simulation used the specific literal
 semantic data to specify the scale representation available to our
 model. The ``entailment'' model used only the original pair of scalar

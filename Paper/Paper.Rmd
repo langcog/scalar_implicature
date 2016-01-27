@@ -162,13 +162,13 @@ $$p_{L1}(m \mid u) \propto p_{S_1} (u \mid m) p(m)$$
 
 The pragmatic speaker in turn considers the probability that a literal listener would interpret her utterance correctly:
 
-$$ p_{S_1} (u \mid m) \propto p_{L_0} (m \mid u)$$
+$$ p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)$$
 
 \noindent where $L_0$ refers to a listener who only considers the truth-functional semantics of the utterance (that is, which meanings the utterance can refer to). 
 
 This model of the pragmatic speaker is consistent with a speaker who chooses words to maximize the utility of an utterance in context [@frank2012], where utility is operationalized as the informativity of a particular utterance (surprisal) minus a cost:
 
-$$p(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}$$
+$$p_{S_1}(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}$$
 
 \noindent where $C(u)$ is the cost of a particular utterance, $-log(p_{L_0})$ represents the _surprisal_ for the literal listener (the information content of the utterance), and ($\alpha$ is a parameter in a standard choice rule. If $\alpha=0$, speakers choose randomly and as $\alpha \rightarrow \infty$, they greedily choose the highest probability alternative. In our simulations below, we treat $\alpha$ as a free parameter and fit it to the data. 
 
@@ -199,7 +199,7 @@ exp1b <- subset(allLiteralListener, exp == "e10")
 exp1c <- subset(allLiteralListener, exp == "e12")
 ```
 
-In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT). In the two-alternative condition, `r 30 - length(unique(exp1a$workerid))` participants were excluded \footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,1c} for either failing to pass two training trails or were not native English speakers, leaving a total sample of `r length(unique(exp1a$workerid))` participants. In the four-alternative condition,  `r 30 - length(unique(exp1b$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1b$workerid))` participants. In the five-alternative condition, `r 30 - length(unique(exp1c$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1c$workerid))`.
+In each condition we recruited 30 participants from Amazon Mechanical Turk (AMT). In the two-alternative condition, `r 30 - length(unique(exp1a$workerid))` participants were excluded \footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,c} for either failing to pass two training trails or were not native English speakers, leaving a total sample of `r length(unique(exp1a$workerid))` participants. In the four-alternative condition,  `r 30 - length(unique(exp1b$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1b$workerid))` participants. In the five-alternative condition, `r 30 - length(unique(exp1c$workerid))` participants were excluded for either failing to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp1c$workerid))`.
 
 ### Design and procedure
 
@@ -279,7 +279,7 @@ We recruited 30 workers on AMT. All participants were native English speakers an
 
 ### Design and procedure
 
-Participants were presented a target scalar term from our original entailment set embedded in a sentence such as, "In a recent restaurant review someone said they thought they the food was \____," with a target scalar presented in the blank. Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \_____?" They were prompted to generate three unique alternatives.
+Participants were presented a target scalar term from our original entailment set embedded in a sentence such as, "In a recent restaurant review someone said they thought they the food was \____," with a target scalar presented in the blank. Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \____?" They were prompted to generate three unique alternatives.
 
 ## Results and Discussion
 
@@ -351,7 +351,7 @@ Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for t
 
 # Experiment 3: Pragmatic Listener
 
-Experiment 3 was conducted to measure pragmatic judgments $p_{L_1}(m \mid u)$ for five pairs of scalar items taken from @vantiel2014. We include two conditions in Experiment 3. In the two-alternative entailment condition, participants made judgments for items included in the entailment scales. In the four-alternative condition, participants made pragmatic judgments for the entialment items and also the top two alternatives elicited for each scale in Experiment 2. Running two pragmatic judgment conditions allowed us to rule out the potential effects of having a larger set of alternatives during the pragmatic judgment elicitation and also provided two sets of human judgments to compare with model predictions. \footnote{Note that alternatives in the four-alternative condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
+Experiment 3 was conducted to measure pragmatic judgments $p_{L_1}(m \mid u)$ for five pairs of scalar items taken from @vantiel2014. We include two conditions in Experiment 3. In the two-alternative condition, participants made judgments for items included in the entailment scales. In the four-alternative condition, participants made judgments for the entialment items and also the top two alternatives elicited for each scale in Experiment 2. Running two pragmatic judgment conditions allowed us to rule out the potential effects of having a larger set of alternatives during the pragmatic judgment elicitation and also provided two sets of human judgments to compare with model predictions. \footnote{Note that alternatives in the four-alternative condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
 
 ## Participants
 
@@ -360,7 +360,7 @@ exp3a <- subset(allPragmaticListener, exp == "e6")
 exp3b <- subset(allPragmaticListener, exp == "e11")
 ```
 
-We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - length(unique(exp3a$workerid))` participants in the two-alternative condition were excluded after participants either failed to pass two training trials or reported a non-English native language, leaving a total sample of `r length(unique(exp3a$workerid))` participants. In the four-alternative condition, data from `r 50 - length(unique(exp3b$workerid))` participants was thrown out after participants either failed to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp3b$workerid))` participants.
+We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - length(unique(exp3a$workerid))` participants was excluded after participants either failed to pass two training trials or were non-native English speakers, leaving a total sample of `r length(unique(exp3a$workerid))` participants. In the four-alternative condition, data from `r 50 - length(unique(exp3b$workerid))` participants was excluded after participants either failed to pass two training trials or were not native English speakers, leaving a total sample of `r length(unique(exp3b$workerid))` participants.
 
 ## Procedure
 
@@ -378,11 +378,11 @@ anovaResults <- anova(glm1, glm2)
 
 Figure \ref{fig:exp2Plots} plots pragmatic listener judgments distributions for "weak" / "strong" scalar pairs (ie *good*/*excellent*). We only include the original entailment pairs in this figure for simplicity. Several trends are visible. First, in each scale participants generated implicatures and were less likely to assign high star-ratings to weaker scalar terms, despite literal semantic compatibility. Second, the "size" of the difference between judgments between "strong" and "weak" scalar items varied by scale, confirming results found by Tiel (2014).
 
-To test whether there were between experiment differences in pragmatic judgments, we ran a mixed effects model, regressing pragmatic judgements on scale and experiment with subject and word level random effects. Results indicate there were no significant differences between Experiment 3a and 3b for $b =$ `r round(sumGlm2$coefficients[2], 2)`, $t($ `r round(sumGlm2$coefficients[14], 2)` $) =$ `r round(sumGlm2$coefficients[20], 2)`, $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of our experiment predictor did not significantly improve model fit when compared to a model without the experiment variable using ANOVA $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`.
+To test whether there were between experiment differences in pragmatic judgments, we ran a mixed effects model, regressing pragmatic judgements on scale and experiment with subject and word level random effects. Results indicate there were no significant differences between Experiment 3a and 3b for $b =$ `r round(sumGlm2$coefficients[2], 2)`, $t($ `r round(sumGlm2$coefficients[14], 0)` $) =$ `r round(sumGlm2$coefficients[20], 2)`, $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of our experiment predictor did not significantly improve model fit when compared to a model without the experiment variable using ANOVA $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`.
 
 # Model Results
 
-Using literal semantic data from Experiment 1 we conducted three simulations with our model. Each simulation used the specific literal semantic data to specify the scale representation available to our model. The "entailment" model used only the original pair of scalar items pulled from van Tiel (2014). These data were measured in Experiment 1a. The "Top two" model extended the original set of alternatives with the top two alternatives generated in Experiment 2. These data were measured in Experiment 3a. The "Full" model included the full set of alternatives, including a neutral valenced alternative. These data were measured in Experiment 4.
+Using literal semantic data from Experiments 1a,b,c we conducted three simulations with our model. Each simulation used the specific literal semantic data to specify the scale representation available to our model. The "entailment" model used only the original pair of scalar items pulled from van Tiel (2014). These data were measured in Experiment 1a. The "Top two" model extended the original set of alternatives with the top two alternatives generated in Experiment 2. These data were measured in Experiment 3a. The "Full" model included the full set of alternatives, including a neutral valenced alternative. These data were measured in Experiment 4.
 
 ```{r xtable, results = "asis", fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
 # Tuned model run data
