@@ -33,6 +33,7 @@ library(gridExtra)
 library(jsonlite)
 library(png)
 library(grid)
+library(xtable)
 # library(langcog)
 ```
 
@@ -338,13 +339,24 @@ ggplot(subset(listeners, plotThis == TRUE),
         legend.text = element_text(size = 8))
 ```
 
-```{r performancePlots, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
+```{r xtable, results = "asis", fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
 # Tuned model run data
 plotData <- allModelRunData %>%
   mutate(study = ifelse(numAlts == 5, "Full", 
                         ifelse(numAlts == 4, "Top_two", "Entailment"))) %>%
   gather(Experiment, cors, c(corE6, corE11)) %>%
   mutate(Experiment = ifelse(Experiment == "corE6", "1b", "3b"))
+
+tableCors <- plotData  %>%
+  select(cors, study, Experiment) %>%
+  unique() %>%
+  mutate(Experiment = ifelse(Experiment == "1b", "Pragmatic_Listener_exp1", "Pragmatic_Listener_exp2")) %>%
+  spread(Experiment, cors)
+  
+names(tableCors) <- c("r", "model", "Experiment")
+tableCors <- tableCors[c(1, 3, 2),]
+tab <- xtable(tableCors)
+print(tab, type="latex")
 
 # Correlation bar chart
 corBarChart <- ggplot(plotData, aes(x=study, y=cors, fill = Experiment)) + 
@@ -373,7 +385,7 @@ fullRepresentationFit <- qplot(stars, pragChoice, col=degree, shape = pragStudy,
   ylim(0, 1) +
   facet_wrap(~scale) + 
   geom_line(aes(y = preds), lty = 4)
-fullRepresentationFit
+# fullRepresentationFit
 # gridExtra::grid.arrange(corBarChart, symmetricCorPlot, ncol = 2, widths = c(2.5,3))
 ```
 
