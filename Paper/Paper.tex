@@ -76,48 +76,49 @@ description.
 pragmatics; scalar implicature; bayesian modeling
 \end{abstract}
 
-\section{Humpty Dumpty Quote\ldots{}}\label{humpty-dumpty-quote}
-
 \section{Introduction}\label{introduction}
 
-Successful communication requires listeners to make pragmatic inferences
-that go beyond the literal semantic content of speakers' utterances. For
-example, listeners commonly enrich the meaning of the scalar item
-``some'' to ``some but not all'' in sentences like ``Bob ate some of the
-cookies'' (Grice, 1975; Horn, 1984; Levinson, 2000). These inferences,
-called \emph{scalar implicatures}, have been an important test case for
-understanding pragmatic inferences more generally. A Gricean account of
-this phenomena assumes listeners reason about the meaning the speaker
-intended by incorporating knowledge about a) alternative scalar items a
-speaker could have used (such as ``all'') and b) the relative
-informativity of using such alternatives (Grice, 1975). According to
-this account, a listener will infer that the speaker must have intended
-that Bob did not eat ``all'' the cookies because it would have been
-\emph{underinformative} for the speaker to use ``some'' when ``all''
-could have been used.
+How much of what we mean comes from the words that go unsaid? As
+listeners, the ability to enrich meaning in context is an indispensible
+component of succesful communication. For example, listeners commonly
+enrich the meaning of the scalar item \emph{some} to \emph{some but not
+all} in sentences like ``Alice ate some of the cookies'' (Grice, 1975;
+Horn, 1984; Levinson, 2000). These inferences, called \emph{scalar
+implicatures}, have been an important test case for understanding
+pragmatic inferences more generally. A Gricean account of this phenomena
+assumes listeners reason about the meaning the speaker intended by
+incorporating knowledge about a) alternative scalar items a speaker
+could have used (such as \emph{all}) and b) the relative informativity
+of using such alternatives (Grice, 1975). According to this account, a
+listener will infer that the speaker must have intended that Alice did
+not eat \emph{all} the cookies because it would have been
+\emph{underinformative} for the speaker to use \emph{some} when
+\emph{all} could have been used.
 
-But what are the alternatives that should be considered in this
-computation more generally? Under classic accounts of implicature,
-listeners consider only those words whose meaning would entail the word
-that is actually sent (Horn, 1972), and these alternatives enter into
-conventionalized or semi-conventionalized scales (Levinson, 2000). For
-example, because ``all'' entails ``some,'' and hence is a ``stronger''
-meaning, ``all'' should be considered as an alternative to ``some'' in
-implicatures. Similar scales exist for non-quantifier scales, e.g.
-``love'' entails ``like'' (and hence ``I liked the movie'' implicates
-that I didn't love it).
+But how much of the meaning of \emph{some} comes from the alternatives
+that weren't chosen? Put differently, what are the alternatives that
+should be considered in this computation more generally? Under classic
+accounts of implicature, listeners consider only those words whose
+meaning would entail the word that is actually sent (Horn, 1972), and
+these alternatives enter into conventionalized or semi-conventionalized
+scales (Levinson, 2000). For example, because \emph{all} entails
+\emph{some}, and hence is a ``stronger'' meaning, \emph{all} should be
+considered as an alternative to \emph{some} in implicatures. Similar
+scales exist for non-quantifier scales, e.g. \emph{loved} entails
+\emph{liked} (and hence ``I liked the movie'' implicates that I didn't
+love it).
 
 Recent empirical evidence has called into question whether entailment
 scales are all that is necessary for understanding scalar implicature.
 For example, Degen \& Tanenhaus (2015) demonstrated that the scalar item
-``some'' was judged less appropriate when exact numbers were seen as
+\emph{some} was judged less appropriate when exact numbers were seen as
 viable alternatives. And in a different paradigm, Tiel (2014) found
-converging evidence that ``some'' was judged to be atypical for small
+converging evidence that \emph{some} was judged to be atypical for small
 quantities. These data provide indirect evidence about a broader set of
-alternatives: since ``some'' is logically true of sets with one or two
-members, these authors argued that the presence of salient alternatives
-(the words ``one'' and ``two'') reduced the felicity of ``some'' via a
-pragmatic inference.
+alternatives: since \emph{some} is logically true of sets with one or
+two members, these authors argued that the presence of salient
+alternatives (the words \emph{one} and \emph{two}) reduced the felicity
+of \emph{some} via a pragmatic inference.
 
 By formalizing pragmatic reasoning, computational models can help
 provide more direct evidence about the role that alternatives play. The
@@ -128,8 +129,8 @@ understanding as a special case of social cognition, in which listeners
 and speakers reason recursively about one another's goals. In the case
 of scalar implicature, a listener makes a probabilistic inference about
 what the speaker's most likely communicative goal was, given that she
-picked the quantifier ``some'' rather than the stronger quantifier
-``all.'' In turn, the speaker reasons about what message would best
+picked the quantifier \emph{some} rather than the stronger quantifier
+\emph{all}. In turn, the speaker reasons about what message would best
 convey her intended meaning to the listener, given that he is reasoning
 in this way. This recursion is grounded in a ``literal'' listener who
 reasons only according to the basic truth-functional semantics of the
@@ -140,12 +141,12 @@ speaker would need to consider in order to produce the
 typicality/felicity ratings reported by Degen \& Tanenhaus (2015) and
 Tiel (2014). In order to do this, Franke (2014)'s model assigned weights
 to a set of alternative numerical expressions. Surprisingly, along with
-weighting ``one'' highly (a conclusion that was suppored by the
+weighting \emph{one} highly (a conclusion that was suppored by the
 empirical work), the best-fitting model assigned substantial weight to
-``none'' as an alternative. This finding was especially surprising
+\emph{none} as an alternative. This finding was especially surprising
 considering the emphasis of standard theories on scalar items that stand
-in entailment relationships with one another (e.g. ``one'' entails
-``some'' even if it is not classically considered to be part of the
+in entailment relationships with one another (e.g. \emph{one} entails
+\emph{some} even if it is not classically considered to be part of the
 scale).
 
 In our current work, we pick up where these previous studies left off,
@@ -155,9 +156,9 @@ scales we consider. Our inspiration for this move comes from work by Van
 Tiel, Van Miltenburg, Zevakhina, \& Geurts (2014), who examined a
 phenomenon that they dubbed ``scalar diversity,'' namely the substantial
 difference in the strength of scalar implicature across a variety of
-scalar pairs (e.g. ``liked/loved,'' or ``palatable/delicious.''). Making
-use of some of this diversity allows us to investigate the ways that
-different alternative sets give rise to implicatures of different
+scalar pairs (e.g. \emph{liked/loved,} or \emph{palatable/delicious.}).
+Making use of some of this diversity allows us to investigate the ways
+that different alternative sets give rise to implicatures of different
 strengths across scales.
 
 We begin by presenting the computational framework we use throughout the
@@ -322,12 +323,12 @@ three conditions. Several trends are visible. First, in each scale, the
 alternatives spanned the star scale, such that there were alternatives
 that were highly compatible with both the lowest and highest numbers of
 stars. Second, there was clear variability between scalar families. For
-example, compatibility judgments for the top items in the ``memorable /
-unforgettable'' scale were more similar than those for ``good /
-excellent'' or ``liked / loved.'' Finally, there was substantial
-consistency in ratings for items that were repeated across experiments,
-suggesting that this paradigm elicited stable judgments from
-participants.
+example, compatibility judgments for the top items in the
+\emph{memorable / unforgettable} scale were more similar than those for
+\emph{good / excellent} or \emph{liked / loved.} Finally, there was
+substantial consistency in ratings for items that were repeated across
+experiments, suggesting that this paradigm elicited stable judgments
+from participants.
 
 \section{Experiment 2: Alternative
 Elicitation}\label{experiment-2-alternative-elicitation}
@@ -357,6 +358,17 @@ unique alternatives.
 \subsection{Results and Discussion}\label{results-and-discussion-1}
 
 \begin{CodeChunk}
+\begin{figure*}[t]
+
+{\centering \includegraphics{figs/exp2Plots-1} 
+
+}
+
+\caption[Pragmatic listener judgements for our entailment scalar items]{Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair.}\label{fig:exp2Plots}
+\end{figure*}
+\end{CodeChunk}
+
+\begin{CodeChunk}
 \begin{figure}[t]
 
 {\centering \includegraphics{figs/exp2_altsPlot_likedLoved-1} 
@@ -368,21 +380,29 @@ unique alternatives.
 \end{CodeChunk}
 
 Figure \ref{fig:exp2_altsPlot} an example alternative set for the scalar
-items ``liked'' and ``loved'' (combined). Alternative distributions for
-the other scalar pairs (e.g.. ``good/excellent'',
-``memorable/unforgettable'') were similarly long-tailed.
+items \emph{liked} and \emph{loved} (combined). Alternative
+distributions for the other scalar pairs (e.g.. \emph{good/excellent},
+\emph{memorable/unforgettable}) were similarly long-tailed.
 
 \section{Experiment 3: Pragmatic
 Listener}\label{experiment-3-pragmatic-listener}
 
-In Experiment 3, we asked participants to make pragmatic listener
-judgements.
-
-CONDITIONS
+Experiment 3 was conducted to measure pragmatic judgments
+\(p_{L_1}(m \mid u)\) for five pairs of scalar items taken from Tiel
+(2014). We include two conditions in Experiment 3. In the
+two-alternative entailment condition, participants made judgments for
+items included in the entailment scales. In the four-alternative
+condition, participants made pragmatic judgments for the entialment
+items and also the top two alternatives elicited for each scale in
+Experiment 2. Running two pragmatic judgment conditions allowed us to
+rule out the potential effects of having a larger set of alternatives
+during the pragmatic judgment elicitation and also provided two sets of
+human judgments to compare with model predictions.
+\footnote{Note that alternatives in the four-alternative condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
 
 \subsection{Participants}\label{participants-2}
 
-We recruited 150 participants from AMT, 50 for each condition. Data for
+We recruited 100 participants from AMT, 50 for each condition. Data for
 7 participants in the two-alternative condition were excluded after
 participants either failed to pass two training trials or reported a
 non-English native language, leaving a total sample of 43 participants.
@@ -414,17 +434,6 @@ alternatives with the top two alternatives generated in Experiment 2.
 These data were measured in Experiment 3a. The ``Full'' model included
 the full set of alternatives, including a neutral valenced alternative.
 These data were measured in Experiment 4.
-
-\begin{CodeChunk}
-\begin{figure*}[t]
-
-{\centering \includegraphics{figs/exp2Plots-1} 
-
-}
-
-\caption[Pragmatic listener judgements for our entailment scalar items]{Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair.}\label{fig:exp2Plots}
-\end{figure*}
-\end{CodeChunk}
 
 \% latex table generated in R 3.2.3 by xtable 1.8-0 package \% Tue Jan
 26 20:47:20 2016
