@@ -295,16 +295,16 @@ star rating. Compatibility was assessed through a binary ``yes/no''
 response to a question of the form ``Do you think that the person
 thought the food was \_\_\_\_?" where a target scalar was presented in
 the blank. Each participant saw all scalar item and star rating
-combinations for their particular condition (see Figure
-\ref{fig:allScalesTable}), in a random oder.
+combinations for their particular condition, in a random order.
 
 The two-alternatives condition included only the scalar pairs from Tiel
 (2014). The four-alternatives condition included the two scalar items
 plus the top two alternatives generated for each scalar family by
 participants in Experiment 2. The five-alternatives condition included
 the four previous items plus one more ``neutral'' item chosen from those
-alternatives generated in Experiment 2. See Figure 1 for the complete
-list of alternatives used in each condition.
+alternatives generated in Experiment 2. See Figure
+\ref{fig:allScalesTable} for the complete list of alternatives used in
+each condition.
 
 \subsection{Results and Discussion}\label{results-and-discussion}
 
@@ -315,7 +315,7 @@ list of alternatives used in each condition.
 
 }
 
-\caption[Literal listener judgements from Experiments 1a, 3a, and 4]{Literal listener judgements from Experiments 1a, 3a, and 4. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items).  Each panel shows one scalar pair.}\label{fig:exp1Plots}
+\caption[Literal listener judgements from Experiments 1a,b,c]{Literal listener judgements from Experiments 1a,b,c. Proportion of participants indicating acceptability is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the different items in the scale (with the experiments including different numbers of items).}\label{fig:exp1Plots}
 \end{figure*}
 \end{CodeChunk}
 
@@ -392,10 +392,11 @@ unique alternatives.
 \end{figure}
 \end{CodeChunk}
 
-Figure \ref{fig:exp2_altsPlot_likedLoved} an example alternative set for
-the scalar items \emph{liked} and \emph{loved} (combined). Alternative
-distributions for the other scalar pairs (e.g.. \emph{good/excellent},
-\emph{memorable/unforgettable}) were similarly long-tailed.
+Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative
+set for the scalar items \emph{liked} and \emph{loved} (combined).
+Alternative distributions for the other scalar pairs (e.g..
+\emph{good/excellent}, \emph{memorable/unforgettable}) were similarly
+long-tailed.
 
 \section{Experiment 3: Pragmatic
 Listener}\label{experiment-3-pragmatic-listener}
@@ -434,6 +435,16 @@ experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right.
 
 \subsection{Results and Discussion}\label{results-and-discussion-2}
 
+Figure \ref{fig:exp2Plots} plots pragmatic listener judgments
+distributions for ``weak'' / ``strong'' scalar pairs (ie
+\emph{good}/\emph{excellent}). We only include the original entailment
+pairs in this figure for simplicity. Several trends are visible. First,
+in each scale participants generated implicatures and were less likely
+to assign high star-ratings to weaker scalar terms, despite literal
+semantic compatibility. Second, the ``size'' of the difference between
+judgments between ``strong'' and ``weak'' scalar items varied by scale,
+confirming results found by Tiel (2014).
+
 To test whether there were between experiment differences in pragmatic
 judgments, we ran a mixed effects model, regressing pragmatic judgements
 on scale and experiment with subject and word level random effects.
@@ -457,20 +468,18 @@ These data were measured in Experiment 3a. The ``Full'' model included
 the full set of alternatives, including a neutral valenced alternative.
 These data were measured in Experiment 4.
 
-\% latex table generated in R 3.2.3 by xtable 1.8-0 package \% Wed Jan
-27 09:40:50 2016
-
 \begin{table}[ht]
 \centering
-\begin{tabular}{rlrr}
+\begin{tabular}{lrr}
   \hline
- & r & model & Experiment \\ 
+Model & Exp. 3a & Exp 3b \\ 
   \hline
-1 & Entailment & 0.54 & 0.57 \\ 
-  3 & Top\_two & 0.84 & 0.90 \\ 
-  2 & Full & 0.86 & 0.90 \\ 
+Entailment & 0.54 & 0.57 \\ 
+  Top\_two & 0.84 & 0.90 \\ 
+  Full & 0.86 & 0.90 \\ 
    \hline
 \end{tabular}
+\caption{Model fit measured by correlation coefficients} 
 \end{table}
 
 \section{General Discussion}\label{general-discussion}

@@ -398,10 +398,10 @@ tableCors <- plotData  %>%
   mutate(Experiment = ifelse(Experiment == "1b", "Pragmatic_Listener_exp1", "Pragmatic_Listener_exp2")) %>%
   spread(Experiment, cors)
   
-names(tableCors) <- c("r", "model", "Experiment")
+names(tableCors) <- c("Model", "Exp. 3a", "Exp 3b")
 tableCors <- tableCors[c(1, 3, 2),]
-tab <- xtable(tableCors)
-print(tab, type="latex")
+tab <- xtable(tableCors, caption = "Model fit measured by correlation coefficients")
+print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FALSE)
 
 # Correlation bar chart
 corBarChart <- ggplot(plotData, aes(x=study, y=cors, fill = Experiment)) + 
