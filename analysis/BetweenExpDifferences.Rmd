@@ -230,6 +230,12 @@ str(allL0Listener)
 allL0Listener$word <- as.factor(with(allL0Listener, mapply(lookupScalar, degree, scale, exp)))
 ```
 
+### Save literalListenerData
+```{r}
+# write.csv(allL0Listener, "/Users/benpeloquin/Desktop/Projects/scalar_implicature/models/model_data/RawLiteralListenerCombined.csv")
+```
+
+
 ## glmer()
 ```{r}
 # fix contrasts so we're comparing most disparate experimetns (e8 and e12)
@@ -243,10 +249,6 @@ glm2 <- glmer(judgment ~ exp + scale +  stars + (1 | word) +  (1 | workerid), da
 
 ## Visulaziations?
 ```{r}
-# ggplot(allL0Listener, aes(x=stars, y=judgment, col=degree)) + 
-#   geom_point(alpha = 0.5) +
-#   geom_jitter(width = 0.1, height = 0.1) +
-#   facet_wrap(~scale + exp)
 ```
 
 ## Model Comaprisons
@@ -294,6 +296,12 @@ str(allL1Listener)
 ```{r}
 allL1Listener$word <- as.factor(with(allL1Listener, mapply(lookupScalar, degree, scale, exp)))
 ```
+
+### Save literalListenerData
+```{r}
+# write.csv(allL1Listener, "/Users/benpeloquin/Desktop/Projects/scalar_implicature/models/model_data/RawPragmaticListenerCombined.csv")
+```
+
 
 ## glmer()
 ```{r}
