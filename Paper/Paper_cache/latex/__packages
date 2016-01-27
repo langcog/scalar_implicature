@@ -7,3 +7,5 @@ tidyr
 gridExtra
 jsonlite
 png
+pander
+xtable
