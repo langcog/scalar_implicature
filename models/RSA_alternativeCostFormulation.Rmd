@@ -129,6 +129,14 @@ runFull <- function(data, calcFn = 2, alpha = 1, numAlts = 5) {
                  low1 = low1 / sum(low1),
                  low2 = low2 / sum(low2)) %>%
           select(hi1, hi2, low1, low2)
+      } else if (numAlts == 3) {
+        mat <- subset(data, scale  == s) %>%
+          select(stars, degree, speaker.p) %>%
+          spread(degree, speaker.p) %>%
+          mutate(hi = hi / sum(hi),
+                 low = low / sum(low),
+                 none = none / sum(none)) %>%
+          select(hi, low, none)
       } else if (numAlts == 2) {
         mat <- subset(data, scale  == s) %>%
           select(stars, degree, speaker.p) %>%
@@ -181,6 +189,7 @@ yelpPriors <- data.frame(stars=1:5,
                            c(0.090190981, 0.105689431, 0.162783722, 0.304569543, 0.336766323))
 # Cost / rewards
 # --------------
+# for five alts
 emptyCosts5 <- data.frame(scale = c(rep("good_excellent", 5),
                                     rep("liked_loved", 5),
                                     rep("memorable_unforgettable", 5),
@@ -189,6 +198,7 @@ emptyCosts5 <- data.frame(scale = c(rep("good_excellent", 5),
                           degree = rep(c("hi1", "hi2", "mid", "low1", "low2"), 5),
                           newCount = rep(0.0, 25),
                           stringsAsFactors = FALSE)
+# for four alts
 emptyCosts4 <- data.frame(scale = c(rep("good_excellent", 4),
                                     rep("liked_loved", 4),
                                     rep("memorable_unforgettable", 4),
@@ -197,6 +207,16 @@ emptyCosts4 <- data.frame(scale = c(rep("good_excellent", 4),
                           degree = rep(c("hi1", "hi2", "low1", "low2"), 5),
                           newCount = rep(0.0, 20),
                           stringsAsFactors = FALSE)
+# Used with generic none run
+emptyCosts3 <- data.frame(scale = c(rep("good_excellent", 3),
+                                    rep("liked_loved", 3),
+                                    rep("memorable_unforgettable", 3),
+                                    rep("palatable_delicious", 3),
+                                    rep("some_all", 3)),
+                          degree = rep(c("hi", "low", "none"), 5),
+                          newCount = rep(0.0, 15),
+                          stringsAsFactors = FALSE)
+# for two-alts
 emptyCosts2 <- data.frame(scale = c(rep("good_excellent", 2),
                                     rep("liked_loved", 2),
                                     rep("memorable_unforgettable", 2),
@@ -231,6 +251,7 @@ salienceCosts2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_d
 # -------
 speakerL12 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e12.csv")
 speakerL10 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e10.csv")
+speakerGenericNone <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8_genericNone.csv")
 speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8.csv")
 speakerL08 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L0_e8Compliance.csv")
 # Listener
@@ -251,21 +272,21 @@ normNegSalienceCosts <- function(saliences) {
   
   for (s in scales) {
     saliences[saliences$scale == s, ]$cost <-
-      (-1 * saliences[saliences$scale == s, ]$newCount) / NUM_ALTERNATIVES_E9
-    saliences[saliences$scale == s, ]$cost <-
-      -1 * normedVec(saliences[saliences$scale == s, ]$cost)
+      saliences[saliences$scale == s, ]$newCount / NUM_ALTERNATIVES_E9
+    
+    saliences[saliences$scale == s, ]$cost <- 1 / log(saliences[saliences$scale == s, ]$cost)
   }
   saliences[, c("scale", "degree", "cost")]
 }
 ############# NEW SALIENCES 1/20/16 #########
 
-costs <- normNegSalienceCosts(salienceCosts5)
-priors <- unifPriors
-data <- left_join(speakerL12, costs) %>%
-  left_join(., priors) %>%
-  rowwise %>%
-  select(scale, degree, stars, speaker.p, prior.p, cost) %>%
-  group_by(scale)
+# costs <- normNegSalienceCosts(salienceCosts5)
+# priors <- unifPriors
+# data <- left_join(speakerL12, costs) %>%
+#   left_join(., priors) %>%
+#   rowwise %>%
+#   select(scale, degree, stars, speaker.p, prior.p, cost) %>%
+#   group_by(scale)
 
 # run fns()
 # ---------
@@ -302,6 +323,8 @@ matchModelHumanData <- function(predDf, listenerDf, study = "e12") {
           tempDf <- subset(predDf, scale == s & (degree == "hi1" | degree == "hi2")) %>%
             mutate(degree = ifelse(degree == "hi1", "hi", "low"))
         }
+    } else if (study == "genericNone") {
+      tempDf <- subset(predDf, scale == s & degree != "none")
     } else { ## study e6
       tempDf <- subset(predDf, scale == s)
     }
@@ -324,7 +347,12 @@ matchModelHumanData <- function(predDf, listenerDf, study = "e12") {
 tuneAlphas <- function(modelData, humanDf, alphas = seq(1, 12), numAlts = 5, study = "e12"){
   sapply(alphas, function(i) {
     predDf <- runFull(modelData, calcFn = 2, alpha = i, numAlts = numAlts)
-    mergedData <- matchModelHumanData(predDf, listener, study = study)
+    # Watch for generic none run
+    if (study == "genericNone") {
+      mergedData <- matchModelHumanData(subset(predDf, degree != "none"), listener, study = study)
+    } else {
+      mergedData <- matchModelHumanData(predDf, listener, study = study)
+    }
     cor(mergedData$preds, mergedData$listener.p)
   })
 }
@@ -365,10 +393,10 @@ correlationScatterPlot <- function(d) {
 }
 ```
 
-Symmetric scale analysis
+Run full model analysis
 ```{r}
-# Set-up data
-
+# completeModelRun()
+# ------------------
 completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
   results <- list() ## Will return this
   newCosts <- normNegSalienceCosts(costs)
@@ -379,7 +407,9 @@ completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
     select(scale, degree, stars, speaker.p, prior.p, cost) %>%
     group_by(scale)
 
-  studyNum <- ifelse(numAlts == 5, "e12", ifelse(numAlts == 4, "e10", "e6"))
+  studyNum <- ifelse(numAlts == 5, "e12",
+                     ifelse(numAlts == 4, "e10",
+                            ifelse(numAlts == 3, "genericNone", "e6")))
   # Tune alpha
   bestAlpha <- which.max(tuneAlphas(data, listener, numAlts = numAlts, study = studyNum))
   # Run model
@@ -402,27 +432,30 @@ completeModelRun <- function(speaker, listener, priors, costs, numAlts) {
 Run complete analyses and output to csv
 ```{r}
 # Run analyses
-symmetricScalerun <- completeModelRun(speakerL12, listener, unifPriors, emptyCosts5, numAlts = 5)
-symmetricScalerun[[4]]
-negAltsRun <- completeModelRun(speakerL10, listener, unifPriors, emptyCosts4, numAlts = 4)
-negAltsRun[[4]]
-entailmentRun <- completeModelRun(speakerL08, listener, unifPriors, emptyCosts2, numAlts = 2)
-entailmentRun[[4]]
-
+fiveAlts <- completeModelRun(speakerL12, listener, unifPriors, emptyCosts5, numAlts = 5)
+fiveAlts[[4]]
+fourAlts <- completeModelRun(speakerL10, listener, unifPriors, emptyCosts4, numAlts = 4)
+fourAlts[[4]]
+twoAltsGenericNone <- completeModelRun(speakerGenericNone, listener, unifPriors, emptyCosts3, numAlts = 3)
+twoAltsGenericNone[[4]]
+twoAlts <- completeModelRun(speakerL08, listener, unifPriors, emptyCosts2, numAlts = 2)
+twoAlts[[4]]
 
 
 listener2 <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/L1_e11.csv", stringsAsFactors = FALSE)
-symmetricData <- symmetricScalerun[[1]]
-symmetricData$numAlts = 5
-negAltsData <- negAltsRun[[1]]
-negAltsData$numAlts = 4
-entailmentData <- entailmentRun[[1]]
-entailmentData$numAlts = 2
+fiveAltsData <- fiveAlts[[1]]
+fiveAltsData$numAlts = 5
+fourAltsData <- fourAlts[[1]]
+fourAltsData$numAlts = 4
+twoAltsGenericNoneData <- twoAltsGenericNone[[1]]
+twoAltsGenericNoneData$numAlts = 3
+twoAltsData <- twoAlts[[1]]
+twoAltsData$numAlts = 2
 
 # Aggregate data to write to .csv
 
 # combine with e11 prag listener nums
-aggregateData <- rbind(symmetricData, negAltsData, entailmentData)
+aggregateData <- rbind(fiveAltsData, fourAltsData, twoAltsGenericNoneData, twoAltsData)
 listener2 <- listener2[(listener2$scale == "some_all" & (listener2$degree == "low1" | listener2$degree == "hi1")) |
                          (listener2$scale != "some_all" & (listener2$degree == "hi1" | listener2$degree == "hi2")), ]
 listener2$degree <- as.character(ifelse(listener2$degree == "hi1", "hi", "low"))
@@ -433,18 +466,27 @@ aggregateData <- left_join(aggregateData, listener2[, -5], by=c("degree", "stars
 
 # record correlations for both studies
 modelRunData <- aggregateData
-symmetricE6cor <- cor(subset(modelRunData, numAlts == 5)$preds, subset(modelRunData, numAlts == 5)$listener.p)
-symmetricE11cor <-cor(subset(modelRunData, numAlts == 5)$preds, subset(modelRunData, numAlts == 5)$listener.p2)
-negAltsE6cor <- cor(subset(modelRunData, numAlts == 4)$preds, subset(modelRunData, numAlts == 4)$listener.p)
-negAltsE11cor <- cor(subset(modelRunData, numAlts == 4)$preds, subset(modelRunData, numAlts == 4)$listener.p2)
-entailmentE6cor <- cor(subset(modelRunData, numAlts == 2)$preds, subset(modelRunData, numAlts == 2)$listener.p)
-entailmentE11cor <- cor(subset(modelRunData, numAlts == 2)$preds, subset(modelRunData, numAlts == 2)$listener.p2)
-modelRunData$corE6 <- ifelse(modelRunData$numAlts == 5, symmetricE6cor,
-                             ifelse(modelRunData$numAlts == 4, negAltsE6cor, entailmentE6cor))
-modelRunData$corE11 <- ifelse(modelRunData$numAlts == 5, symmetricE11cor,
-                             ifelse(modelRunData$numAlts == 4, negAltsE11cor, entailmentE11cor))
-modelRunData$alphas <- ifelse(modelRunData$numAlts == 5, symmetricScalerun[[3]],
-                             ifelse(modelRunData$numAlts == 4, negAltsRun[[3]], entailmentRun[[3]]))
+fiveAltsE6cor <- cor(subset(modelRunData, numAlts == 5)$preds, subset(modelRunData, numAlts == 5)$listener.p)
+fiveAltsE11cor <-cor(subset(modelRunData, numAlts == 5)$preds, subset(modelRunData, numAlts == 5)$listener.p2)
+fourAltsE6cor <- cor(subset(modelRunData, numAlts == 4)$preds, subset(modelRunData, numAlts == 4)$listener.p)
+fourAltsE11cor <- cor(subset(modelRunData, numAlts == 4)$preds, subset(modelRunData, numAlts == 4)$listener.p2)
+twoAltsGenericNoneE6cor <-
+  cor(subset(modelRunData, numAlts == 3)$preds, subset(modelRunData, numAlts == 3)$listener.p)
+twoAltsGenericNoneE11cor <-
+  cor(subset(modelRunData, numAlts == 3)$preds, subset(modelRunData, numAlts == 3)$listener.p2)
+twoAltsE6cor <- cor(subset(modelRunData, numAlts == 2)$preds, subset(modelRunData, numAlts == 2)$listener.p)
+twoAltsE11cor <- cor(subset(modelRunData, numAlts == 2)$preds, subset(modelRunData, numAlts == 2)$listener.p2)
+
+
+modelRunData$corE6 <- ifelse(modelRunData$numAlts == 5, fiveAltsE6cor,
+                             ifelse(modelRunData$numAlts == 4, fourAltsE6cor,
+                                    ifelse(modelRunData$numAlts == 3, twoAltsGenericNoneE6cor, twoAltsE6cor)))
+modelRunData$corE11 <- ifelse(modelRunData$numAlts == 5, fiveAltsE11cor,
+                             ifelse(modelRunData$numAlts == 4, fourAltsE11cor,
+                                    ifelse(modelRunData$numAlts == 3, twoAltsGenericNoneE11cor, twoAltsE11cor)))
+modelRunData$alphas <- ifelse(modelRunData$numAlts == 5, fiveAlts[[3]],
+                             ifelse(modelRunData$numAlts == 4, fourAlts[[3]],
+                                    ifelse(modelRunData$numAlts == 3, twoAltsGenericNone[[3]], twoAlts[[3]])))
 
 # write.csv(modelRunData, "~/Desktop/Projects/scalar_implicature/models/model_data/allModelRuns.csv")
 ```
