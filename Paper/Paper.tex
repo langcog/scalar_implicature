@@ -268,6 +268,11 @@ five-alternative conditions then add successively more alternatives to
 test whether including a larger number of alternatives will increase
 model
 fit.\footnote{Note that alternatives in the four- and five-alternatives conditions were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; all literal listener experiments are grouped together for simplicity in reporting.}
+A secondary goal of Experiments 1b,c tests whether the total set of
+alternatives queried during literal semantic elicitation effects
+compatibility judgments. (If it does we should see differences in
+compatibility judgments between experiments.) We address this possibiliy
+in the results section.
 
 \subsection{Methods}\label{methods}
 
@@ -332,16 +337,17 @@ scale were more similar than those for \emph{good / excellent} or
 ratings for items that were repeated across experiments, suggesting that
 this paradigm elicited stable judgments from participants.
 
-To test whether there were between experiment differences in
-acceptability judgments, we ran a mixed effects model, regressing
-acceptability judgements on scale, number of stars and experiment type,
-with by subject and by word random effects. Results indicate no
-significant differences between Experiment 1a and 1c \(b =\)-0.05,
-\(Z =\) -0.53, \(p =\) 0.59 or between 1b and 1c \(b =\) -0.04, \(Z =\)
--0.52 \(p =\) 0.6 and the addition of our experiment predictor did not
-significantly improve model fit when compared to a model without the
-experiment type variable using ANOVA \(\chi^2(\) 2 \() =\) 0.43, \(p =\)
-0.81.
+To test our secondary hypothesis, that the different sets of scalar
+items queried might result in differences in compatibility judgments
+between experiments, we ran a mixed effects model. We regressed
+compatibility judgments on scale, number of stars and experiment
+(1a,b,c), with subject and word level random effects, which was the
+maximal structure that converged. Results indicate no significant
+differences between Experiment 1a and 1c \(b =\)-0.05, \(Z =\) -0.53,
+\(p =\) 0.59 or between 1b and 1c \(b =\) -0.04, \(Z =\) -0.52 \(p =\)
+0.6 and the addition of our experiment predictor did not significantly
+improve model fit when compared to a model without the experiment
+variable using ANOVA \(\chi^2(\) 2 \() =\) 0.43, \(p =\) 0.81.
 
 \section{Experiment 2: Alternative
 Elicitation}\label{experiment-2-alternative-elicitation}
@@ -413,6 +419,10 @@ effects of having a larger set of alternatives during the pragmatic
 judgment elicitation and also provided two sets of human judgments to
 compare with model predictions.
 \footnote{Note that alternatives in the four-alternative condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
+A secondary goal of Experiment 3b tests whether the total set of
+alternatives queried in Experiments 3a,b effects pragmatic judgments.
+(If it does we should see differences in pragmatic judgments between
+experiments.) We address this possibiliy in the results section.
 
 \subsection{Participants}\label{participants-2}
 
@@ -445,51 +455,100 @@ semantic compatibility. Second, the ``size'' of the difference between
 judgments between ``strong'' and ``weak'' scalar items varied by scale,
 confirming results found by Tiel (2014).
 
-To test whether there were between experiment differences in pragmatic
-judgments, we ran a mixed effects model, regressing pragmatic judgements
-on scale and experiment with subject and word level random effects.
-Results indicate there were no significant differences between
-Experiment 3a and 3b for \(b =\) 0.05, \(t(\) 150 \() =\) 1.04, \(p =\)
-0.3 and the addition of our experiment predictor did not significantly
-improve model fit when compared to a model without the experiment
-variable using ANOVA \(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
+To test our secondary hypothesis, that the different sets of scalar
+items queried might result in differences in pragmatic judgments between
+experiments, we ran a mixed effects model. We regressed pragmatic
+judgements on scale and experiment (3a,b) with subject and word level
+random effects, which was the maximal structure that converged. Results
+indicate there were no significant differences between Experiment 3a and
+3b for \(b =\) 0.05, \(t(\) 150 \() =\) 1.04, \(p =\) 0.3 and the
+addition of our experiment predictor did not significantly improve model
+fit when compared to a model without the experiment variable using ANOVA
+\(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
 
 \section{Model Results}\label{model-results}
 
 Using literal semantic data from Experiments 1a,b,c we conducted three
 simulations with our model. Each simulation used the specific literal
 semantic data to specify the scale representation available to our
-model. The ``entailment'' model used only the original pair of scalar
-items pulled from van Tiel (2014). These data were measured in
-Experiment 1a. The ``Top two'' model extended the original set of
-alternatives with the top two alternatives generated in Experiment 2.
-These data were measured in Experiment 3a. The ``Full'' model included
-the full set of alternatives, including a neutral valenced alternative.
-These data were measured in Experiment 4.
+model.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
   \hline
-Model & Exp. 3a & Exp 3b \\ 
+Model & $\alpha$ & Exp. 3a & Exp. 3b \\ 
   \hline
-Entailment & 0.54 & 0.57 \\ 
-  Top\_two & 0.84 & 0.90 \\ 
-  Full & 0.86 & 0.90 \\ 
+Two alts &   9 & 0.54 & 0.57 \\ 
+  Two alts + generic negative  &   6 & 0.62 & 0.66 \\ 
+  Four alts &   4 & 0.84 & 0.90 \\ 
+  Five alts &   4 & 0.86 & 0.90 \\ 
    \hline
 \end{tabular}
-\caption{Model fit measured by correlation coefficients} 
+\caption{Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in our two Pragmatic listener experiments (3a,b)} 
 \end{table}
+
+\begin{CodeChunk}
+\begin{figure*}[t]
+
+{\centering \includegraphics{figs/fiveAltsScatter-1} 
+
+}
+
+\caption[Model fit]{Model fit: model predictions are plotted on the x-axis. Human judgments from Exerpiment 3b are plotted on the y-axis. Coloration denotes star rating for which judgment was made.}\label{fig:fiveAltsScatter}
+\end{figure*}
+\end{CodeChunk}
 
 \section{General Discussion}\label{general-discussion}
 
 By varying the type of scale representations available to our Bayesian
 model we investigated the effects of alternatives on scalar implicature.
-Model fit with human judgement was significantly improved by the
+Model fit with human judgments was significantly improved by the
 inclusion of alternatives beyond the typical ``strong'' and ``weak''
-scalar items. In fact, we found that both neutral and negative valence
-scalar items contribute to human-like implicature generation within our
-framework.
+scalar items. The ``Two alternative'' model contained only entailment
+items, which, under classic accounts, should be sufficient to generate
+implicature. Model performance with this limited alternative set was
+poor when compared to human judgments from Experiment 3a,b (row 1, Table
+\ref{xtable}). Building off findings in Franke (2014), in which the
+best-fitting model assigned substantial weight to \emph{none} as an
+alternative, we included a ``generic'' negative alternative that was
+only compatible with 1-star. Model fit for this modified ``Two
+alternative with generic negative'' alternative set did improve, however
+overall correlation was still low (row 2, Table \ref{xtable}). Model fit
+jumped substantially by adding the top-two alternatives for each scale
+(row 3, Table \ref{xtable}). Finally, our ``Five alternative'' model
+included a neutral alternative along with the original entailment pair
+and top two (row 4, Table \ref{xtable}).
+
+While model improvement seemed to be related to the number of
+alternatives present, we did not see substantial differences between our
+four- and five-alternative models. One possibility is that alternatives
+are differentially salient in context. Our current framework makes the
+simplifying assumption that all alternatives are equally salient.
+However, it may well be the case that while both \emph{all} and
+\emph{most} are \emph{present} during pragmatic enrichment of
+\emph{some}, \emph{all} is more salient and therefore should carry
+greater weight in our model. Findings from Experiment 2, in which
+participants generated plausible alternatives, supports this intuition,
+as some alternatives appeared more often than others. This distinction
+between binary \emph{presence} and graded \emph{salience} is an
+important one that deserves further investigation.
+
+It is also likely that the precise set of alternatives present during
+implicature are domain dependent. Our current empirical paradigm
+elicited literal semantics, pragmatic judgments and plausible
+alternatives all within the restricted domain of food reviews.
+Participant data may have differed greatly if we had instead asked them
+to respond in a movie review paradigm, which would have been acceptable
+for a number of our stimuli (ie \emph{memorable}/\emph{unforgettable},
+\emph{liked}/\emph{loved}, etc.).
+
+Considering the possibility that alternative sets may be domain specific
+even for scalar items may provide a way forward in uniting generalized
+and particularized implicatures. Findings from our investigation
+indicate that human literal semantic and pragmatic judgments are often
+graded and diverse, much like the set of plausible alternatives that
+give rise to pragmatic inferences.
 
 \section{Acknowledgements}\label{acknowledgements}
 
