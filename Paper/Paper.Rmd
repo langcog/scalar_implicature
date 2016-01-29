@@ -116,7 +116,7 @@ allModelRunData <- read.csv("../models/model_data/allModelRuns.csv",
 # Non-summarized data
 # -------------------
 allLiteralListener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/RawLiteralListenerCombined.csv")
-allPragmaticListener <- read.csv("~/Desktop/Projects/scalar_implicature/models//model_data/RawPragmaticListenerCombined.csv")
+allPragmaticListener <- read.csv("~/Desktop/Projects/scalar_implicature/models/model_data/RawPragmaticListenerCombined.csv")
 
 # Model run data
 # --------------
@@ -230,9 +230,7 @@ ggplot(speakers,
   # facet_grid(.~ scale) + 
   facet_wrap(~wordPlots) +
   guides(colour = guide_legend(direction = "horizontal", nrow = 1, 
-                               title = "Scalar Item"), 
-         linetype = guide_legend(direction = "horizontal", nrow = 1, 
-                                 title = "Experiment")) + 
+                               title = "Experiment")) + 
   xlab("star rating") +
   ylab("proportion compatible ('yes' responses)") + 
   # ggtitle("Scalar item literal semantic compatibility\nwith star ratings") +
