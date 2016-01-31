@@ -154,7 +154,7 @@ We begin by giving a brief presentation of the basic RSA model. This model simul
 
 In the standard RSA model, the pragmatic listener (denoted $L_1$), makes a Bayesian inference:
 
-$$p_{L_1}(m \mid u) \propto p_{S_1} (u \mid m) p(m) \label{eq:rsa}$$
+$$p_{L_1}(m \mid u) \propto p_{S_1} (u \mid m) p(m) \tag{1}$$
 
 \noindent In other words, the probability of a particular meaning given an utterance is proportional to the speaker's probability of using that particular utterance to express that meaning, weighted by a prior over meanings. This prior represents the listener's _a priori_ expectations about plausible meanings, independent of the utterance. Because our experiments take place in a context in which listeners should have very little expectation about which meanings speakers want to convey, for simplicity we assume a uniform prior $p(m) \propto 1$. 
 
@@ -355,7 +355,7 @@ Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for t
 
 # Experiment 3: Pragmatic Listener
 
-Experiment 3 was conducted to measure pragmatic judgments---$p_{L_1}(m \mid u)$ in Equation \ref{eq:rsa}. As in Experiment 1, we include several conditions to test inferences in the presence of different alternative sets. In the two alternatives condition, participants made judgments for items included in the entailment scales. In the four alternatives condition, participants made judgments for the entailment items and also the top two alternatives elicited for each scale in Experiment 2. Including two conditions with differing alternatives allowed us to rule out the potential effects of having a larger set of alternatives during the pragmatic judgment elicitation and also provided two sets of human judgments to compare with model predictions.\footnote{Note that alternatives in the four alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.} 
+Experiment 3 was conducted to measure pragmatic judgments---$p_{L_1}(m \mid u)$ in Equation $(1)$. As in Experiment 1, we include several conditions to test inferences in the presence of different alternative sets. In the two alternatives condition, participants made judgments for items included in the entailment scales. In the four alternatives condition, participants made judgments for the entailment items and also the top two alternatives elicited for each scale in Experiment 2. Including two conditions with differing alternatives allowed us to rule out the potential effects of having a larger set of alternatives during the pragmatic judgment elicitation and also provided two sets of human judgments to compare with model predictions.\footnote{Note that alternatives in the four alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.} 
 
 ## Participants
 
