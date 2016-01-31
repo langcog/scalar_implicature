@@ -384,7 +384,7 @@ Figure \ref{fig:exp2Plots} plots pragmatic listener judgments distributions for 
 
 To test our secondary hypothesis, that the different sets of scalar items in the two conditions might result in differences in pragmatic judgments for the same items, we fit a mixed effects model. We regressed pragmatic judgments on scale and condition with subject- and word-level random effects, which was the maximal structure that converged. There were no significant differences between conditions, $b =$ `r round(sumGlm2$coefficients[2], 2)`, $t($ `r round(sumGlm2$coefficients[14], 0)` $) =$ `r round(sumGlm2$coefficients[20], 2)`, $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of the condition predictor did not significantly improve model fit when compared to a model without that variable $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`.
 
-# Model Comparison
+# Model
 
 Using literal listener data from Experiment 1, we conducted a set of simulations with the RSA model. Each simulation kept the model constant, fitting the choice parameter $\alpha$ as a free parameter, but used a set of alternatives to specify the scale over which predictions were computed. We considered four different alternative sets, with empirical measurements corresponding to those shown in Table \ref{fig:allScalesTable): 1) the two alternatives in the classic entailment scales, 2) those two alternatives with the addition of a generic negative alternative, 3) the expanded set of four alternatives tested in Experiment 1, and 4) the expanded set of five alternatives tested in Experiment 1. 
 
