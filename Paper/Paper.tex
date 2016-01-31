@@ -65,12 +65,13 @@ some of the cookies,'' listeners routinely infer that Alice did not eat
 all of them. A Gricean account of this phenomena assumes the presence of
 alternatives (like ``all of the cookies'') with varying degrees of
 informativity, but it remains an open question precisely what these
-alternatives are. We use a computational model of pragmatic inference to
-test hypotheses about how well different sets of alternatives allow us
-to predict scalar implicature performance across a range of different
-scales. Our findings suggest that human comprehenders likely consider a
-much broader set of alternatives beyond those entailed by the initial
-description.
+alternatives are. We collect empirical measurements of speaker and
+listener judgments and use these as inputs to a computational model of
+pragmatic inference. This approach allows us to test hypotheses about
+how well different sets of alternatives predict implicature performance
+across a range of different scales. Our findings suggest that
+comprehenders likely consider a much broader set of alternatives beyond
+those entailed by the initial description.
 
 \textbf{Keywords:}
 pragmatics; scalar implicature; bayesian modeling
@@ -80,31 +81,32 @@ pragmatics; scalar implicature; bayesian modeling
 
 How much of what we mean comes from the words that go unsaid? As
 listeners, our ability to make precise inferences about a speaker's
-intended meaning in context is an indispensable component of successful
+intended meaning in context is indispensable to successful
 communication. For example, listeners commonly enrich the meaning of the
 scalar item \emph{some} to \emph{some but not all} in sentences like
 ``Alice ate some of the cookies'' (Grice, 1975; Horn, 1984; Levinson,
 2000). These inferences, called \emph{scalar implicatures}, have been an
 important test case for understanding pragmatic inferences more
-generally. A Gricean account of this phenomena assumes listeners reason
+generally. A Gricean account of this phenomenon assumes listeners reason
 about the meaning the speaker intended by incorporating knowledge about
 a) alternative scalar items a speaker could have used (such as
 \emph{all}) and b) the relative informativity of using such alternatives
 (Grice, 1975). According to this account, a listener will infer that the
-speaker must have intended that Alice did not eat \emph{all} the cookies
-because it would have been underinformative for the speaker to use
-\emph{some} when \emph{all} could have been used.
+speaker must have intended that Alice did not eat all the cookies
+because otherwise it would have been underinformative to use the
+descriptor \emph{some} when the alternative \emph{all} could have been
+used just as easily.
 
-But what are the alternatives that should be considered in this
-computation more generally? Under classic accounts of implicature,
-listeners consider only those words whose meaning would entail the word
-that is actually sent (Horn, 1972), and these alternatives enter into
-conventionalized or semi-conventionalized scales (Levinson, 2000). For
-example, because \emph{all} entails \emph{some}, and hence is a
-``stronger'' meaning, \emph{all} should be considered as an alternative
-to \emph{some} in implicatures. Similar scales exist for non-quantifier
-scales, e.g. \emph{loved} entails \emph{liked} (and hence ``I liked the
-movie'' implicates that I didn't love it).
+But what are the alternatives that should be considered in the
+implicature computation more generally? Under classic accounts,
+listeners consider only those words whose meanings entail the actual
+message (Horn, 1972), and these alternatives enter into conventionalized
+or semi-conventionalized scales (Levinson, 2000). For example, because
+\emph{all} entails \emph{some}, and hence is a ``stronger'' meaning,
+\emph{all} should be considered as an alternative to \emph{some} in
+implicatures. Similar scales exist for non-quantifier scales, e.g.
+\emph{loved} entails \emph{liked} (and hence ``I liked the movie''
+implicates that I didn't love it).
 
 Recent empirical evidence has called into question whether entailment
 scales are all that is necessary for understanding scalar implicature.
@@ -115,8 +117,8 @@ converging evidence that \emph{some} was judged to be atypical for small
 quantities. These data provide indirect evidence about a broader set of
 alternatives: since \emph{some} is logically true of sets with one or
 two members, these authors argued that the presence of salient
-alternatives (the words \emph{one} and \emph{two}) reduced the felicity
-of \emph{some} via a pragmatic inference.
+alternatives (the words \emph{one} and \emph{two}, for example) reduced
+the felicity of \emph{some} via a pragmatic inference.
 
 By formalizing pragmatic reasoning, computational models can help
 provide more direct evidence about the role that alternatives play. The
@@ -188,7 +190,7 @@ fall in \(U\).
 In the standard RSA model, the pragmatic listener (denoted \(L_1\)),
 makes a Bayesian inference:
 
-\[p_{L1}(m \mid u) \propto p_{S_1} (u \mid m) p(m)\]
+\[p_{L_1}(m \mid u) \propto p_{S_1} (u \mid m) p(m) \label{eq:rsa}\]
 
 \noindent In other words, the probability of a particular meaning given
 an utterance is proportional to the speaker's probability of using that
@@ -202,7 +204,7 @@ to convey, for simplicity we assume a uniform prior \(p(m) \propto 1\).
 The pragmatic speaker in turn considers the probability that a literal
 listener would interpret her utterance correctly:
 
-\[ p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)\]
+\[p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)\]
 
 \noindent where \(L_0\) refers to a listener who only considers the
 truth-functional semantics of the utterance (that is, which meanings the
@@ -213,27 +215,28 @@ a speaker who chooses words to maximize the utility of an utterance in
 context (Frank \& Goodman, 2012), where utility is operationalized as
 the informativity of a particular utterance (surprisal) minus a cost:
 
-\[p_{S_1}(u \mid m) \propto e^{-\alpha(-log(p_{L_0}(m \mid u)) - C(u))}\]
+\[p_{S_1}(u \mid m) \propto e^{-\alpha[-log(p_{L_0}(m \mid u)) - C(u)]}\]
 
 \noindent where \(C(u)\) is the cost of a particular utterance,
-\(-log(p_{L_0})\) represents the \emph{surprisal} for the literal
-listener (the information content of the utterance), and \(\alpha\) is a
-parameter in a standard choice rule. If \(\alpha=0\), speakers choose
-randomly and as \(\alpha \rightarrow \infty\), they greedily choose the
-highest probability alternative. In our simulations below, we treat
-\(\alpha\) as a free parameter and fit it to the data.
+\(-log(p_{L_0})\) represents the \emph{surprisal} of the message for the
+literal listener (the information content of the utterance), and
+\(\alpha\) is a parameter in a standard choice rule. If \(\alpha=0\),
+speakers choose randomly and as \(\alpha \rightarrow \infty\), they
+greedily choose the highest probability alternative. In our simulations
+below, we treat \(\alpha\) as a free parameter and fit it to the data.
 
 To instantiate our signaling game with a tractable message set \(M\), in
-our studies we adopt a food-review paradigm: we assume that speakers and
-listeners are trying to communicate the number of stars in an online
-restaurant review (where \(m \in \{1, 2, 3, 4, 5\}\)). We then use
-experiments to measure three components of the model. First, to measure
-literal semantics \({p_{L_0} (m \mid u)}\) (we ask experiment
-participants to judge whether a message is compatible with a particular
-meaning (Experiment 1). Second, to generate a set of plausible
-alternative messages in \(U\), we elicit alternatives directly
-(Experiment 2). Lastly, to obtain human \(L_1\) pragmatic judgments, we
-ask participants to interpret a speaker's utterances (Experiment 3).
+our studies we adopt the world of restaurant reviews as our
+communication game. We assume that speakers and listeners are trying to
+communicate the number of stars in an online restaurant review (where
+\(m \in \{1, 2, 3, 4, 5\}\)). We then use experiments to measure three
+components of the model. First, to measure literal semantics
+\({p_{L_0} (m \mid u)}\) (we ask experiment participants to judge
+whether a message is compatible with a particular meaning (Experiment
+1). Second, to generate a set of plausible alternative messages in
+\(U\), we elicit alternatives directly (Experiment 2). Lastly, to obtain
+human \(L_1\) pragmatic judgments, we ask participants to interpret a
+speaker's utterances (Experiment 3).
 
 \section{Experiment 1: Literal listener
 task}\label{experiment-1-literal-listener-task}
@@ -259,37 +262,36 @@ Experiment 1 was conducted to approximate literal listener semantic
 distributions \(p_{L_0}(m \mid u)\) for five pairs of scalar items taken
 from Tiel (2014). We include three conditions in Experiment 1,
 corresponding to the sets of alternatives within a scale that
-participants were presented with: two-alternatives (``entailment''),
-four-alternatives, and five-alternatives. The two-alternatives
-entailment condition makes a test of the hypothesis that the two members
-of the classic Horn scale (Horn, 1972) are the only alternatives
-necessary to predict the strength of listeners' pragmatic inference. The
-four- and five-alternatives conditions then add successively more
-alternatives to test whether including a larger number of alternatives
-will increase model
-fit.\footnote{Note that alternatives in the four- and five-alternatives conditions were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; all literal listener experiments are grouped together for simplicity in reporting.}
-A secondary goal of Experiments 1a,b,c tests whether the set of
+participants were presented with: two alternatives (``entailment''),
+four alternatives, and five alternatives. The two alternatives condition
+makes a test of the hypothesis that the two members of the classic Horn
+(entailment) scale (Horn, 1972) are the only alternatives necessary to
+predict the strength of listeners' pragmatic inference. The four and
+five alternatives conditions then add successively more alternatives to
+test whether including a larger number of alternatives will increase
+model
+fit.\footnote{Note that alternatives in the four and five alternatives conditions were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; all literal listener experiments are grouped together for simplicity in reporting.}
+A secondary goal of Experiment 1 is to test whether the set of
 alternatives queried during literal semantic elicitation impacts
 compatibility judgments. (If it does we should see differences in
-compatibility judgments for shared items between experiments.) We
-address this possibility in the results section.
+compatibility judgments for shared items between experiments.)
 
 \subsection{Methods}\label{methods}
 
 \subsubsection{Participants}\label{participants}
 
-In each condition we recruited 30 participants from Amazon Mechanical
-Turk (AMT). In the two-alternative condition, 16 participants were
-excluded
-\footnote{The majority of respondent data excluded from Experiment 1a was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in Experiments 1b,c}
-for either failing to pass two training trails or were not native
-English speakers, leaving a total sample of 14 participants. In the
-four-alternative condition, 7 participants were excluded for either
-failing to pass two training trials or were not native English speakers,
-leaving a total sample of 23 participants. In the five-alternative
-condition, 3 participants were excluded for either failing to pass two
-training trials or were not native English speakers, leaving a total
-sample of 27.
+Conditions were run sequentially. In each condition we recruited 30
+participants from Amazon Mechanical Turk (AMT). In the two alternative
+condition, 16 participants were excluded for either failing to pass two
+training trails or were not native English speakers, leaving a total
+sample of 14
+participants.\footnote{The majority of respondent data excluded from the two alternative condition was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in later conditions.}
+In the four alternative condition, 7 participants were excluded for
+either failing to pass two training trials or were not native English
+speakers, leaving a total sample of 23 participants. In the five
+alternative condition, 3 participants were excluded for either failing
+to pass two training trials or were not native English speakers, leaving
+a total sample of 27.
 
 \subsubsection{Design and procedure}\label{design-and-procedure}
 
@@ -302,11 +304,11 @@ thought the food was \_\_\_\_?" where a target scalar was presented in
 the blank. Each participant saw all scalar item and star rating
 combinations for their particular condition, in a random order.
 
-The two-alternatives condition included only the scalar pairs from Tiel
-(2014). The four-alternatives condition included the two scalar items
+The two alternatives condition included only the scalar pairs from Tiel
+(2014). The four alternatives condition included the two scalar items
 plus the top two alternatives generated for each scalar family by
-participants in Experiment 2. The five-alternatives condition included
-the four previous items plus one more ``neutral'' item chosen from those
+participants in Experiment 2. The five alternatives condition included
+the four previous items plus one more neutral item chosen from those
 alternatives generated in Experiment 2. See Figure
 \ref{fig:allScalesTable} for the complete list of alternatives used in
 each condition.
@@ -333,21 +335,21 @@ with both the lowest and highest numbers of stars. Second, there was
 clear variability between scalar families. For example, compatibility
 judgments for the top items in the \emph{memorable / unforgettable}
 scale were more similar than those for \emph{good / excellent} or
-\emph{liked / loved.} Finally, there was substantial consistency in
+\emph{liked / loved}. Finally, there was substantial consistency in
 ratings for items that were repeated across experiments, suggesting that
 this paradigm elicited stable judgments from participants.
 
 To test our secondary hypothesis, that the different sets of scalar
-items queried might result in differences in compatibility judgments
-between experiments, we ran a mixed effects model. We regressed
-compatibility judgments on scale, number of stars and experiment
-(1a,b,c), with subject and word level random effects, which was the
-maximal structure that converged. Results indicate no significant
-differences between Experiment 1a and 1c, \(b =\)-0.05, \(Z =\) -0.53,
-\(p =\) 0.59 or between 1b and 1c, \(b =\) -0.04, \(Z =\) -0.52 \(p =\)
-0.6 and the addition of our experiment predictor did not significantly
-improve model fit when compared to a model without the experiment
-variable using ANOVA \(\chi^2(\) 2 \() =\) 0.43, \(p =\) 0.81.
+items might result in differences in compatibility judgments between
+experiments, we ran a mixed effects model. We regressed compatibility
+judgments on scale, number of stars and condition, with subject and word
+level random effects, which was the maximal structure that converged.
+Results indicate no significant differences between Experiment 1a and
+1c, \(b =\)-0.05, \(Z =\) -0.53, \(p =\) 0.59 or between 1b and 1c,
+\(b =\) -0.04, \(Z =\) -0.52 \(p =\) 0.6 and the addition of condition
+as a predictor did not significantly improve model fit when compared to
+a model without the experiment variable using ANOVA \(\chi^2(\) 2
+\() =\) 0.43, \(p =\) 0.81.
 
 \section{Experiment 2: Alternative
 Elicitation}\label{experiment-2-alternative-elicitation}
@@ -377,25 +379,25 @@ about the food, what other words could they have used instead of
 \subsection{Results and Discussion}\label{results-and-discussion-1}
 
 \begin{CodeChunk}
-\begin{figure*}[t]
-
-{\centering \includegraphics{figs/exp2Plots-1} 
-
-}
-
-\caption[Pragmatic listener judgements for our entailment scalar items]{Pragmatic listener judgements for our entailment scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Each line-type shows a different experiment, and colors indicate the stronger (ie excellent) or weaker (ie good) scalar items for each scale. Each panel shows one scalar pair. We are only showing scalar items used for model comparison (items used in Experiments 1a / 3a) for simplicity,}\label{fig:exp2Plots}
-\end{figure*}
-\end{CodeChunk}
-
-\begin{CodeChunk}
 \begin{figure}[t]
 
 {\centering \includegraphics{figs/exp2_altsPlot_likedLoved-1} 
 
 }
 
-\caption[Combined counts for participant generated alternatives for 'liked  loved' scale from Experiment 2]{Combined counts for participant generated alternatives for 'liked  loved' scale from Experiment 2. Participants were shown a target scalar (either liked or loved) and asked to give three alternatives.}\label{fig:exp2_altsPlot_likedLoved}
+\caption[Combined counts for participant-generated alternatives for the 'liked  loved' scale in Experiment 2]{Combined counts for participant-generated alternatives for the 'liked  loved' scale in Experiment 2.}\label{fig:exp2_altsPlot_likedLoved}
 \end{figure}
+\end{CodeChunk}
+
+\begin{CodeChunk}
+\begin{figure*}[t]
+
+{\centering \includegraphics{figs/exp2Plots-1} 
+
+}
+
+\caption[Pragmatic listener judgements for scalar items]{Pragmatic listener judgements for scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Line type denotes condition, and colors indicate the particular scalar items. Each panel shows one scalar pair, with only entailment items (two alternatives condition) shown here for simplicity.}\label{fig:exp2Plots}
+\end{figure*}
 \end{CodeChunk}
 
 Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative
@@ -407,32 +409,29 @@ long-tailed.
 \section{Experiment 3: Pragmatic
 Listener}\label{experiment-3-pragmatic-listener}
 
-Experiment 3 was conducted to measure pragmatic judgments
-\(p_{L_1}(m \mid u)\) for five pairs of scalar items taken from Tiel
-(2014). We include two conditions in Experiment 3. In the
-two-alternatives condition, participants made judgments for items
-included in the entailment scales. In the four-alternatives condition,
-participants made judgments for the entailment items and also the top
-two alternatives elicited for each scale in Experiment 2. Running two
-pragmatic judgment conditions allowed us to rule out the potential
-effects of having a larger set of alternatives during the pragmatic
-judgment elicitation and also provided two sets of human judgments to
-compare with model
-predictions\footnote{Note that alternatives in the four-alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}.
-A secondary goal of Experiment 3b tests whether the set of alternatives
-queried in Experiments 3a,b impacts pragmatic judgments. (If it does we
-should see differences in pragmatic judgments between experiments.) We
-address this possibility in the results section.
+Experiment 3 was conducted to measure pragmatic
+judgments---\(p_{L_1}(m \mid u)\) in Equation \ref{eq:rsa}. As in
+Experiment 1, we include several conditions to test inferences in the
+presence of different alternative sets. In the two alternatives
+condition, participants made judgments for items included in the
+entailment scales. In the four alternatives condition, participants made
+judgments for the entailment items and also the top two alternatives
+elicited for each scale in Experiment 2. Including two conditions with
+differing alternatives allowed us to rule out the potential effects of
+having a larger set of alternatives during the pragmatic judgment
+elicitation and also provided two sets of human judgments to compare
+with model
+predictions.\footnote{Note that alternatives in the four alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
 
 \subsection{Participants}\label{participants-2}
 
 We recruited 100 participants from AMT, 50 for each condition. Data for
-9 participants was excluded after participants either failed to pass two
-training trials or were non-native English speakers, leaving a total
-sample of 41 participants. In the four-alternative condition, data from
-7 participants was excluded after participants either failed to pass two
-training trials or were not native English speakers, leaving a total
-sample of 43 participants.
+9 participants was excluded from the two alternatives condition after
+participants either failed to pass two training trials or were
+non-native English speakers, leaving a total sample of 41 participants.
+In the four alternative condition, data from 7 participants was excluded
+after participants either failed to pass two training trials or were not
+native English speakers, leaving 43 participants.
 
 \subsection{Procedure}\label{procedure}
 
@@ -447,31 +446,49 @@ experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right.
 
 Figure \ref{fig:exp2Plots} plots pragmatic listener judgments
 distributions for ``weak'' / ``strong'' scalar pairs (e.g.
-\emph{good}/\emph{excellent}). We only include the original entailment
+\emph{good}/\emph{excellent}). We include only the original entailment
 pairs in this figure for simplicity. Several trends are visible. First,
-in each scale participants generated implicatures and were less likely
-to assign high star-ratings to weaker scalar terms, despite literal
-semantic compatibility. Second, the ``size'' of the difference between
-judgments between ``strong'' and ``weak'' scalar items varied by scale,
-consistent with results from Tiel (2014).
+in each scale participants generated implicatures. They were
+substantially less likely to assign high star ratings to weaker scalar
+terms, despite the literal semantic compatibility of those terms with
+those states shown in Experiment 1. Second, the size of the difference
+between strong and weak scalar items varied considerably across scales,
+consistent with previous work (Tiel, 2014).
 
 To test our secondary hypothesis, that the different sets of scalar
-items queried might result in differences in pragmatic judgments between
-experiments, we ran a mixed effects model. We regressed pragmatic
-judgments on scale and experiment (3a,b) with subject and word level
-random effects, which was the maximal structure that converged. Results
-indicate there were no significant differences between Experiment 3a and
-3b, \(b =\) 0.05, \(t(\) 150 \() =\) 1.04, \(p =\) 0.3 and the addition
-of our experiment predictor did not significantly improve model fit when
-compared to a model without the experiment variable using ANOVA
-\(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
+items in the two conditions might result in differences in pragmatic
+judgments for the same items, we fit a mixed effects model. We regressed
+pragmatic judgments on scale and condition with subject- and word-level
+random effects, which was the maximal structure that converged. There
+were no significant differences between conditions, \(b =\) 0.05, \(t(\)
+150 \() =\) 1.04, \(p =\) 0.3 and the addition of the condition
+predictor did not significantly improve model fit when compared to a
+model without that variable \(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
 
-\section{Model Results}\label{model-results}
+\section{Model}\label{model}
 
-Using literal semantic data from Experiments 1a,b,c we conducted three
-simulations with our model. Each simulation used the specific literal
-semantic data to specify the scale representation available to our
-model.
+Using literal listener data from Experiment 1, we conducted a set of
+simulations with the RSA model. Each simulation kept the model constant,
+fitting the choice parameter \(\alpha\) as a free parameter, but used a
+set of alternatives to specify the scale over which predictions were
+computed. We considered four different alternative sets, with empirical
+measurements corresponding to those shown in Table
+\textbackslash{}ref\{fig:allScalesTable): 1) the two alternatives in the
+classic entailment scales, 2) those two alternatives with the addition
+of a generic negative alternative, 3) the expanded set of four
+alternatives tested in Experiment 1, and 4) the expanded set of five
+alternatives tested in Experiment 1.
+
+Model fit with human judgments was significantly improved by the
+inclusion of alternatives beyond the entailment items (Table
+\ref{fig:xtable}). The two alternatives model contained only entailment
+items, which, under classic accounts, should be sufficient to generate
+implicature, but fit to data was quite poor with these items. The
+addition of a generic negative element produced some gains in
+performance, but much higher performance was found when we included four
+and five alternatives, with the alternatives derived empirically for the
+specific scale we used. An example fit for the five-alternative model is
+shown in Figure \ref{fig:fiveAltsScatter}.
 
 \begin{table}[ht]
 \centering
@@ -495,65 +512,63 @@ Two alts &   9 & 0.54 & 0.57 \\
 
 }
 
-\caption[Model fit]{Model fit: model predictions are plotted on the x-axis. Human judgments from Exerpiment 3b are plotted on the y-axis. Coloration denotes star rating for which judgment was made.}\label{fig:fiveAltsScatter}
+\caption[Judgments from Experiment 3, four alternatives condition, are plotted against model predictions]{Judgments from Experiment 3, four alternatives condition, are plotted against model predictions. Colors show the star rating for individual judgments.}\label{fig:fiveAltsScatter}
 \end{figure*}
 \end{CodeChunk}
 
 \section{General Discussion}\label{general-discussion}
 
-By varying the type of scale representations available to our Bayesian
-model we investigated the effects of alternatives on scalar implicature.
-Model fit with human judgments was significantly improved by the
-inclusion of alternatives beyond the typical ``strong'' and ``weak''
-scalar items. The two-alternatives model contained only entailment
-items, which, under classic accounts, should be sufficient to generate
-implicature. Model performance with this limited alternative set was
-poor when compared to human judgments from Experiment 3a,b (row 1, Table
-\ref{xtable}). Building off findings in Franke (2014), in which the
-best-fitting model assigned substantial weight to \emph{none} as an
-alternative, we included a ``generic'' negative alternative that was
-only compatible with 1-star. Model fit for this modified entailment
-alternative set did improve, however overall correlation was still low
-(row 2, Table \ref{xtable}). Model fit jumped substantially by adding
-the top-two alternatives for each scale (row 3, Table \ref{xtable}).
-Finally, our five-alternatives model included a neutral alternative
-along with the original entailment pair and top two (row 4, Table
-\ref{xtable}).
+Pragmatic inference requires reasoning about alternatives. The
+fundamental pragmatic computation is counterfactual: ``if she had meant
+X, she would have said Y, but she didn't.'' Yet the nature of these
+alternatives has been controversial. For a few well-studied scales, a
+small set of logically-determined alternatives has been claimed to be
+all that is necessary (Horn, 1972). For other, contextually-determined
+inferences, the issue of alternatives has been considered relatively
+intractable in terms of formal inquiry (Sperber \& Wilson, 1995).
 
-While model improvement seemed to be related to the number of
-alternatives present, we did not see substantial differences between our
-four- and five-alternative models. One possibility is that alternatives
-are differentially salient in context. Our current framework makes the
-simplifying assumption that all alternatives are equally salient.
-However, it may well be the case that while both \emph{all} and
-\emph{most} are \emph{present} during pragmatic enrichment of
-\emph{some}, \emph{all} is more salient and therefore should carry
-greater weight in our model. Findings from Experiment 2, in which
-participants generated plausible alternatives, support this intuition,
-as some alternatives appeared more often than others. This distinction
-between binary \emph{presence} and graded \emph{salience} is an
-important one that deserves further investigation.
+In our current work, we used the rational speech act framework to
+investigate the set of alternatives that best allowed the model to
+predict pragmatic judgments across a series of different scales. We
+found that the best predictions came when a range of scale-dependent
+negative and neutral alternatives were added to the implicature
+computation, suggesting the importance of considering non-entailment
+alternatives. This work builds on previous investigations, reinforcing
+the claim that negative alternatives are critical for understanding
+implicature (Franke, 2014), and replicates and extends findings that
+different lexical scales produce strikingly different patterns of
+inference ({\textbf{???}}).
 
-It is also likely that the precise set of alternatives present during
-implicature are domain dependent. Our current empirical paradigm
-elicited literal semantics, pragmatic judgments and plausible
-alternatives all within the restricted domain of restaurant reviews.
-Participant data may have differed greatly if we had instead asked them
-to respond in a movie review paradigm, which would have been acceptable
-for a number of our stimuli (e.g. \emph{memorable}/\emph{unforgettable},
-\emph{liked}/\emph{loved}, etc.).
+While improvements in model fit were substantial as we moved from two to
+four alternatives, we saw only a minor increase in fit from the move to
+five alternatives. One possible explanation is that alternatives are
+differentially salient in context, and moving to larger sets would
+consider weighting the alternatives differentially (as Franke, 2014
+did). Preliminary simulations using weightings derived from Experiment 2
+provide some support for this idea but would require further empirical
+work for confirmation.
 
-Considering the possibility that alternative sets may be domain specific
-even for scalar items may provide a way forward in uniting generalized
-and particularized implicatures. Findings from our investigation
-indicate that human literal semantic and pragmatic judgments are often
-graded and diverse, much like the set of plausible alternatives that
-give rise to pragmatic inferences.
+The precise set of alternatives present during implicature is likely to
+be domain dependent. Our current empirical paradigm elicited literal
+semantics, pragmatic judgments, and plausible alternatives all within
+the restricted domain of restaurant reviews. Our measurements might have
+differed substantially if we had instead grounded our ratings in a
+different context. Future investigations should probe the
+context-specificity of the weight and availability of particular
+alternative sets.
+
+More broadly, considering the context- and domain-specificity of
+alternative sets may provide a way to unite what Grice (1975) called
+``generalized'' (cross-context) and ``particularized''
+(context-dependent) implicatures. Rather than being grounded in a firm
+distinction, we may find that these categories are simply a reflection
+of the effects of context on a constantly-shifting set of pragmatic
+alternatives.
 
 \section{Acknowledgements}\label{acknowledgements}
 
-Thanks to NSF BCS. Thanks to Michael Franke, Judith Degen, and Noah
-Goodman.
+Thanks to NSF BCS \#1456077 for support, and thanks to Michael Franke,
+Judith Degen, and Noah Goodman for valuable discussion.
 
 \section{References}\label{references}
 
@@ -589,6 +604,9 @@ generalized conversational implicature}. MIT Press.
 
 Lewis, D. (1969). \emph{Convention: A philosophical study}. John Wiley
 \& Sons.
+
+Sperber, D., \& Wilson, D. (1995). \emph{Relevance: Communication and
+cognition} (2nd ed.). Oxford, UK: Blackwell.
 
 Tiel, B. van. (2014). Quantity matters: Implicatures, typicality, and
 truth.

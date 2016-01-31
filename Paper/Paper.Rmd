@@ -160,13 +160,13 @@ $$p_{L_1}(m \mid u) \propto p_{S_1} (u \mid m) p(m) \label{eq:rsa}$$
 
 The pragmatic speaker in turn considers the probability that a literal listener would interpret her utterance correctly:
 
-$$ p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)$$
+$$p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)$$
 
 \noindent where $L_0$ refers to a listener who only considers the truth-functional semantics of the utterance (that is, which meanings the utterance can refer to). 
 
 This model of the pragmatic speaker (denoted $S_1$) is consistent with a speaker who chooses words to maximize the utility of an utterance in context [@frank2012], where utility is operationalized as the informativity of a particular utterance (surprisal) minus a cost:
 
-$$p_{S_1}(u \mid m) \propto e^{-\alpha\[-log(p_{L_0}(m \mid u)) - C(u)\]}$$
+$$p_{S_1}(u \mid m) \propto e^{-\alpha[-log(p_{L_0}(m \mid u)) - C(u)]}$$
 
 \noindent where $C(u)$ is the cost of a particular utterance, $-log(p_{L_0})$ represents the _surprisal_ of the message for the literal listener (the information content of the utterance), and $\alpha$ is a parameter in a standard choice rule. If $\alpha=0$, speakers choose randomly and as $\alpha \rightarrow \infty$, they greedily choose the highest probability alternative. In our simulations below, we treat $\alpha$ as a free parameter and fit it to the data. 
 
@@ -280,7 +280,7 @@ Participants were presented a target scalar item from our original entailment se
 
 ## Results and Discussion
 
-```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, fig.height=2, num.cols.cap=2, fig.cap = "Combined counts for participant-generated alternatives for the "liked \ loved" scale in Experiment 2."}
+```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, fig.height=2, num.cols.cap=2, fig.cap = "Combined counts for participant-generated alternatives for the 'liked \ loved' scale in Experiment 2."}
 
 # Subset alternatives for demo
 plotData <- alternativesData %>%
