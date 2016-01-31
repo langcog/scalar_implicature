@@ -207,7 +207,7 @@ The two-alternatives condition included only the scalar pairs from @vantiel2014.
 
 ## Results and Discussion
 
-```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=5, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgments from Experiments 1a,b,c. Proportion of participants indicating compatibility (answering 'yes') is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Rows are grouped by scale and items within rows are ordered by valence. Colors indicate the specific experiment (1a,b,c) with experiments including different numbers of items."}
+```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgments from Experiments 1a,b,c. Proportion of participants indicating compatibility (answering 'yes') is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Rows are grouped by scale and items within rows are ordered by valence. Colors indicate the specific experiment (1a,b,c) with experiments including different numbers of items."}
 
 speakers <- bind_rows(speakerE12 %>% mutate(expt = "e12"), 
                       speakerE10 %>% mutate(expt = "e10"), 
