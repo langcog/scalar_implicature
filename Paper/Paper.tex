@@ -105,7 +105,7 @@ or semi-conventionalized scales (Levinson, 2000). For example, because
 \emph{all} should be considered as an alternative to \emph{some} in
 implicatures. Similar scales exist for non-quantifier scales, e.g.
 \emph{loved} entails \emph{liked} (and hence ``I liked the movie''
-implicates that I didn't love it).
+implicates I didn't love it).
 
 Recent empirical evidence has called into question whether entailment
 scales are all that is necessary for understanding scalar implicature.
@@ -155,10 +155,10 @@ scales we consider. Our inspiration for this move comes from work by Van
 Tiel, Van Miltenburg, Zevakhina, \& Geurts (2014), who examined a
 phenomenon that they dubbed ``scalar diversity,'' namely the substantial
 difference in the strength of scalar implicature across a variety of
-scalar pairs (e.g. \emph{liked/loved,} or \emph{palatable/delicious.}).
-Making use of some of this diversity allows us to investigate the ways
-that different alternative sets give rise to implicatures of different
-strengths across scales.
+scalar pairs (e.g. \emph{liked}/\emph{loved,} or
+\emph{palatable}/\emph{delicious.}). Making use of some of this
+diversity allows us to investigate the ways that different alternative
+sets give rise to implicatures of different strengths across scales.
 
 We begin by presenting the computational framework we use throughout the
 paper. We next describe a series of experiments designed to measure both
@@ -203,7 +203,7 @@ to convey, for simplicity we assume a uniform prior \(p(m) \propto 1\).
 The pragmatic speaker in turn considers the probability that a literal
 listener would interpret her utterance correctly:
 
-\[p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u)\]
+\[p_{S_1}(u \mid m) \propto p_{L_0} (m \mid u) \tag{2}\]
 
 \noindent where \(L_0\) refers to a listener who only considers the
 truth-functional semantics of the utterance (that is, which meanings the
@@ -214,7 +214,7 @@ a speaker who chooses words to maximize the utility of an utterance in
 context (Frank \& Goodman, 2012), where utility is operationalized as
 the informativity of a particular utterance (surprisal) minus a cost:
 
-\[p_{S_1}(u \mid m) \propto e^{-\alpha[-log(p_{L_0}(m \mid u)) - C(u)]}\]
+\[p_{S_1}(u \mid m) \propto e^{-\alpha[-log(p_{L_0}(m \mid u)) - C(u)]} \tag{3}\]
 
 \noindent where \(C(u)\) is the cost of a particular utterance,
 \(-log(p_{L_0})\) represents the \emph{surprisal} of the message for the
@@ -230,11 +230,11 @@ communication game. We assume that speakers and listeners are trying to
 communicate the number of stars in an online restaurant review (where
 \(m \in \{1, 2, 3, 4, 5\}\)). We then use experiments to measure three
 components of the model. First, to measure literal semantics
-\({p_{L_0} (m \mid u)}\) (we ask experiment participants to judge
-whether a message is compatible with a particular meaning (Experiment
-1). Second, to generate a set of plausible alternative messages in
-\(U\), we elicit alternatives directly (Experiment 2). Lastly, to obtain
-human \(L_1\) pragmatic judgments, we ask participants to interpret a
+\({p_{L_0} (m \mid u)}\) we ask experiment participants to judge whether
+a message is compatible with a particular meaning (Experiment 1).
+Second, to generate a set of plausible alternative messages in \(U\), we
+elicit alternatives directly (Experiment 2). Lastly, to obtain human
+\(L_1\) pragmatic judgments, we ask participants to interpret a
 speaker's utterances (Experiment 3).
 
 \section{Experiment 1: Literal listener
@@ -261,36 +261,36 @@ Experiment 1 was conducted to approximate literal listener semantic
 distributions \(p_{L_0}(m \mid u)\) for five pairs of scalar items taken
 from Tiel (2014). We include three conditions in Experiment 1,
 corresponding to the sets of alternatives within a scale that
-participants were presented with: two alternatives (``entailment''),
-four alternatives, and five alternatives. The two alternatives condition
+participants were presented with: two-alternatives (``entailment''),
+four-alternatives, and five-alternatives. The two-alternatives condition
 makes a test of the hypothesis that the two members of the classic Horn
 (entailment) scale (Horn, 1972) are the only alternatives necessary to
 predict the strength of listeners' pragmatic inference. The four and
-five alternatives conditions then add successively more alternatives to
+five-alternatives conditions then add successively more alternatives to
 test whether including a larger number of alternatives will increase
 model
-fit.\footnote{Note that alternatives in the four and five alternatives conditions were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; all literal listener experiments are grouped together for simplicity in reporting.}
+fit.\footnote{Note that alternatives in the four and five-alternatives conditions were chosen on the basis of Experiment 2, which was run chronologically after the two-alternative condition; all literal listener experiments are grouped together for simplicity in reporting.}
 A secondary goal of Experiment 1 is to test whether the set of
-alternatives queried during literal semantic elicitation impacts
-compatibility judgments. (If it does we should see differences in
-compatibility judgments for shared items between experiments.)
+alternatives queried during literal semantic elicitation impacts literal
+semantic judgments. If it does we should see differences in these
+judgments for shared items between experiments.
 
 \subsection{Methods}\label{methods}
 
 \subsubsection{Participants}\label{participants}
 
 Conditions were run sequentially. In each condition we recruited 30
-participants from Amazon Mechanical Turk (AMT). In the two alternative
-condition, 16 participants were excluded for either failing to pass two
-training trails or were not native English speakers, leaving a total
-sample of 14
-participants.\footnote{The majority of respondent data excluded from the two alternative condition was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in later conditions.}
-In the four alternative condition, 7 participants were excluded for
-either failing to pass two training trials or were not native English
-speakers, leaving a total sample of 23 participants. In the five
-alternative condition, 3 participants were excluded for either failing
-to pass two training trials or were not native English speakers, leaving
-a total sample of 27.
+participants from Amazon Mechanical Turk (AMT). In the two-alternatives
+condition (Experiment 1a), 16 participants were excluded for either
+failing to pass two training trails or were not native English speakers,
+leaving a total sample of 14
+participants.\footnote{The majority of respondent data excluded from the two-alternatives condition was caused by failure to pass training trials. We believe the task may have been too difficult for most respondents and made adjustments to the training trials in later conditions.}
+In the four alternative condition (Experiment 1b), 7 participants were
+excluded for either failing to pass two training trials or were not
+native English speakers, leaving a total sample of 23 participants. In
+the five alternative condition (Experiment 1c), 3 participants were
+excluded for either failing to pass two training trials or were not
+native English speakers, leaving a total sample of 27.
 
 \subsubsection{Design and procedure}\label{design-and-procedure}
 
@@ -303,14 +303,14 @@ thought the food was \_\_\_\_?" where a target scalar was presented in
 the blank. Each participant saw all scalar item and star rating
 combinations for their particular condition, in a random order.
 
-The two alternatives condition included only the scalar pairs from Tiel
-(2014). The four alternatives condition included the two scalar items
-plus the top two alternatives generated for each scalar family by
-participants in Experiment 2. The five alternatives condition included
+The two-alternatives condition included only the scalar pairs from Tiel
+(2014). The four-alternatives condition included the two scalar items
+plus the top two-alternatives generated for each scalar family by
+participants in Experiment 2. The five-alternatives condition included
 the four previous items plus one more neutral item chosen from those
 alternatives generated in Experiment 2. See Figure
 \ref{fig:allScalesTable} for the complete list of alternatives used in
-each condition.
+each model.
 
 \subsection{Results and Discussion}\label{results-and-discussion}
 
@@ -329,33 +329,43 @@ Figure \ref{fig:exp2Plots} plots literal listener \(p_{L0}(m|u)\) scalar
 item distributions for the three conditions. Each row shows a unique
 scalar family with items ordered horizontally by valence. Several trends
 are visible. First, in each scale, the alternatives spanned the star
-scale, such that there were alternatives that were highly compatible
-with both the lowest and highest numbers of stars. Second, there was
-clear variability between scalar families. For example, compatibility
-judgments for the top items in the \emph{memorable / unforgettable}
-scale were more similar than those for \emph{good / excellent} or
-\emph{liked / loved}. Finally, there was substantial consistency in
-ratings for items that were repeated across experiments, suggesting that
-this paradigm elicited stable judgments from participants.
+scale, such that there were scalar items that were highly compatible
+with both the lowest and highest numbers of stars. Second, participant
+compatibility judgments match intuitive literal semantics. That is, both
+weaker (e.g. \emph{some} or \emph{good}) and stronger (e.g. \emph{all}
+or \emph{excellent}) entailment items were seen as compatible with
+five-star ratings. This means participants' compatibility judgements
+reflect literal semantic intuitions, not enriched pragmatic judgments.
+We see clear variability between scalar families (literal semantic
+distributions for \emph{memorable} are considerably different from
+\emph{palatable}), but also substantial consistency across conditions
+(compatibility judgments for individual scalar items are consistent in
+Experiments 1a,b,c).
 
-To test our secondary hypothesis, that the different sets of scalar
-items might result in differences in compatibility judgments between
-experiments, we ran a mixed effects model. We regressed compatibility
-judgments on scale, number of stars and condition, with subject and word
-level random effects, which was the maximal structure that converged.
-Results indicate no significant differences between Experiment 1a and
-1c, \(b =\)-0.05, \(Z =\) -0.53, \(p =\) 0.59 or between 1b and 1c,
-\(b =\) -0.04, \(Z =\) -0.52 \(p =\) 0.6 and the addition of condition
-as a predictor did not significantly improve model fit when compared to
-a model without the experiment variable using ANOVA \(\chi^2(\) 2
-\() =\) 0.43, \(p =\) 0.81.
+To examine this last issue of consistency across experiments (our
+secondary hypothesis) we ran a mixed effects model regressing
+compatibility judgments on scale, number of stars and experimental
+condition, with subject and word level random effects, which was the
+maximal structure that converged. Results indicate no significant
+differences between Experiment 1a and 1c, \(b =\)-0.05, \(Z =\) -0.53,
+\(p =\) 0.59 or between 1b and 1c, \(b =\) -0.04, \(Z =\) -0.52 \(p =\)
+0.6 and the addition of condition as a predictor did not significantly
+improve model fit when compared to a model without the experiment
+condition variable using ANOVA \(\chi^2(\) 2 \() =\) 0.43, \(p =\) 0.81.
+These findings suggest that literal semantic intuitions are not effected
+by the set of alternatives queried in our paradigm. This finding is
+important because literal semantic data generated in these three
+conditions are used to simulate the effects of different alternative
+sets on implicature generation in our model.
 
 \section{Experiment 2: Alternative
 Elicitation}\label{experiment-2-alternative-elicitation}
 
-To elicit empirical alternatives for the scales we used in Experiment 1,
-we adopted a modified cloze task inspired by Experiment 3 of Tiel
-(2014).
+To examine the effect different alternative sets have on implicature, we
+needed a way of selecting plausible alternatives. We addressed this
+issue by adopting a modified cloze task to elicit empirical alternatives
+for the entailment items we used in Experiment 1a and 3a. This design
+was inspired by Experiment 3 of Tiel (2014).
 
 \subsection{Methods}\label{methods-1}
 
@@ -384,7 +394,7 @@ about the food, what other words could they have used instead of
 
 }
 
-\caption[Combined counts for participant-generated alternatives for the 'liked  loved' scale in Experiment 2]{Combined counts for participant-generated alternatives for the 'liked  loved' scale in Experiment 2.}\label{fig:exp2_altsPlot_likedLoved}
+\caption[Combined counts for participant-generated alternatives for the `liked  loved' scale in Experiment 2]{Combined counts for participant-generated alternatives for the `liked  loved' scale in Experiment 2.}\label{fig:exp2_altsPlot_likedLoved}
 \end{figure}
 \end{CodeChunk}
 
@@ -395,15 +405,24 @@ about the food, what other words could they have used instead of
 
 }
 
-\caption[Pragmatic listener judgements for scalar items]{Pragmatic listener judgements for scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Line type denotes condition, and colors indicate the particular scalar items. Each panel shows one scalar pair, with only entailment items (two alternatives condition) shown here for simplicity.}\label{fig:exp2Plots}
+\caption[Pragmatic listener judgements for scalar items]{Pragmatic listener judgements for scalar items. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Line type denotes condition, and colors indicate the particular scalar items. Each panel shows one scalar pair, with only entailment items (two-alternatives condition) shown here for simplicity.}\label{fig:exp2Plots}
 \end{figure*}
 \end{CodeChunk}
 
 Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative
-set for the scalar items \emph{liked} and \emph{loved} (combined).
-Alternative distributions for the other scalar pairs (e.g..
-\emph{good/excellent}, \emph{memorable/unforgettable}) were similarly
-long-tailed.
+set for the scalar items \emph{liked} and \emph{loved} (combined). We
+expanded our alternative set from only entailment items (Experiments 1a,
+3a) to four alternatives (Experiments 1b, 3b) by including the top two
+alternatives elicited for each scale in Experiment 2. For example, the
+top two alternatives for the \emph{liked}/\emph{loved} scale were
+\emph{hated} and \emph{disliked} and were included in four-alternatives
+model runs. Similarly, neutral items (e.g. \emph{okay} in the
+\emph{good}/\emph{excellent} scalar family) were chosen from among the
+set of alternatives elicited in Experiment 2. Alternative set
+distributions for the other scalar families (e.g.
+\emph{good}/\emph{excellent}, \emph{memorable}/\emph{unforgettable})
+were similarly long-tailed. See Figure \ref{fig:allScalesTable} for the
+complete list of alternatives we used from Experiment 2.
 
 \section{Experiment 3: Pragmatic
 Listener}\label{experiment-3-pragmatic-listener}
@@ -411,15 +430,16 @@ Listener}\label{experiment-3-pragmatic-listener}
 Experiment 3 was conducted to measure pragmatic
 judgments---\(p_{L_1}(m \mid u)\) in Equation \((1)\). As in Experiment
 1, we include several conditions to test inferences in the presence of
-different alternative sets. In the two alternatives condition,
-participants made judgments for items included in the entailment scales.
-In the four alternatives condition, participants made judgments for the
-entailment items and also the top two alternatives elicited for each
-scale in Experiment 2. Including two conditions with differing
-alternatives allowed us to rule out the potential effects of having a
-larger set of alternatives during the pragmatic judgment elicitation and
-also provided two sets of human judgments to compare with model
-predictions.\footnote{Note that alternatives in the four alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
+different alternative sets. In the two-alternatives condition
+(Experiment 3a), participants made judgments for items included in the
+entailment scales. In the four-alternatives condition (Experiment 3b),
+participants made judgments for the entailment items and also the top
+two-alternatives elicited for each scale in Experiment 2. Including two
+conditions with differing alternatives allowed us to rule out the
+potential effects of having a larger set of alternatives during the
+pragmatic judgment elicitation and also provided two sets of human
+judgments to compare with model
+predictions.\footnote{Note that alternatives in the four-alternatives condition were chosen on the basis of Experiment 2, which was run chronologically after the two-alternatives condition; both pragmatic listener experiments are grouped together for simplicity in reporting.}
 
 \subsection{Participants}\label{participants-2}
 
@@ -427,9 +447,9 @@ We recruited 100 participants from AMT, 50 for each condition. Data for
 9 participants was excluded from the two alternatives condition after
 participants either failed to pass two training trials or were
 non-native English speakers, leaving a total sample of 41 participants.
-In the four alternative condition, data from 7 participants was excluded
-after participants either failed to pass two training trials or were not
-native English speakers, leaving 43 participants.
+In the four alternatives condition, data from 7 participants was
+excluded after participants either failed to pass two training trials or
+were not native English speakers, leaving 43 participants.
 
 \subsection{Procedure}\label{procedure}
 
@@ -453,15 +473,15 @@ those states shown in Experiment 1. Second, the size of the difference
 between strong and weak scalar items varied considerably across scales,
 consistent with previous work (Tiel, 2014).
 
-To test our secondary hypothesis, that the different sets of scalar
-items in the two conditions might result in differences in pragmatic
-judgments for the same items, we fit a mixed effects model. We regressed
-pragmatic judgments on scale and condition with subject- and word-level
-random effects, which was the maximal structure that converged. There
-were no significant differences between conditions, \(b =\) 0.05, \(t(\)
-150 \() =\) 1.04, \(p =\) 0.3 and the addition of the condition
-predictor did not significantly improve model fit when compared to a
-model without that variable \(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
+To rule out the potential effects of having a larger set of alternatives
+during the pragmatic judgment elicitation, we fit a mixed effects model.
+We regressed pragmatic judgments on scale and experimental condition
+with subject- and word-level random effects, which was the maximal
+structure that converged. There were no significant differences between
+conditions 3a and 3b, \(b =\) 0.05, \(t(\) 150 \() =\) 1.04, \(p =\) 0.3
+and the addition of the condition predictor did not significantly
+improve model fit when compared to a model without that variable
+\(\chi^2(\) 1 \() =\) 1.13, \(p =\) 0.29.
 
 \section{Model}\label{model}
 
@@ -471,20 +491,21 @@ fitting the choice parameter \(\alpha\) as a free parameter, but used a
 set of alternatives to specify the scale over which predictions were
 computed. We considered four different alternative sets, with empirical
 measurements corresponding to those shown in Figure
-\ref{fig:allScalesTable}: 1) the two alternatives in the classic
+\ref{fig:allScalesTable}: 1) the two-alternatives in the classic
 entailment scales, 2) those two alternatives with the addition of a
-generic negative alternative, 3) the expanded set of four alternatives
-tested in Experiment 1, and 4) the expanded set of five alternatives
-tested in Experiment 1.
+generic negative alternative
+\footnote{literal semantics for the generic negative alternative were not generated empirically, but serve as a baseline "none" style semantics in which the scalar item is only compatible with 1 star},
+3) the expanded set of four alternatives tested in Experiment 1b, and 4)
+the expanded set of five alternatives tested in Experiment 1c.
 
 Model fit with human judgments was significantly improved by the
-inclusion of alternatives beyond the entailment items (Table 1). The two
-alternatives model contained only entailment items, which, under classic
-accounts, should be sufficient to generate implicature, but fit to data
-was quite poor with these items. The addition of a generic negative
-element produced some gains in performance, but much higher performance
-was found when we included four and five alternatives, with the
-alternatives derived empirically for the specific scale we used. An
+inclusion of alternatives beyond the entailment items (Table 1). The
+two-alternatives model contained only entailment items, which, under
+classic accounts, should be sufficient to generate implicature, but fit
+to data was quite poor with these items. The addition of a generic
+negative element produced some gains in performance, but much higher
+performance was found when we included four and five alternatives, with
+the alternatives derived empirically for the specific scale we used. An
 example fit for the five-alternative model is shown in Figure
 \ref{fig:fiveAltsScatter}.
 
@@ -510,7 +531,7 @@ Two alts &   9 & 0.54 & 0.57 \\
 
 }
 
-\caption[Judgments from Experiment 3, four alternatives condition, are plotted against model predictions]{Judgments from Experiment 3, four alternatives condition, are plotted against model predictions. Colors show the star rating for individual judgments.}\label{fig:fiveAltsScatter}
+\caption[Judgments from Experiment 3, four-alternatives condition, are plotted against model predictions]{Judgments from Experiment 3, four-alternatives condition, are plotted against model predictions. Colors show the star rating for individual judgments.}\label{fig:fiveAltsScatter}
 \end{figure*}
 \end{CodeChunk}
 
@@ -540,11 +561,11 @@ inference (Tiel, 2014).
 While improvements in model fit were substantial as we moved from two to
 four alternatives, we saw only a minor increase in fit from the move to
 five alternatives. One possible explanation is that alternatives are
-differentially salient in context, and moving to larger sets would
-consider weighting the alternatives differentially (as Franke, 2014
-did). Preliminary simulations using weightings derived from Experiment 2
-provide some support for this idea but would require further empirical
-work for confirmation.
+differentially salient in context, and in moving to larger sets we
+should consider weighting the alternatives differentially (as Franke,
+2014 did). Preliminary simulations using weightings derived from
+Experiment 2 provide some support for this idea but would require
+further empirical work for confirmation.
 
 The precise set of alternatives present during implicature is likely to
 be domain dependent. Our current empirical paradigm elicited literal
