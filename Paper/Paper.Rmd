@@ -20,7 +20,7 @@ output: cogsci2016::cogsci_paper
 ```{r global_options, include=FALSE}
 rm(list=ls())
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", fig.path='figs/',
-                      echo=F, warning=F, cache=F, message=F, sanitize = T)
+                      echo=F, warning=F, cache=TRUE, message=F, sanitize = T)
 ```
 
 ```{r, libraries}
@@ -207,7 +207,7 @@ The two-alternatives condition included only the two terms in the pairs from van
 
 ## Results and Discussion
 
-```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgments from Experiment 1. Proportion of participants indicating compatibility (answering `yes') is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Rows are grouped by scale and items within rows are ordered by valence. Colors indicate the specific condition (1a,b,c) with conditions including different numbers of items."}
+```{r exp1Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Literal listener judgments from Experiment 1. Proportion of participants indicating compatibility (answering \"yes\") is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Rows are grouped by scale and items within rows are ordered by valence. Colors indicate the specific condition (1a,b,c) with conditions including different numbers of items."}
 
 speakers <- bind_rows(speakerE12 %>% mutate(expt = "e12"), 
                       speakerE10 %>% mutate(expt = "e10"), 
@@ -264,7 +264,7 @@ sumGlm2 <- summary(glm2)
 anovaResults <- anova(glm1, glm2)
 ```
 
-To examine this last issue of consistency across conditions (our secondary hypothesis) we fit a mixed effects model, regressing compatibility judgment on scale, number of stars and experimental condition, with subject- and word-level random effects, which was the maximal structure that converged. Results indicate no significant differences between two- and five-alternative conditions, $b =$`r round(sumGlm2$coefficients[3], 2)`, $Z =$ `r round(sumGlm2$coefficients[19], 2)`, $p =$ `r round(sumGlm2$coefficients[27], 2)` or between four- and five-alternative conditions, $b =$ `r round(sumGlm2$coefficients[2], 2)`, $Z =$ `r round(sumGlm2$coefficients[18], 2)` $p =$ `r round(sumGlm2$coefficients[26], 2)` and the addition of condition as a predictor did not significantly improve model fit when compared to a model without the condition variable using ANOVA $\chi^2($ `r anovaResults$"Chi Df"[2]` $) =$ `r round(anovaResults$Chisq[2], 2)`, $p =$ `r round(anovaResults$"Pr(>Chisq)"[2], 2)`. These findings suggest that literal semantic intuitions are not effected by the set of alternatives queried in our paradigm. This finding is important because literal semantic data generated in these three conditions are used to simulate the effects of different alternative sets on implicature generation in our model.
+To examine this last issue of consistency across conditions (our secondary hypothesis) we fit a mixed effects model, regressing compatibility judgment on scale, number of stars and experimental condition, with subject- and word-level random effects, which was the maximal structure that converged. Results indicate no significant differences between two- and five-alternative conditions ($\beta=`r round(sumGlm2$coefficients[3], 2)`$, $z = `r round(sumGlm2$coefficients[19], 2)`$, $p = `r round(sumGlm2$coefficients[27], 2)`$) or between four- and five-alternative conditions ($\beta = `r round(sumGlm2$coefficients[2], 2)`$, $z = `r round(sumGlm2$coefficients[18], 2)`$, $p = `r round(sumGlm2$coefficients[26], 2)`$). The addition of condition as a predictor did not significantly improve model fit when compared to a model without the condition variable using ANOVA ($\chi^2(`r anovaResults$"Chi Df"[2]`) = `r round(anovaResults$Chisq[2], 2)`$, $p = `r round(anovaResults$"Pr(>Chisq)"[2], 2)`$). These findings suggest that literal semantic intuitions are not effected by the set of alternatives queried in our paradigm. This finding is important because literal semantic data generated in these three conditions are used to simulate the effects of different alternative sets on implicature generation in our model.
 
 # Experiment 2: Alternative Elicitation
 
@@ -282,7 +282,7 @@ Participants were presented a target scalar item from our original entailment se
 
 ## Results and Discussion
 
-```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', set.cap.width=T, fig.height=2, num.cols.cap=2, fig.cap = "Combined counts for participant-generated alternatives for the `liked \ loved' scale in Experiment 2."}
+```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', fig.height=2, fig.cap = "Combined counts for participant-generated alternatives for liked vs. loved in Experiment 2."}
 
 # Subset alternatives for demo
 plotData <- alternativesData %>%
@@ -353,7 +353,7 @@ ggplot(subset(listeners, plotThis == TRUE),
         axis.text.y = element_text(size = 10))
 ```
 
-Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for the scalar items *liked* and *loved* (combined). We expanded our alternative set from only entailment items (items used in Experiments 1a, 3a) to four alternatives (Experiments 1b, 3b) by including the top two alternatives elicited for each scale in Experiment 2. For example, the top two alternatives for the *liked*/*loved* scale were *hated* and *disliked* and were included in four-alternatives model. Similarly, neutral items (e.g. *okay* in the *good*/*excellent* scale) were chosen from among the set of alternatives elicited in Experiment 2 and added to the five-alternatives model. See Figure \ref{fig:allScalesTable} for the complete list of alternatives we used from Experiment 2.
+Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for the scalar items *liked* and *loved* (combined). Figure \ref{fig:allScalesTable} shows the complete list of alternative sets derived from Experiment 2.
 
 # Experiment 3: Pragmatic Listener
 
@@ -373,6 +373,7 @@ We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - 
 Participants were presented with a one-sentence prompt such as "Someone said they thought the food was \_____." with a target scalar item in the blank. Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. The experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right. 
 
 ## Results and Discussion
+
 ```{r pragmaticListener_ME_models, echo = FALSE, warning = FALSE, message = FALSE}
 # glmer WITHOUT experiment and with random effect for subjects
 glm1 <- lmer(stars ~ scale + (1 | word) + (1 | workerid), data = allPragmaticListener)
@@ -392,7 +393,8 @@ Using literal listener data from Experiment 1, we conducted a set of simulations
 
 Model fit with human judgments was significantly improved by the inclusion of alternatives beyond the entailment items (Table 1). The two-alternatives model contained only entailment items, which, under classic accounts, should be sufficient to generate implicature, but fit to data was quite poor with these items. The addition of a generic negative element produced some gains in performance, but much higher performance was found when we included four and five alternatives, with the alternatives derived empirically for the specific scale we used. An example fit for the five-alternative model is shown in Figure \ref{fig:fiveAltsScatter}. 
 
-```{r xtable, results = "asis", fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=T, num.cols.cap=2, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "The left panel shows improved model fit as scale representations are enriched with more scalar items. Correlations are coputed using pragmatic judgment data from Experiments 1b and 3b. The right panel plots model predictions using full symmetric scales versus human judgments from Experiment 3b."}
+```{r xtable, results = "asis"}
+
 # Tuned model run data
 plotData <- allModelRunData %>%
   mutate(study = ifelse(numAlts == 5, "Five alts", 
@@ -436,19 +438,19 @@ print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FA
 ```
 
 
-```{r fiveAltsScatter, fig.env = "figure*", fig.pos = "t", fig.width=4.5, fig.height=2, fig.align='center', set.cap.width=T, num.cols.cap=2, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "Judgments from Experiment 3b are plotted against five-alternatives model predictions. Colors show the star rating for individual judgments."}
+```{r fiveAltsScatter, fig.pos = "t", fig.width=3.5, fig.height=2.5, fig.cap = "Judgments from the four-alternatives condition of Experiment 3 are plotted against model predictions using the five-alternatives data from Experiment 1. Colors show the star rating for individual judgments."}
 # Correlation scatter plot
 ggplot(subset(plotData, study == "Five alts"), aes(x = listener.p2, y = preds, col=stars)) + 
   geom_point() +
-  xlab("model predictions") +
-  ylab("human judgments (Exp. 3b)") +
+  xlab("Model predictions") +
+  ylab("Human judgments") +
   stat_smooth(method = "lm") +
   theme_bw() + 
   theme(strip.text.x = element_text(size = 8),
-#         legend.position = "bottom",
-#         legend.margin = unit(.02,"in"),
-#         legend.key = element_blank(), 
-#         legend.key.size = unit(.1, "in"),
+        legend.position = "right",
+        legend.margin = unit(.02,"in"),
+        legend.key = element_blank(), 
+        legend.key.size = unit(.1, "in"),
         axis.title.x = element_text(size = 8.5),
         axis.title.y = element_text(size = 8.5)) 
   # ggtitle("Model fit\nFive alternatives")
