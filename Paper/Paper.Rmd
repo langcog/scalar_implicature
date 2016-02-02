@@ -215,7 +215,7 @@ We recruited 30 workers on Amazon Mechanical Turk (AMT). All participants were n
 
 ### Design and procedure
 
-On each trial participants were presented with a target scalar item from five scales, selected from the entailment items used in @vantiel2014b. These were embedded in a sentence such as, "In a recent restaurant review someone said they thought the the food was \____," with a target scalar presented in the blank. Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \____?" They were prompted to generate three unique alternatives.
+On each trial participants were presented with a target scalar item from five scales, selected from the entailment items used in @vantiel2014b. These were embedded in a sentence such as, "In a recent restaurant review someone said they thought the food was \____," with a target scalar presented in the blank. Participants were then asked to generate plausible alternatives by responding to the question, "If they'd felt differently about the food, what other words could they have used instead of \____?" They were prompted to generate three unique alternatives.
 
 ## Results and Discussion
 
