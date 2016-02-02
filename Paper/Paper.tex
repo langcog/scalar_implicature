@@ -70,9 +70,9 @@ measurements of speaker and listener judgments about varying sets of
 alternatives across a range of scales and use these as inputs to a
 computational model of pragmatic inference. This approach allows us to
 test hypotheses about how well different sets of alternatives predict
-implicature performance. Our findings suggest that comprehenders likely
-consider a broader set of alternatives beyond those logically entailed
-by the initial message.
+pragmatic judgments by people. Our findings suggest that comprehenders
+likely consider a broader set of alternatives beyond those logically
+entailed by the initial message.
 
 \textbf{Keywords:}
 pragmatics; scalar implicature; bayesian modeling
@@ -114,9 +114,10 @@ For example, Degen \& Tanenhaus (2015) demonstrated that the scalar item
 \emph{some} was judged less appropriate when exact numbers were seen as
 viable alternatives. And in a different paradigm, {van Tiel} (2014)
 found converging evidence that \emph{some} was judged to be atypical for
-small quantities. These data provide indirect evidence about a broader
-set of alternatives. Since \emph{some} is logically true of sets with
-one or two members, these authors argued that the presence of salient
+small quantities. These data provide indirect evidence that people may
+actually consider a broader set of alternatives when computing scalar
+implicatures. Since \emph{some} is logically true of sets with one or
+two members, these authors argued that the presence of salient
 alternatives (the words \emph{one} and \emph{two}, for example) reduced
 the felicity of \emph{some} via a pragmatic inference.
 
@@ -162,16 +163,20 @@ scalar pairs (e.g., \emph{liked} / \emph{loved,} \emph{palatable} /
 the ways that different alternative sets give rise to implicatures of
 different strengths across scales.
 
-We begin by presenting the computational framework we use throughout the
-paper. We next describe a series of experiments designed to measure both
-the literal semantics of a set of scalar items and comprehenders'
-pragmatic judgments for these same items. These experiments allow us to
-compare the effects of different alternative sets on our ability to
-model listeners' pragmatic judgments. To preview our results: we find
-that standard entailment alternatives do not allow us to fit
-participants' judgments, but that expanding the range of alternatives
-empirically (by asking participants to generate alternative messages)
-allows us to predict listeners' pragmatic judgments with high accuracy.
+In our current work, we use a computational framework to investigate the
+set of alternatives that best allow the model to predict human pragmatic
+judgments. We begin by presenting the computational framework (RSA) we
+use throughout the paper. We next describe a series of experiments
+designed to measure both the literal semantics of a set of scalar items
+(used to simulate different alternative sets available to listeners) and
+comprehenders' pragmatic judgments for these same items (used for model
+comparison). These experiments allow us to compare the effects of
+different alternative sets on our ability to model listeners' pragmatic
+judgments. To preview our results: we find that standard entailment
+alternatives do not allow us to fit participants' judgments, but that
+expanding the range of alternatives empirically (by asking participants
+to generate alternative messages) allows us to predict listeners'
+pragmatic judgments with high accuracy.
 
 \section{Modeling Implicature Using
 RSA}\label{modeling-implicature-using-rsa}
@@ -235,15 +240,25 @@ communicate the number of stars in an online restaurant review (where
 components of the model. First, to generate a set of plausible
 alternative messages in \(U\), we ask participants to generate
 alternatives for particular scalar items (Experiment 1). Next, to
-measure literal semantics \({p_{L_0} (m \mid u)}\) we ask experiment
-participants to judge whether a message is compatible with a particular
-meaning (Experiment 2). Lastly, to obtain human \(L_1\) pragmatic
-judgments, we ask participants to interpret a speaker's utterances
-(Experiment 3).
+measure literal semantics \({p_{L_0} (m \mid u)}\) we ask participants
+to judge whether a message is compatible with a particular meaning
+(Experiment 2). Lastly, to obtain human \(L_1\) pragmatic judgments, we
+ask participants to interpret a speaker's utterances (Experiment 3).
 
 \begin{CodeChunk}
 \begin{figure}[t]
-\includegraphics{figs/allScalesTable-1} \caption[Alternative sets for Experiments 1, 2, and 3]{Alternative sets for Experiments 1, 2, and 3.}\label{fig:allScalesTable}
+\includegraphics{figs/allScalesTable-1} \caption[Alternative sets used in Experiments 2 and 3]{Alternative sets used in Experiments 2 and 3. Green coloring denotes classic entailment items used in conditions 2a and 3a. Blue coloring denotes top-two alternatives added to entailment scales (from Experiment 1) in conditions 2b and 3b. Red coloring denotes ``neutral" items aded in condition 2c.}\label{fig:allScalesTable}
+\end{figure}
+\end{CodeChunk}
+
+\begin{CodeChunk}
+\begin{figure}[t]
+
+{\centering \includegraphics{figs/exp2_altsPlot_likedLoved-1} 
+
+}
+
+\caption[Combined counts for participant-generated alternatives for liked vs]{Combined counts for participant-generated alternatives for liked vs. loved in Experiment 2.}\label{fig:exp2_altsPlot_likedLoved}
 \end{figure}
 \end{CodeChunk}
 
@@ -268,7 +283,7 @@ speakers and naive to the purpose of the experiment.
 Participants were presented with a target scalar item from five scales,
 selected from {van Tiel} et al. (2014) (see Figure
 \ref{fig:allScalesTable}). These were embedded in a sentence such as,
-``In a recent restaurant review someone said they thought they the food
+``In a recent restaurant review someone said they thought the the food
 was \_\_\_\_," with a target scalar presented in the blank. Participants
 were then asked to generate plausible alternatives by responding to the
 question, ``If they'd felt differently about the food, what other words
@@ -276,17 +291,6 @@ could they have used instead of \_\_\_\_?" They were prompted to
 generate three unique alternatives.
 
 \subsection{Results and Discussion}\label{results-and-discussion}
-
-\begin{CodeChunk}
-\begin{figure}[t]
-
-{\centering \includegraphics{figs/exp2_altsPlot_likedLoved-1} 
-
-}
-
-\caption[Combined counts for participant-generated alternatives for liked vs]{Combined counts for participant-generated alternatives for liked vs. loved in Experiment 2.}\label{fig:exp2_altsPlot_likedLoved}
-\end{figure}
-\end{CodeChunk}
 
 \begin{CodeChunk}
 \begin{figure*}[t]
@@ -308,7 +312,7 @@ sets derived from Experiment 1.
 task}\label{experiment-2-literal-listener-task}
 
 Experiment 2 was conducted to approximate literal listener
-semantics---\(p_{L_0}(m \mid u)\) in Equation (2)---for the same five
+semantics---\(p_{L_0}(m \mid u)\) in Equation (3)---for the same five
 pairs of scalar items used in Experiment 1. We included three
 conditions: two alternatives (``entailment''), four alternatives, and
 five alternatives. The two alternatives condition makes a test of the
@@ -371,22 +375,22 @@ alternatives generated in Experiment 1.
 \end{figure*}
 \end{CodeChunk}
 
-Figure \ref{fig:exp1Plots} plots the estimated literal listener
-semantics for the three conditions. Each row shows a unique scalar
-family with items ordered horizontally by valence. Several trends are
-visible. First, in each scale, the alternatives spanned the star scale,
-such that there were scalar items that were highly compatible with both
-the lowest and highest numbers of stars. Second, participant
-compatibility judgments match intuitive literal semantics. That is, both
-weaker (e.g. \emph{some} or \emph{good}) and stronger (e.g. \emph{all}
-or \emph{excellent}) entailment items were seen as compatible with
+Figure \ref{fig:exp1Plots} plots estimated literal listener semantics
+for the three conditions. Each row shows a unique scalar family with
+items ordered horizontally by valence. Several trends are visible.
+First, in each scale, the alternatives spanned the star scale - there
+were scalar items that were highly compatible with both the lowest and
+highest numbers of stars. Second, participant compatibility judgments
+match intuitive literal semantics. That is, both weaker (e.g.
+\emph{some} or \emph{good}) and stronger (e.g. \emph{all} or
+\emph{excellent}) entailment items were seen as compatible with
 five-star ratings. This means participants' compatibility judgements
 reflect literal semantic intuitions, not enriched pragmatic judgments.
 We see clear variability between scalar families (literal semantic
 distributions for \emph{memorable} are considerably different from
 \emph{palatable}), but also substantial consistency across conditions
-(compatibility judgments for individual scalar items are consistent
-across conditions).
+(compatibility judgments for individual items are consistent across
+conditions).
 
 To examine this last issue of consistency across conditions (our
 secondary hypothesis) we fit a mixed effects model, regressing
@@ -399,7 +403,7 @@ five-alternative conditions (\(\beta = -0.04\), \(z = -0.52\),
 \(p = 0.6\)). The addition of condition as a predictor did not
 significantly improve model fit when compared to a model without the
 condition variable using ANOVA (\(\chi^2(2) = 0.43\), \(p = 0.81\)).
-These findings suggest that literal semantic intuitions are not effected
+These findings suggest that literal semantic intuitions are not affected
 by the set of alternatives queried in our paradigm. This finding is
 important because literal semantic data generated in these three
 conditions are used to simulate the effects of different alternative
@@ -458,9 +462,9 @@ distributions for ``weak'' / ``strong'' scalar pairs (e.g.
 each scale participants generated implicatures. They were substantially
 less likely to assign high star ratings to weaker scalar terms, despite
 the literal semantic compatibility of those terms with those states
-shown in Experiment 2. Second, the size of the difference between strong
-and weak scalar items varied considerably across scales, consistent with
-previous work ({van Tiel} et al., 2014).
+shown in Experiment 2. Second, the difference between strong and weak
+scalar items varied considerably across scales, consistent with previous
+work ({van Tiel} et al., 2014).
 
 To rule out the potential effects of having a larger set of alternatives
 during the pragmatic judgment elicitation, we fit a mixed effects model.
@@ -513,12 +517,6 @@ Two alts &   9 & 0.54 & 0.57 \\
 \caption{Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.} 
 \end{table}
 
-\begin{CodeChunk}
-\begin{figure}[t]
-\includegraphics{figs/fiveAltsScatter-1} \caption[Judgments from the four-alternatives condition of Experiment 3 are plotted against model predictions using the five-alternatives data from Experiment 1]{Judgments from the four-alternatives condition of Experiment 3 are plotted against model predictions using the five-alternatives data from Experiment 1. Colors show the star rating for individual judgments.}\label{fig:fiveAltsScatter}
-\end{figure}
-\end{CodeChunk}
-
 \section{General Discussion}\label{general-discussion}
 
 Pragmatic inference requires reasoning about alternatives. The
@@ -552,9 +550,9 @@ Experiment 1 provide some support for this idea but would require
 further empirical work for confirmation.
 
 The precise set of alternatives present during implicature is likely to
-be domain dependent. Our current empirical paradigm elicited literal
-semantics, pragmatic judgments, and plausible alternatives all within
-the restricted domain of restaurant reviews. Our measurements might have
+be domain dependent. Our empirical paradigm elicited literal semantics,
+pragmatic judgments, and plausible alternatives all within the
+restricted domain of restaurant reviews. Our measurements might have
 differed substantially if we had instead grounded our ratings in a
 different context. Future investigations should probe the
 context-specificity of the weight and availability of particular
@@ -567,6 +565,12 @@ alternative sets may provide a way to unite what Grice (1975) called
 distinction, we may find that these categories are simply a reflection
 of the effects of context on a constantly-shifting set of pragmatic
 alternatives.
+
+\begin{CodeChunk}
+\begin{figure}[t]
+\includegraphics{figs/fiveAltsScatter-1} \caption[Judgments from the four-alternatives condition of Experiment 3 are plotted against model predictions using the five-alternatives data from Experiment 1]{Judgments from the four-alternatives condition of Experiment 3 are plotted against model predictions using the five-alternatives data from Experiment 1. Colors show the star rating for individual judgments.}\label{fig:fiveAltsScatter}
+\end{figure}
+\end{CodeChunk}
 
 \section{Acknowledgements}\label{acknowledgements}
 
