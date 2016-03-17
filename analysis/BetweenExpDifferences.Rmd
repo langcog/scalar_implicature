@@ -235,6 +235,59 @@ allL0Listener$word <- as.factor(with(allL0Listener, mapply(lookupScalar, degree,
 # write.csv(allL0Listener, "/Users/benpeloquin/Desktop/Projects/scalar_implicature/models/model_data/RawLiteralListenerCombined.csv")
 ```
 
+### Save non-compliant
+```{r}
+allL0ListenerNC <- rbind(e8, e10, e12) %>%
+  subset(scale != "training1" & scale != "training2")
+allL0ListenerNC$exp <- as.factor(allL0ListenerNC$exp)
+## judgment :: numeric
+allL0ListenerNC$judgment <- as.numeric(allL0ListenerNC$judgment) 
+allL0ListenerNC$stars <- as.numeric(as.character(allL0ListenerNC$stars)) / 20
+
+
+ne8 <- allL0ListenerNC %>%
+  filter(exp == "e8") %>%
+  group_by(workerid) %>%
+  summarise(n = 1) %>%
+  nrow()
+ne10 <- allL0ListenerNC %>%
+  filter(exp == "e10") %>%
+  group_by(workerid) %>%
+  summarise(n = 1) %>%
+  nrow()
+ne12 <- allL0ListenerNC %>%
+  filter(exp == "e12") %>%
+  group_by(workerid) %>%
+  summarise(n = 1) %>%
+  nrow()
+
+literalD_NC <- allL0ListenerNC %>%
+  group_by(exp, scale, degree, stars) %>%
+  summarise(cnt.judgment = sum(judgment))
+literalD_NC$speaker.p <- with(literalD_NC,
+                           ifelse(exp == "e8", cnt.judgment / ne8,
+                                  ifelse(exp == "e10",
+                                         cnt.judgment / ne10, cnt.judgment / ne12)))
+literalD_NC$exp <- as.character(literalD_NC$exp)
+literalD_NC$words <- mapply(lookupScalar, literalD_NC$degree, literalD_NC$scale, literalD_NC$exp)
+drop <- c("cnt.judgment", "degree")
+literalD_NC <- literalD_NC[, !(names(literalD_NC) %in% drop)]
+
+# normalize for comparison
+for (e in unique(literalD_NC$exp)) {
+  for (word in unique(literalD_NC$words)) {
+    literalD_NC[literalD_NC$words == word & literalD_NC$exp == e, "speaker.p"] <-
+      rrrsa::rsa.normVec(subset(literalD_NC, words == word & exp == e)$speaker.p)
+  }
+}
+
+subset(literalD_NC, words == "excellent" & exp == "e12")
+subset(peloquinFrank_4Alts, words == "excellent")
+rrrsa::rsa.normVec(subset(speakerL12, scale == "good_excellent" & degree == "hi1")$speaker.p)
+
+```
+
+
 
 ## glmer()
 ```{r}
