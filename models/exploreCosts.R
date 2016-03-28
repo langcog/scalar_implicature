@@ -1,4 +1,5 @@
 library(rrrsa)
+library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(stringr)
@@ -13,28 +14,27 @@ d5 <- peloquinFrank_5Alts
 d5$costLen <- sapply(d5$words, str_length)
 d5$costLogLen <- log(d5$costLen)
 
-## Runs
-rsa5 <- plyr::ddply(d5, "scale", rsa.runDf,
-                    quantityVarName = "stars", semanticsVarName = "speaker.p",
-                    itemVarName = "words", costsVarName = "costLen")
+## Saliency costs
+salience5 <- read.csv("/Users/benpeloquin/Desktop/Projects/scalar_implicature/models/saliences5.csv")
+salience5$word <- with(salience5, mapply(lookupScalar, degree, scale, exp = rep("e12", length(scale))))
+  mutate(word = lookupScalar(scale = scale, degree = degree))
+d5$salienceCosts <- sapply(d5$words, FUN = function(w) {
+  subset(salience5, word == w)$cost
+})
+  
+subset(salience5, word == "excellent")$cost
 
+## Runs
 checkWords <- c("good", "excellent", "liked", "loved", "memorable", "unforgettable",
                 "palatable", "delicious", "some", "all")
-rsa5 <- rsa.tuneDepthAlpha(d5, quantityVarName = "stars", semanticsVarName = "speaker.p",
-                    groupName = "scale", itemVarName = "words", costsVarName = "costLogLen",
-                    compareDataName = "e6", compareItems = checkWords, alphas = seq(1, 5, by = 0.1))
-
-
-scales <- unique(d5$scale)
-newData <- data.frame()
-names(newData) <- names(d5)
-for (s in scales) {
-  currData <- d5 %>%
-    filter(scale == s)
-  currRun <- rsa.runDf(currData,
-                       quantityVarName = "stars",
-                       semanticsVarName = "speaker.p",
-                       itemVarName = "words")
-  
-}
-       
+## run with salience costs
+rsa5 <- plyr::ddply(d5, "scale", rsa.runDf,
+          quantityVarName = "stars",
+          semanticsVarName = "speaker.p",
+          itemVarName = "words",
+          costsVarName = "salienceCosts",
+          alpha = 4.5)
+ggplot(subset(rsa5, words %in% checkWords), aes(x = stars, y = e11, col = words)) +
+  geom_point() +
+  facet_wrap(~scale) +
+  geom_line(aes(x = stars, y = preds))
