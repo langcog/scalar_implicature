@@ -530,9 +530,16 @@ The precise set of alternatives present during implicature is likely to be domai
 More broadly, considering the context- and domain-specificity of alternative sets may provide a way to unite what @grice1975 called "generalized" (cross-context) and "particularized" (context-dependent) implicatures. Rather than being grounded in a firm distinction, we may find that these categories are simply a reflection of the effects of context on a constantly-shifting set of pragmatic alternatives. 
 
 ```{r fiveAltsScatter, fig.pos = "t", fig.width=3.5, fig.height=2.25, fig.cap = "Judgments for entailment items from the four alternatives condition of Experiment 3 are plotted against model predictions using the five alternatives data from Experiment 2. Colors show the star rating for individual judgments."}
-# Correlation scatter plot
-ggplot(subset(plotData, study == "Five alts"),
-       aes(x = listener.p2, y = preds, col=stars)) + 
+best_alpha <- 4.5
+best_run <- plyr::ddply(.data = peloquinFrank_5Alts, .variables =c("scale"), .fun = rsa.runDf,
+                        semanticsVarName = "speaker.p",
+                        quantityVarName = "stars",
+                        itemVarName = "words",
+                        alpha = best_alpha) %>%
+  filter(words %in% check_words)
+
+## Correlation scatter plot
+ggplot(best_run, aes(x = preds, y = e11, col = stars)) +
   geom_point() +
   xlab("model predictions") +
   ylab("human judgments") +
@@ -545,7 +552,6 @@ ggplot(subset(plotData, study == "Five alts"),
         legend.key.size = unit(.1, "in"),
         axis.title.x = element_text(size = 8.5),
         axis.title.y = element_text(size = 8.5)) 
-  # ggtitle("Model fit\nFive alternatives")
 ```
 
 # Acknowledgements
