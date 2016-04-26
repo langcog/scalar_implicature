@@ -24,6 +24,7 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb", f
 ```
 
 ```{r, libraries}
+library(rrrsa)
 library(dplyr)
 library(ggplot2)
 library(grid)
@@ -399,27 +400,100 @@ Using literal listener data from Experiment 2, we conducted a set of simulations
 Model fit with human judgments was significantly improved by the inclusion of alternatives beyond the entailment items (Table 1). The two alternatives model contained only entailment items, which, under classic accounts, should be sufficient to generate implicature, but fit to data was quite poor with these items. The addition of a generic negative element produced some gains, but much higher performance was found when we included four and five alternatives, with the alternatives derived empirically for the specific scale we used. An example fit for the five alternatives model is shown in Figure \ref{fig:fiveAltsScatter}. 
 
 ```{r xtable, results = "asis"}
+check_words <- c("good", "excellent", "liked", "loved", "memorable", "unforgettable", "palatable", "delicious", "some", "all")
 
-# Tuned model run data
-plotData <- allModelRunData %>%
-  mutate(study = ifelse(numAlts == 5, "Five alts", 
-                        ifelse(numAlts == 4, "Four alts",
-                               ifelse(numAlts == 3, "Two alts + generic negative ", "Two alts")))) %>%
-  gather(Experiment, cors, c(corE6, corE11)) %>%
-  mutate(Experiment = ifelse(Experiment == "corE6", "1b", "3b"))
+exps <- c("e6", "e11")
+res_table <- data.frame()
+compare_indices2 <- which(peloquinFrank_2Alts$words %in% check_words)
+for (exp in exps) {
+  two_alt_alphas <- rsa.tuneDepthAlpha(data = peloquinFrank_2Alts,
+            semanticsVarName = "speaker.p",
+            quantityVarName = "stars",
+            itemVarName = "words",
+            groupName = "scale",
+            compareIndices = compare_indices2,
+            compareDataName = exp,
+            alphas = seq(0, 10, by = 0.1))
+  res_table <- rbind(res_table, exp = two_alt_alphas[1, ])
+}
 
-tableCors <- plotData  %>%
-  select(cors, study, Experiment, alphas) %>%
-  unique() %>%
-  mutate(Experiment = ifelse(Experiment == "1b", "Pragmatic_Listener_exp1", "Pragmatic_Listener_exp2")) %>%
-  spread(Experiment, cors)
-  
-# Plot model performance table
-names(tableCors) <- c("Model", "$\\alpha$", "Two alts", "Four alts")
-tableCors <- tableCors[c(3, 4, 2, 1),]
-tab <- xtable(tableCors, caption = "Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.")
+compare_indices3 <- which(peloquinFrank_3Alts$words %in% check_words)
+for (exp in exps) {
+  three_alt_alphas <- rsa.tuneDepthAlpha(data = peloquinFrank_3Alts,
+              semanticsVarName = "speaker.p",
+              quantityVarName = "stars",
+              itemVarName = "words",
+              groupName = "scale",
+              compareIndices = compare_indices3,
+              compareDataName = exp,
+              alphas = seq(0, 20, by = 0.1))
+  res_table <- rbind(res_table, exp = three_alt_alphas[1, ])
+}
+compare_indices4 <- which(peloquinFrank_4Alts$words %in% check_words)
+for (exp in exps) {
+  four_alt_alphas <- rsa.tuneDepthAlpha(data = peloquinFrank_4Alts,
+              semanticsVarName = "speaker.p",
+              quantityVarName = "stars",
+              itemVarName = "words",
+              groupName = "scale",
+              compareIndices = compare_indices4,
+              compareDataName = exp,
+              alphas = seq(0, 10, by = 0.1))
+  res_table <- rbind(res_table, exp = four_alt_alphas[1, ])
+}
+compare_indices5 <- which(peloquinFrank_5Alts$words %in% check_words)
+for (exp in exps) {
+  five_alt_alphas <- rsa.tuneDepthAlpha(data = peloquinFrank_5Alts,
+              semanticsVarName = "speaker.p",
+              quantityVarName = "stars",
+              itemVarName = "words",
+              groupName = "scale",
+              compareIndices = compare_indices5,
+              compareDataName = exp,
+              alphas = seq(0, 10, by = 0.1))
+  res_table <- rbind(res_table, exp = five_alt_alphas[1, ])
+}
+res_table$row_num <- seq(1, nrow(res_table))
+res_table <- res_table %>% 
+  mutate(exp = ifelse(row_num %% 2 == 0, "Human judgments 4-alts", "Human judgments 2-alts"),
+         model = ifelse(row_num < 3, "2-alts",
+                           ifelse(row_num < 5, "3-alts",
+                                  ifelse(row_num < 7, "4-alts", "5-alts"))),
+         result = paste0("", round(cor, 2), " (alpha = ", alpha, ")")) %>%
+  select(model, result, exp) %>%
+  spread(exp, result)
+
+tab <- xtable(res_table[4:1, ], caption = "Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.")
 print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FALSE,
       sanitize.colnames.function = identity)
+
+
+
+# two_alt_alphas[1,]
+# three_alt_alphas[1,]
+# four_alt_alphas[1,]
+# five_alt_alphas[1,]
+# 
+# # Tuned model run data
+# plotData <- allModelRunData %>%
+#   mutate(study = ifelse(numAlts == 5, "Five alts", 
+#                         ifelse(numAlts == 4, "Four alts",
+#                                ifelse(numAlts == 3, "Two alts + generic negative ", "Two alts")))) %>%
+#   gather(Experiment, cors, c(corE6, corE11)) %>%
+#   mutate(Experiment = ifelse(Experiment == "corE6", "1b", "3b"))
+# 
+# tableCors <- plotData  %>%
+#   select(cors, study, Experiment, alphas) %>%
+#   unique() %>%
+#   mutate(Experiment = ifelse(Experiment == "1b", "Pragmatic_Listener_exp1", "Pragmatic_Listener_exp2")) %>%
+#   spread(Experiment, cors)
+#   
+# # Plot model performance table
+# names(tableCors) <- c("Model", "$\\alpha$", "Two alts", "Four alts")
+# tableCors <- tableCors[c(3, 4, 2, 1),]
+# tab <- xtable(tableCors, caption = "Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.")
+# print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FALSE,
+#       sanitize.colnames.function = identity)
 
 # Correlation bar chart
 # corBarChart <- ggplot(plotData, aes(x=study, y=cors, fill = Experiment)) + 
