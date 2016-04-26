@@ -138,7 +138,7 @@ listenerE11 <- read.csv("../models/model_data/L1_e11.csv", stringsAsFactors = FA
 
 # Introduction
 
-How much of what we mean comes from the words that go unsaid? As listeners, our ability to make precise inferences about a speaker's intended meaning in context is  indispensable to successful communication. For example, listeners commonly enrich the meaning of the scalar item *some* to *some but not all* in sentences like "Alice ate some of the cookies" [@grice1975;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomenon assumes listeners reason about a speaker's intended meaning by incorporating knowledge about A) alternative scalar items a speaker could have used (such as *all*) and B) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker must have intended that Alice did not eat all the cookies because it would have been underinformative to use the descriptor *some* when the alternative *all* could have been used just as easily.
+How much of what we mean comes from the words that go unsaid? As listeners, our ability to make precise inferences about a speaker's intended meaning in context is  indispensable to successful communication. For example, listeners commonly enrich the meaning of the word *some* to *some but not all* in sentences like "Alice ate some of the cookies" [@grice1975;@levinson2000]. These inferences, called _scalar implicatures_, have been an important test case for understanding pragmatic inferences more generally. A Gricean account of this phenomenon assumes listeners reason about a speaker's intended meaning by incorporating knowledge about A) alternative scalar items a speaker could have used (such as *all*) and B) the relative informativity of using such alternatives [@grice1975]. According to this account, a listener will infer that the speaker intended to convey that Alice did not eat all the cookies because it would have been underinformative to use the descriptor *some* when the alternative *all* could have been used just as easily.
 
 But what are the alternatives that should be considered in the implicature computation more generally? Under classic accounts, listeners consider only those words whose meanings entail the actual message [@horn1972], and these alternatives enter into conventionalized or semi-conventionalized scales [@levinson2000]. For example, because *all* entails *some*, and hence is a "stronger" meaning, *all* should be considered as an alternative to *some* in implicatures. Similar scales exist for non-quantifier scales, e.g. *loved* entails *liked* (and hence "I liked the movie" implicates that I didn't love it).
 
@@ -183,7 +183,7 @@ To instantiate our signaling game with a tractable message set $M$, in our studi
 grid::grid.raster(png::readPNG("figs/alternativeSets.png"))
 ```
 
-```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', fig.height=2, fig.cap = "Combined counts for participant-generated alternatives for liked vs. loved in Experiment 1."}
+```{r exp2_altsPlot_likedLoved, fig.pos = "t", fig.align='center', fig.height=2, fig.cap = "Combined counts for participant-generated alternatives for liked and loved in Experiment 1."}
 
 # Subset alternatives for demo
 plotData <- alternativesData %>%
@@ -396,7 +396,7 @@ To rule out the potential effects of having a larger set of alternatives during 
 
 # Model
 
-Using literal listener data from Experiment 2, we conducted a set of simulations with the RSA model. Each simulation kept the model constant, fitting the choice parameter $\alpha$ as a free parameter, but used a set of alternatives to specify the scale over which predictions were computed. We considered four different alternative sets, with empirical measurements corresponding to those shown in Figure \ref{fig:allScalesTable}: 1) the two alternatives in the classic entailment scales, 2) those two alternatives with the addition of a generic negative alternative, 3) the expanded set of four alternatives, and 4) the expanded set of five alternatives. Literal semantics for the generic negative alternative served as a baseline ``none"-style semantics in which the scalar item was only compatible with 1 star.
+Using literal listener data from Experiment 2, we conducted a set of simulations with the RSA model. Each simulation kept the model constant, fitting the choice parameter $\alpha$ as a free parameter, but used a set of alternatives to specify the scale over which predictions were computed. We considered four different alternative sets, with empirical measurements corresponding to those shown in Figure \ref{fig:allScalesTable}: 1) the two alternatives in the classic entailment scales, 2) those two alternatives with the addition of a generic negative alternative, 3) the expanded set of four alternatives, and 4) the expanded set of five alternatives. Literal semantics for the generic negative alternative served as a baseline ``none" semantics in which the scalar item was only compatible with 1 star.
 
 Model fit with human judgments was significantly improved by the inclusion of alternatives beyond the entailment items (Table 1). The two alternatives model contained only entailment items, which, under classic accounts, should be sufficient to generate implicature, but fit to data was quite poor with these items. The addition of a generic negative element produced some gains, but much higher performance was found when we included four and five alternatives, with the alternatives derived empirically for the specific scale we used. An example fit for the five alternatives model is shown in Figure \ref{fig:fiveAltsScatter}. 
 
@@ -467,54 +467,6 @@ res_table <- res_table %>%
 tab <- xtable(res_table[4:1, ], caption = "Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.")
 print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FALSE,
       sanitize.colnames.function = identity)
-
-
-
-# two_alt_alphas[1,]
-# three_alt_alphas[1,]
-# four_alt_alphas[1,]
-# five_alt_alphas[1,]
-# 
-# # Tuned model run data
-# plotData <- allModelRunData %>%
-#   mutate(study = ifelse(numAlts == 5, "Five alts", 
-#                         ifelse(numAlts == 4, "Four alts",
-#                                ifelse(numAlts == 3, "Two alts + generic negative ", "Two alts")))) %>%
-#   gather(Experiment, cors, c(corE6, corE11)) %>%
-#   mutate(Experiment = ifelse(Experiment == "corE6", "1b", "3b"))
-# 
-# tableCors <- plotData  %>%
-#   select(cors, study, Experiment, alphas) %>%
-#   unique() %>%
-#   mutate(Experiment = ifelse(Experiment == "1b", "Pragmatic_Listener_exp1", "Pragmatic_Listener_exp2")) %>%
-#   spread(Experiment, cors)
-#   
-# # Plot model performance table
-# names(tableCors) <- c("Model", "$\\alpha$", "Two alts", "Four alts")
-# tableCors <- tableCors[c(3, 4, 2, 1),]
-# tab <- xtable(tableCors, caption = "Model performance with fitted alpha levels. Model fit assessed through correlation with human judgments in the two conditions of Experiment 3.")
-# print(tab, type="latex", floating = TRUE, include.rownames = FALSE, comment = FALSE,
-#       sanitize.colnames.function = identity)
-
-# Correlation bar chart
-# corBarChart <- ggplot(plotData, aes(x=study, y=cors, fill = Experiment)) + 
-#   geom_bar(stat="identity", position="dodge") +
-#   ylab("Correlation") +
-#   xlab("Model") +
-#   ylim(0, 1) + 
-#   ggtitle("Model fit correlation coefficients") +
-#   guides(colour=FALSE) +
-#   geom_text(aes(x = study, y=as.numeric(cors) + 0.025, label = round(cors, 2), col=(Experiment)))
-
-# modifiedPlotData <- plotData %>%
-#   gather(pragStudy, pragChoice, c(9,11))
-# fullRepresentationFit <- qplot(stars, pragChoice, col=degree, shape = pragStudy,
-#       data=subset(modifiedPlotData, study == "Full")) +
-#   ylim(0, 1) +
-#   facet_wrap(~scale) + 
-#   geom_line(aes(y = preds), lty = 4)
-# fullRepresentationFit
-# gridExtra::grid.arrange(corBarChart, symmetricCorPlot, ncol = 2, widths = c(2.5,3))
 ```
 
 
