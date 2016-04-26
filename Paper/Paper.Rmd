@@ -223,11 +223,6 @@ On each trial participants were presented with a target scalar item from five sc
 
 ## Results and Discussion
 
-```{r stimuli_exp1, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=TRUE, num.cols.cap=2, fig.cap = "(Left) A trial from Experiment 2 (literal listener) with the target scalar \``liked.\" (Right) A trial from Experiment 3 (pragmatic listener) with the target scalar \``liked.\""}
-
-# Screen shots of literal listener and pragmatic listener conditions
-grid::grid.raster(png::readPNG("figs/exp1_stimuli.png"))
-```
 
 Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for the scalar items *liked* and *loved* (combined). Figure \ref{fig:allScalesTable} shows the complete list of alternative sets derived from Experiment 1.
 
@@ -236,6 +231,12 @@ Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for t
 Experiment 2 was conducted to approximate literal listener semantics---$p_{L_0}(m \mid u)$ in Equation (3)---for the same five pairs of scalar items used in Experiment 1. We included three conditions: two alternatives ("entailment"), four alternatives, and five alternatives. The two alternatives condition makes a test of the hypothesis that the two members of the classic Horn (entailment) scale [@horn1972] are the only alternatives necessary to predict the strength of listeners' pragmatic inference. The four and five alternative conditions then add successively more alternatives to test whether including a larger number of alternatives will increase model fit.\footnote{Note that alternatives in the four and five alternative conditions were chosen on the basis of Experiment 1, which was run chronologically after the two alternative condition; all literal listener experiments are grouped together for simplicity in reporting.} A secondary goal of Experiment 2 is to test whether the set of alternatives queried during literal semantic elicitation impacts literal semantic judgments. If it does we should see differences in these judgments for shared items between conditions
 
 ## Methods
+
+```{r stimuli_exp1, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=4, fig.align='center', set.cap.width=TRUE, num.cols.cap=2, fig.cap = "(Left) A trial from Experiment 2 (literal listener) with the target scalar 'liked'. (Right) A trial from Experiment 3 (pragmatic listener) with the target scalar 'liked'."}
+
+# Screen shots of literal listener and pragmatic listener conditions
+grid::grid.raster(png::readPNG("figs/exp1_stimuli.png"))
+```
 
 ### Participants
 ```{r}
@@ -455,7 +456,7 @@ for (exp in exps) {
 }
 res_table$row_num <- seq(1, nrow(res_table))
 res_table <- res_table %>% 
-  mutate(exp = ifelse(row_num %% 2 == 0, "Human judgments 4-alts", "Human judgments 2-alts"),
+  mutate(exp = ifelse(row_num %% 2 == 0, "Empirical 4-alts", "Empirical 2-alts"),
          model = ifelse(row_num < 3, "2-alts",
                            ifelse(row_num < 5, "3-alts",
                                   ifelse(row_num < 7, "4-alts", "5-alts"))),
