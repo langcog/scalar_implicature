@@ -94,7 +94,10 @@ lookupScalar <- function(degree, scale, exp) {
   }
   NA
 }
-
+#####
+##### normedVec()
+##### normalize vector
+#####
 normedVec <- function(vec) vec / sum(vec)
 ```
 
