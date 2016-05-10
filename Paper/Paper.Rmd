@@ -226,7 +226,7 @@ On each trial participants were presented with a target scalar item from five sc
 
 Figure \ref{fig:exp2_altsPlot_likedLoved} shows an example alternative set for the scalar items *liked* and *loved* (combined). Figure \ref{fig:allScalesTable} shows the complete list of alternative sets derived from Experiment 1.
 
-# Experiment 2: Literal listener task
+# Experiment 2: Literal Listener Task
 
 Experiment 2 was conducted to approximate literal listener semantics---$p_{L_0}(m \mid u)$ in Equation (3)---for the same five pairs of scalar items used in Experiment 1. We included three conditions: two alternatives ("entailment"), four alternatives, and five alternatives. The two alternatives condition makes a test of the hypothesis that the two members of the classic Horn (entailment) scale [@horn1972] are the only alternatives necessary to predict the strength of listeners' pragmatic inference. The four and five alternative conditions then add successively more alternatives to test whether including a larger number of alternatives will increase model fit.\footnote{Note that alternatives in the four and five alternative conditions were chosen on the basis of Experiment 1, which was run chronologically after the two alternative condition; all literal listener experiments are grouped together for simplicity in reporting.} A secondary goal of Experiment 2 is to test whether the set of alternatives queried during literal semantic elicitation impacts literal semantic judgments. If it does we should see differences in these judgments for shared items between conditions.
 
@@ -314,11 +314,13 @@ anovaResults <- anova(glm1, glm2)
 
 To examine this last issue of consistency across conditions (our secondary hypothesis) we fit a mixed effects model, regressing compatibility judgment on scale, number of stars and experimental condition, with subject- and word-level random effects, which was the maximal structure that converged. Results indicate no significant differences between two and five alternative conditions ($\beta=`r round(sumGlm2$coefficients[3], 2)`$, $z = `r round(sumGlm2$coefficients[19], 2)`$, $p = `r round(sumGlm2$coefficients[27], 2)`$) or between four and five alternative conditions ($\beta = `r round(sumGlm2$coefficients[2], 2)`$, $z = `r round(sumGlm2$coefficients[18], 2)`$, $p = `r round(sumGlm2$coefficients[26], 2)`$). The addition of condition as a predictor did not significantly improve model fit when compared to a model without the condition variable using ANOVA ($\chi^2(`r anovaResults$"Chi Df"[2]`) = `r round(anovaResults$Chisq[2], 2)`$, $p = `r round(anovaResults$"Pr(>Chisq)"[2], 2)`$). These findings suggest that literal semantic intuitions are not affected by the set of alternatives queried in our paradigm. This finding is important because literal semantic data generated in these three conditions are used as input to our model to simulate the effects of different alternative sets on implicature generation.
 
-# Experiment 3: Pragmatic Listener
+# Experiment 3: Pragmatic Listener Task
 
 Experiment 3 was conducted to measure pragmatic judgments. As in Experiment 2, we include several conditions to test inferences in the presence of different alternative sets. In the two alternatives condition, participants made judgments for items included in the entailment scales. In the four alternatives condition, participants made judgments for the entailment items and also the top two alternatives elicited for each scale in Experiment 1. Including two conditions with differing alternatives allowed us to rule out the potential effects of having a larger set of alternatives during the pragmatic judgment elicitation and also provided two sets of human judgments to compare with model predictions.
 
-## Participants
+## Methods
+
+### Participants
 
 ```{r, allPragStudySubsets, echo = FALSE, messgae = FALSE, warning = FALSE}
 exp3a <- subset(allPragmaticListener, exp == "e6")
@@ -327,13 +329,13 @@ exp3b <- subset(allPragmaticListener, exp == "e11")
 
 We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - length(unique(exp3a$workerid))` participants was excluded from the two alternatives condition after participants either failed to pass two training trials or were non-native English speakers, leaving a total sample of `r length(unique(exp3a$workerid))` participants. In the four alternatives condition, data from `r 50 - length(unique(exp3b$workerid))` participants was excluded after participants either failed to pass two training trials or were not native English speakers, leaving `r length(unique(exp3b$workerid))` participants.
 
-## Procedure
+### Design and Procedure
 
 Participants were presented with a one-sentence prompt such as "Someone said they thought the food was \_____." with a target scalar item in the blank. Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. Participants in the two alternatives condition gave a total of 10 pragmatic judgments. Participants in the four alternatives condition gave a total of 20 pragmatic judgments. The experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right. 
 
 ## Results and Discussion
 
-```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=2, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgments from Experiment 3. Verticle axis shows proportion of participants generating a star rating. Horizontal axis shows number of stars on which the utterance was judged. Line type denotes condition and colors indicate the particular scalar items. Each panel shows one entailment scalar pair."}
+```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=2, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgments from Experiment 3. Vertical axis shows proportion of participants generating a star rating. Horizontal axis shows number of stars on which the utterance was judged. Line type denotes condition and colors indicate the particular scalar items. Each panel shows one entailment scalar pair."}
 # Get zero's in data frame
 baseDf <- data.frame(degree = rep(c("hi", "low", "hi1", "hi2", "low1", "low2"), 25),
                      scale = c(rep("good_excellent", 6 * 5),
@@ -395,7 +397,7 @@ Figure \ref{fig:exp2Plots} plots pragmatic listener judgment distributions for "
 
 To rule out the potential effects of having a larger set of alternatives during the pragmatic judgment  elicitation, we fit a mixed effects model. We regressed pragmatic judgments on scale and experimental condition with subject- and word-level random effects, which was the maximal structure that converged. There were no significant differences between the two alternative and four alternative conditions ($\beta = `r round(sumGlm2$coefficients[2], 2)`$, $t(`r round(sumGlm2$coefficients[14], 0)`) = `r round(sumGlm2$coefficients[20], 2)`$, $p = `r round(sumGlm2$coefficients[26], 2)`$). The addition of the condition predictor did not significantly improve model fit when compared to a model without that variable ($\chi^2(`r anovaResults$"Chi Df"[2]`) = `r round(anovaResults$Chisq[2], 2)`$, $p = `r round(anovaResults$"Pr(>Chisq)"[2], 2)`$).
 
-# Model
+# Model Simulations
 
 Using literal listener data from Experiment 2, we conducted a set of simulations with the RSA model. Each simulation kept the model constant, fitting the choice parameter $\alpha$ as a free parameter, but used a set of alternatives to specify the scale over which predictions were computed. We considered four different alternative sets, with empirical measurements corresponding to those shown in Figure \ref{fig:allScalesTable}: 1) the two alternatives in the classic entailment scales, 2) those two alternatives with the addition of a generic negative alternative, 3) the expanded set of four alternatives, and 4) the expanded set of five alternatives. Literal semantics for the generic negative alternative served as a baseline ``none" semantics in which the scalar item was only compatible with 1 star.
 
