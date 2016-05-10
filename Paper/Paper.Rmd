@@ -329,11 +329,11 @@ We recruited 100 participants from AMT, 50 for each condition. Data for `r 50 - 
 
 ## Procedure
 
-Participants were presented with a one-sentence prompt such as "Someone said they thought the food was \_____." with a target scalar item in the blank. Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. Participants in the two alternatives condition gave total of 10 pragmatic judgments. Participants in the four alternatives condition gave a total of 20 pragmatic judgments. The experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right. 
+Participants were presented with a one-sentence prompt such as "Someone said they thought the food was \_____." with a target scalar item in the blank. Participants were then asked to generate a star rating representing the rating they thought the reviewer likely gave. Each participant was presented with all scalar items in a random order. Participants in the two alternatives condition gave a total of 10 pragmatic judgments. Participants in the four alternatives condition gave a total of 20 pragmatic judgments. The experimental setup is shown in Figure \ref{fig:stimuli_exp1}, right. 
 
 ## Results and Discussion
 
-```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=2, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgments from Experiment 3. Proportion of participants generating a star rating is shown on the vertical axis, with the horizontal axis showing number of stars on which the utterance was judged. Line type denotes condition, and colors indicate the particular scalar items. Each panel shows one scalar pair, with only standard entailment pairs shown here for simplicity in reporting."}
+```{r exp2Plots, fig.env = "figure*", fig.pos = "t", fig.width=6.5, fig.height=2, fig.align='center', set.cap.width=T, num.cols.cap=2, fig.cap = "Pragmatic listener judgments from Experiment 3. Verticle axis shows proportion of participants generating a star rating. Horizontal axis shows number of stars on which the utterance was judged. Line type denotes condition and colors indicate the particular scalar items. Each panel shows one entailment scalar pair."}
 # Get zero's in data frame
 baseDf <- data.frame(degree = rep(c("hi", "low", "hi1", "hi2", "low1", "low2"), 25),
                      scale = c(rep("good_excellent", 6 * 5),
