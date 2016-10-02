@@ -27,8 +27,9 @@ speaker.inf = function(d, alpha, cost = 0) {
 # ------------------
 speaker.lhd = function(rating, degree, m, alpha) {
   numerator = speaker.inf(m[rating, degree], alpha)
-  normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
-  return(numerator / normalize)
+  return(ifelse(numerator < 0, 0, numerator))
+#   normalize = sum(sapply(m[rating, ], function(i) {speaker.inf(i, alpha)}))
+#   return(numerator / normalize)
 }
 # non-normalized posterior
 # -----------------------
@@ -64,6 +65,7 @@ speaker.lhd3 = function(currRating, currDegree, m, alpha, costs, allDegrees) {
                               speaker.inf3(m[[allDegrees[i]]][currRating], alpha,
                                           subset(costs, degree == allDegrees[i])$cost)}
                           )))
+  # return(ifelse(numerator < 0, 0, numerator))
   if (normalize == 0) return(0)
   return(numerator / normalize)
   # return(numerator)
